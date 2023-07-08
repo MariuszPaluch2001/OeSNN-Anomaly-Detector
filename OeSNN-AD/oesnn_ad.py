@@ -6,7 +6,7 @@ class OeSNN_AD:
 
     def __init__(self, stream: np.ndarray, window_size : int, 
                  input_neurons_n : int, output_neurons_n : int, 
-                 TS : float, mod : float) -> None:
+                 TS : float, mod : float, C : float) -> None:
         
         self.stream : np.ndarray = stream
         self.stream_len : int = self.stream.shape[0]
@@ -17,6 +17,9 @@ class OeSNN_AD:
     
         self.TS = TS
         self.mod = mod
+        self.C = C
+        
+        self.gamma = self.C * (1 - self.mod**(2*input_neurons_n)) / (1 - self.mod**2)
 
     def predict(self) -> np.ndarray:
         current_no_size = 0
