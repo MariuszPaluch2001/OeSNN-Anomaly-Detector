@@ -3,9 +3,9 @@ import numpy as np
 class GRF_Init:
     
     def __init__(self, window : np.ndarray, input_size : int, output_size : int, TS : float, mod : int) -> None:
-        self.min_w_i = window.min()
-        self.max_w_i = window.max()
-        self.xt = window[-1]
+        self.min_w_i : float = window.min()
+        self.max_w_i : float = window.max()
+        self.xt : float = window[-1]
 
         self.input_size = input_size
         self.output_size = output_size

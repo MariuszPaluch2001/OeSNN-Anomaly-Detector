@@ -8,9 +8,9 @@ class OeSNN_AD:
                  input_neurons_n : int, output_neurons_n : int, 
                  TS : float, mod : float, C : float) -> None:
         
-        self.stream : np.ndarray = stream
-        self.stream_len : int = self.stream.shape[0]
-        self.window_size : int = window_size
+        self.stream = stream
+        self.stream_len = self.stream.shape[0]
+        self.window_size = window_size
 
         self.input_layer : Input_Layer = Input_Layer(input_neurons_n, output_neurons_n)
         self.output_layer : Output_Layer = Output_Layer(output_neurons_n)
