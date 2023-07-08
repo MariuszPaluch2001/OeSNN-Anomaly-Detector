@@ -1,34 +1,25 @@
 from grf_init import GRF_Init
 import numpy as np
 
-WINDOW = np.array([0.5, 
-                   0.3, 
-                   0.4, 
-                   0.3, 
-                   0.6, 
-                   0.2, 
-                   1.0, 
-                   0.4, 
-                   0.3, 
-                   0.4, 
-                   0.2, 
-                   0.4, 
-                   0.1, 
-                   0.5])
+WINDOW = np.array([0.5, 0.3, 0.4, 
+                   0.3, 0.6, 0.2, 
+                   1.0, 0.4, 0.3, 
+                   0.4, 0.2, 0.4, 
+                   0.1, 0.5])
 
 def test_get_width_vec():
     grf = GRF_Init(WINDOW, 7, 10, 1, 0.5)
     
     result = grf._get_width_vec()
     correct = np.repeat(0.18, 7)
-    np.testing.assert_array_almost_equal(result, correct, decimal=2)
+    np.testing.assert_array_almost_equal(result, correct, decimal = 2)
 
 def test_get_center_vec():
     grf = GRF_Init(WINDOW, 7, 10, 1, 0.5)
     
     result = grf._get_center_vec()
     correct = np.array([-0.17,  0.01,  0.19,  0.37,  0.55,  0.73,  0.91])
-    np.testing.assert_array_almost_equal(result, correct, decimal=2)
+    np.testing.assert_array_almost_equal(result, correct, decimal = 2)
 
 def test_get_excitation():
     grf = GRF_Init(WINDOW, 7, 10, 1, 0.5)
