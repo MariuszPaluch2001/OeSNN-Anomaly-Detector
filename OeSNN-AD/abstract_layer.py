@@ -1,8 +1,11 @@
 import numpy as np
-from typing import Tuple
+from typing import Tuple, List
+
+from neuron import Neuron
 
 class Layer:
     
-    def __init__(self, input_size : int, output_size : int) -> None:
-        self.shape : Tuple[int, int] = (input_size, output_size)
-        self.weights : np.ndarray = np.zeros((input_size, output_size))
+    def __init__(self, neurons_n : int) -> None:
+        self.neurons_n = neurons_n
+        
+        self.neurons : List[Neuron]

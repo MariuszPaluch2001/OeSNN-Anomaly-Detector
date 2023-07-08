@@ -1,13 +1,13 @@
 from abstract_layer import Layer
 from grf_init import GRF_Init
+from neuron import Input_Neuron
+
 import numpy as np
+from typing import List
 
 class Input_Layer(Layer):
     
-    def __init__(self, input_size : int, output_size : int, mod : float) -> None:
+    def __init__(self, input_size : int, output_size : int) -> None:
         super().__init__(input_size, output_size)
-        self.mod = mod
-
-    def init_weights(self, window : np.ndarray, TS : float) -> None:
-        grf_init = GRF_Init(window, self.shape[0], self.shape[1], TS, self.mod)
-        self.weights = grf_init.init_weights()
+        
+        self.neurons : List[Input_Neuron] = [Input_Neuron(id, 0.0) for id in range(input_size)]
