@@ -27,10 +27,11 @@ class GRF_Init:
         return self.TS * (np.ones(self.input_size) - excitation)
     
     def _get_order(self, firings_times : np.ndarray) -> np.ndarray:
-        return np.array([int(np.argwhere(np.argsort(firings_times)) == i) 
+        arg_sorted = np.argsort(firings_times)
+        return np.array([int(np.argwhere(arg_sorted == i)) 
                          for i in range(self.input_size)])
     
-    def _get_weights(self, orders : np.ndarray) -> None:
+    def _get_weights(self, orders : np.ndarray) -> np.ndarray:
         return np.array(
             [np.repeat(self.mod ** orders[i], self.output_size)
              for i in range(self.input_size)]
