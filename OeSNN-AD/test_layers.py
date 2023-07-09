@@ -1,4 +1,5 @@
 from output_layer import Output_Layer
+from neuron import Output_Neuron
 
 import numpy as np
 
@@ -28,3 +29,28 @@ def test_make_candidate():
     np.testing.assert_array_almost_equal(candidate.weights, correct_weights, decimal = 3)
     assert candidate.max_PSP == approx(1.333, abs=1e-3)
     assert candidate.gamma == approx(0.666, abs=1e-3)
+
+def test_find_most_similar_without_neurons():
+    output_layer = Output_Layer(0, 10)
+    neuron = Output_Neuron(np.array([0.25, 0.25, 0.25]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+
+    result_n, distance =  output_layer.find_most_similar(neuron)
+
+    assert result_n is None
+    assert np.isinf(distance)
+
+def test_find_most_similar_with_neurons():
+    output_layer = Output_Layer(0, 10)
+
+    neuron1 = Output_Neuron(np.array([0.26, 0.26, 0.26]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+    neuron2 = Output_Neuron(np.array([1.0, 1.0, 1.0]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+    neuron3 = Output_Neuron(np.array([0.0, 0.0, 0.0]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+
+    output_layer.neurons.extend([neuron1, neuron2, neuron3])
+
+    c_neuron = Output_Neuron(np.array([0.25, 0.25, 0.25]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+
+    result_n, distance =  output_layer.find_most_similar(c_neuron)
+
+    assert result_n is neuron1
+    assert distance == approx(0.0173, abs = 1e-4)
