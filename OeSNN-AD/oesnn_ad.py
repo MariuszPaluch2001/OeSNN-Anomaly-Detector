@@ -28,19 +28,22 @@ class OeSNN_AD:
         anomaly_result = [False for _ in range(self.window_size)]
 
         for t in range(self.window_size + 1, self.stream_len):
+            self.input_layer.set_orders(window, self.TS, self.mod)
+            
             window = self.stream[t - self.window_size : t]
             is_anomaly = self._anomaly_classification(window)
             anomaly_result.append(is_anomaly)
 
-            self._learning(window)
+            self._learning(window, t)
         
         return np.array(anomaly_result)
     
     def _anomaly_classification(self, window : np.ndarray) -> bool:
-        self.input_layer.init_weights(window)
-    
-    def _learning(self, window : np.ndarray) -> None:
         ...
+        
+    def _learning(self, window : np.ndarray, neuron_age : int) -> None:
+        candidate = self.output_layer.make_candidate(window, self.input_layer.orders, 
+                                                     self.mod, self.C, neuron_age)
 
     def _error_correction(self) -> None:
         ...

@@ -2,13 +2,12 @@ import numpy as np
 
 class GRF_Init:
     
-    def __init__(self, window : np.ndarray, input_size : int, output_size : int, TS : float, mod : int) -> None:
+    def __init__(self, window : np.ndarray, input_size : int, TS : float, mod : int) -> None:
         self.min_w_i : float = window.min()
         self.max_w_i : float = window.max()
         self.xt : float = window[-1]
 
         self.input_size = input_size
-        self.output_size = output_size
         self.TS = TS
         self.mod = mod
 
@@ -30,19 +29,12 @@ class GRF_Init:
         arg_sorted = np.argsort(firings_times)
         return np.array([int(np.argwhere(arg_sorted == i)) 
                          for i in range(self.input_size)])
-    
-    def _get_weights(self, orders : np.ndarray) -> np.ndarray:
-        return np.array(
-            [np.repeat(self.mod ** orders[i], self.output_size)
-             for i in range(self.input_size)]
-        )
 
-    def init_weights(self) -> np.ndarray:
+    def get_order(self) -> np.ndarray:
 
         width_v = self._get_width_vec()
         center_v = self._get_center_vec()
         excitation = self._get_excitation(width_v, center_v)
         firings_times = self._get_firing_time(excitation)
-        orders = self._get_order(firings_times)
         
-        return self._get_weights(orders)
+        return self._get_order(firings_times)

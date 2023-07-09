@@ -11,3 +11,9 @@ class Input_Layer(Layer):
         super().__init__(input_size, output_size)
         
         self.neurons : List[Input_Neuron] = [Input_Neuron(id, 0.0) for id in range(input_size)]
+        self.orders : np.ndarray = None
+
+    def set_orders(self, window : np.ndarray, TS : float, mod : float):
+        grf = GRF_Init(window, self.neurons_n, TS, mod)
+        
+        self.orders = grf.get_order()
