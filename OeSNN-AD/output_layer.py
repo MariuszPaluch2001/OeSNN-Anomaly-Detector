@@ -34,3 +34,4 @@ class Output_Layer(Layer):
         min_distance = dist_f(most_similar_neuron)
         
         return most_similar_neuron, min_distance
+    

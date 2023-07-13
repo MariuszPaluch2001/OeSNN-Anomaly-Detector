@@ -1,5 +1,7 @@
 from input_layer import Input_Layer
 from output_layer import Output_Layer
+from neuron import Output_Neuron
+
 import numpy as np
 
 class OeSNN_AD:
@@ -47,3 +49,19 @@ class OeSNN_AD:
 
     def _error_correction(self) -> None:
         ...
+
+    def _fires_first(self) -> Output_Neuron | None:
+        to_fire = []
+        
+        for n in self.output_layer.neurons:
+            n.PSP = 0
+        
+        for idx_in in range(len(self.input_layer.neurons)):
+            for n_out in self.output_layer.neurons:
+                n_out.PSP += n_out.weights[idx_in] * (self.mod ** self.input_layer.orders[idx_in])
+
+                if n_out.PSP > self.gamma:
+                    to_fire.append(n_out)
+                
+            if to_fire:
+                return max(to_fire, key= lambda x: x.PSP)
