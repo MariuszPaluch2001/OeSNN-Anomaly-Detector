@@ -57,11 +57,13 @@ def test__fires_first():
     assert isinstance(result, Output_Neuron)
 
 def test__anomaly_classification_without_correct_values():
-    oesnn_ad = OeSNN_AD(WINDOW, 14, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    assert not oesnn_ad._anomaly_classification(WINDOW, [0.0 for _ in range(len(WINDOW))], [True for _ in range(len(WINDOW) - 1)])
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert not oesnn_ad._anomaly_classification([0.0 for _ in range(5)], [True for _ in range(4)])
 
 def test__anomaly_classification_with_anomaly_classified():
-    assert True
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert oesnn_ad._anomaly_classification([0.1, 0.2, 0.15, 0.1, 0.9], [False for _ in range(4)])
 
 def test__anomaly_classification_with_not_anomaly_classified():
-    assert not False
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert not oesnn_ad._anomaly_classification([0.1, 0.2, 0.15, 0.1, 0.16], [False for _ in range(4)])

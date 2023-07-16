@@ -41,17 +41,16 @@ class OeSNN_AD:
         
         return np.array(anomaly_result)
     
-    def _anomaly_classification(self, window : np.ndarray, error_values : np.ndarray, 
+    def _anomaly_classification(self, error_values : np.ndarray, 
                                 anom_classification: np.ndarray) -> bool:
-        err_t = window[self.window_size - 1]
+        err_t = error_values[-1]
         
-        err_anom = np.array([err for err, classification 
-                        in zip(error_values, anom_classification) if not classification])
+        err_anom = [err for err, classification 
+                        in zip(error_values[-(self.window_size - 1):-1], anom_classification[-(self.window_size - 1):]) if not classification]
 
-        if (not err_anom) or (err_t - np.mean(err_anom) < np.std(err_anom) * self.epsilon):
-            return False
-        
-        return True
+        return not (
+            (not err_anom) or (err_t - np.mean(err_anom) < np.std(err_anom) * self.epsilon)
+        )
     
     def _learning(self, window : np.ndarray, neuron_age : int) -> None:
         candidate = self.output_layer.make_candidate(window, self.input_layer.orders, 
