@@ -8,7 +8,7 @@ class OeSNN_AD:
 
     def __init__(self, stream: np.ndarray, window_size : int, 
                  input_neurons_n : int, output_neurons_n : int, 
-                 TS : float, mod : float, C : float) -> None:
+                 TS : float, mod : float, C : float, epsilon : float) -> None:
         
         self.stream = stream
         self.stream_len = self.stream.shape[0]
@@ -22,6 +22,7 @@ class OeSNN_AD:
         self.C = C
         
         self.gamma = self.C * (1 - self.mod**(2*input_neurons_n)) / (1 - self.mod**2)
+        self.epsilon  = epsilon
 
     def predict(self) -> np.ndarray:
         current_no_size = 0
@@ -40,9 +41,18 @@ class OeSNN_AD:
         
         return np.array(anomaly_result)
     
-    def _anomaly_classification(self, window : np.ndarray) -> bool:
-        ...
+    def _anomaly_classification(self, window : np.ndarray, error_values : np.ndarray, 
+                                anom_classification: np.ndarray) -> bool:
+        err_t = window[self.window_size - 1]
         
+        err_anom = np.array([err for err, classification 
+                        in zip(error_values, anom_classification) if not classification])
+
+        if (not err_anom) or (err_t - np.mean(err_anom) < np.std(err_anom) * self.epsilon):
+            return False
+        
+        return True
+    
     def _learning(self, window : np.ndarray, neuron_age : int) -> None:
         candidate = self.output_layer.make_candidate(window, self.input_layer.orders, 
                                                      self.mod, self.C, neuron_age)
@@ -64,4 +74,4 @@ class OeSNN_AD:
                     to_fire.append(n_out)
                 
             if to_fire:
-                return max(to_fire, key= lambda x: x.PSP)
+                return max(to_fire, key = lambda x: x.PSP)
