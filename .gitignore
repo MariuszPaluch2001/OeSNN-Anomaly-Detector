@@ -1,5 +1,5 @@
 data_explore/plots_Yahoo/*.png
 data_explore/plots_NAB/*.png
-.vscode
+.vscode/
 __pycache__/
 .pytest_cache/
