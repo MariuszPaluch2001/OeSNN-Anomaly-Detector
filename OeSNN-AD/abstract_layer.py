@@ -3,10 +3,9 @@ from typing import Tuple, List
 
 from neuron import Neuron
 
-
 class Layer:
-
-    def __init__(self, neurons_n: int) -> None:
+    
+    def __init__(self, neurons_n : int) -> None:
         self.neurons_n = neurons_n
-
-        self.neurons: List[Neuron]
+        
+        self.neurons : List[Neuron]
