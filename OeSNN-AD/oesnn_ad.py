@@ -4,6 +4,8 @@ from neuron import Output_Neuron
 
 import numpy as np
 
+from typing import List
+
 
 class OeSNN_AD:
 
@@ -29,27 +31,38 @@ class OeSNN_AD:
     def predict(self) -> np.ndarray:
         current_no_size = 0
         window = self.stream[0:self.window_size]
-        pred_values = np.random.normal(
+        values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
-        anomaly_result = [False for _ in range(self.window_size)]
-
+        errors = [np.abs(xt - yt) for xt, yt in zip(window, values)]
+        anomalies = [False for _ in range(self.window_size)]
         for t in range(self.window_size + 1, self.stream_len):
             self.input_layer.set_orders(window, self.TS, self.mod)
 
             window = self.stream[t - self.window_size: t]
-            is_anomaly = self._anomaly_classification(window)
-            anomaly_result.append(is_anomaly)
+
+            self._anomaly_detection(window, errors, anomalies, values)
 
             self._learning(window, t)
 
-        return np.array(anomaly_result)
+        return np.array(anomalies)
 
-    def _anomaly_classification(self, error_values: np.ndarray,
-                                anom_classification: np.ndarray) -> bool:
-        err_t = error_values[-1]
+    def _anomaly_detection(self, window: List, errors: List, anomalies: List, values: List) -> None:
+        nf = self._fires_first()
+        if nf is None:
+            values.append(None)
+            errors.append(np.inf)
+            anomalies.append(True)
+        else:
+            values.append(nf.output_value)
+            errors.append(np.abs(window[-1] - nf.output_value))
+            anomalies.append(self._anomaly_classification(errors, anomalies))
+
+    def _anomaly_classification(self, errors: np.ndarray,
+                                anomalies: np.ndarray) -> bool:
+        err_t = errors[-1]
 
         err_anom = [err for err, classification
-                    in zip(error_values[-(self.window_size - 1):-1], anom_classification[-(self.window_size - 1):]) if not classification]
+                    in zip(errors[-(self.window_size - 1):-1], anomalies[-(self.window_size - 1):]) if not classification]
 
         return not (
             (not err_anom) or (err_t - np.mean(err_anom)
@@ -60,22 +73,25 @@ class OeSNN_AD:
         candidate = self.output_layer.make_candidate(window, self.input_layer.orders,
                                                      self.mod, self.C, neuron_age)
 
-    def _error_correction(self) -> None:
-        ...
+    def _reset_psp(self):
+        for n in self.output_layer.neurons:
+            n.PSP = 0     
+    
+    def _update_psp(self, idx_in: int):
+        for n_out in self.output_layer.neurons:
+            n_out.PSP += n_out.weights[idx_in] * \
+                (self.mod ** self.input_layer.orders[idx_in])
+
+            if n_out.PSP > self.gamma:
+                yield n_out
 
     def _fires_first(self) -> Output_Neuron | None:
         to_fire = []
 
-        for n in self.output_layer.neurons:
-            n.PSP = 0
+        self._reset_psp()
 
         for idx_in in range(len(self.input_layer.neurons)):
-            for n_out in self.output_layer.neurons:
-                n_out.PSP += n_out.weights[idx_in] * \
-                    (self.mod ** self.input_layer.orders[idx_in])
-
-                if n_out.PSP > self.gamma:
-                    to_fire.append(n_out)
+            to_fire = [n_out for n_out in self._update_psp(idx_in)]
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.PSP)

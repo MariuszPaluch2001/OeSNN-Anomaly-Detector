@@ -30,7 +30,7 @@ class Output_Layer(Layer):
         if not self.neurons:
             return None, np.Inf
 
-        def dist_f(n): return np.linalg.norm(
+        def dist_f(n : Output_Neuron): return np.linalg.norm(
             n.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
