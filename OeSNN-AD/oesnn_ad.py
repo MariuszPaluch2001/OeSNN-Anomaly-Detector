@@ -96,10 +96,6 @@ class OeSNN_AD:
         else:
             self.output_layer.replace_oldest(candidate)
 
-    def _reset_psp(self) -> None:
-        for n in self.output_layer.neurons:
-            n.PSP = 0
-
     def _update_psp(self, idx_in: int) -> Generator[Output_Neuron, None, None]:
         for n_out in self.output_layer.neurons:
             n_out.PSP += n_out.weights[idx_in] * \
@@ -109,7 +105,7 @@ class OeSNN_AD:
                 yield n_out
 
     def _fires_first(self) -> Output_Neuron | None:
-        self._reset_psp()
+        self.output_layer.reset_psp()
 
         for idx_in in range(self.input_layer.num_neurons):
             to_fire = [n_out for n_out in self._update_psp(idx_in)]

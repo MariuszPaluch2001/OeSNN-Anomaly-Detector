@@ -60,11 +60,15 @@ class Output_Layer(Layer):
 
         return most_similar_neuron, min_distance
 
-    def add_new_neuron(self, neuron : Output_Neuron):
+    def add_new_neuron(self, neuron : Output_Neuron) -> None:
         self.neurons.append(neuron)
         self.num_neurons += 1
     
     def replace_oldest(self, candidate: Output_Neuron) -> None:
         oldest = min(self.neurons, key=lambda n: n.addition_time)
-        self.neurons.pop(oldest)
+        self.neurons.remove(oldest)
         self.neurons.append(candidate)
+
+    def reset_psp(self) -> None:
+        for n in self.neurons:
+            n.PSP = 0
