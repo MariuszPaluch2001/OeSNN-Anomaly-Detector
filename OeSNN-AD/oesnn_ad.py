@@ -3,7 +3,7 @@ from neuron import Output_Neuron
 
 import numpy as np
 
-from typing import List
+from typing import List, Generator
 
 
 class OeSNN_AD:
@@ -33,10 +33,10 @@ class OeSNN_AD:
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def _get_window_from_stream(self, begin_idx: int, end_idx: int):
+    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> np.ndarray:
         return self.stream[begin_idx: end_idx]
 
-    def _init_new_arrays_for_predict(self, window: np.ndarray):
+    def _init_new_arrays_for_predict(self, window: np.ndarray) -> None:
         self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
@@ -96,11 +96,11 @@ class OeSNN_AD:
         else:
             self.output_layer.replace_oldest(candidate)
 
-    def _reset_psp(self):
+    def _reset_psp(self) -> None:
         for n in self.output_layer.neurons:
             n.PSP = 0
 
-    def _update_psp(self, idx_in: int):
+    def _update_psp(self, idx_in: int) -> Generator[Output_Neuron, None, None]:
         for n_out in self.output_layer.neurons:
             n_out.PSP += n_out.weights[idx_in] * \
                 (self.mod ** self.input_layer.orders[idx_in])

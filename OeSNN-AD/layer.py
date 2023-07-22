@@ -23,7 +23,7 @@ class Input_Layer(Layer):
             Input_Neuron(0.0) for _ in range(input_size)]
         self.orders: np.ndarray = None
 
-    def set_orders(self, window: np.ndarray, TS: float, mod: float):
+    def set_orders(self, window: np.ndarray, TS: float, mod: float) -> None:
         grf = GRF_Init(window, self.neurons_n, TS, mod)
 
         self.orders = grf.get_order()
@@ -38,7 +38,7 @@ class Output_Layer(Layer):
         self.neurons: List[Output_Neuron] = []
 
     def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
-                       C: float, neuron_age: int):
+                       C: float, neuron_age: int) -> Output_Neuron:
 
         weights = np.array([mod ** o for o in order])
         output_value = np.random.normal(np.mean(window), np.std(window))
@@ -53,14 +53,14 @@ class Output_Layer(Layer):
         if not self.neurons:
             return None, np.Inf
 
-        def dist_f(n: Output_Neuron): return np.linalg.norm(
+        def dist_f(n: Output_Neuron) -> float: return np.linalg.norm(
             n.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
 
         return most_similar_neuron, min_distance
 
-    def replace_oldest(self, candidate : Output_Neuron):
+    def replace_oldest(self, candidate: Output_Neuron) -> None:
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.pop(oldest)
         self.neurons.append(candidate)
