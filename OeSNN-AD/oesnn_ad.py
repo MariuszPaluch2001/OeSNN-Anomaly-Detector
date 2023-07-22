@@ -40,7 +40,7 @@ class OeSNN_AD:
         self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
-        self.anomalies = [False for _ in range(self.window_size)]
+        self.anomalies = [False] * self.window_size
 
     def predict(self) -> np.ndarray:
         window = self._get_window_from_stream(0, self.window_size)
@@ -58,14 +58,14 @@ class OeSNN_AD:
         return np.array(self.anomalies)
 
     def _anomaly_detection(self, window: np.ndarray) -> None:
-        nf = self._fires_first()
-        if nf is None:
+        first_fired_neuron = self._fires_first()
+        if first_fired_neuron is None:
             self.values.append(None)
             self.errors.append(np.inf)
             self.anomalies.append(True)
         else:
-            self.values.append(nf.output_value)
-            self.errors.append(np.abs(window[-1] - nf.output_value))
+            self.values.append(first_fired_neuron.output_value)
+            self.errors.append(np.abs(window[-1] - first_fired_neuron.output_value))
             self.anomalies.append(self._anomaly_classification())
 
     def _anomaly_classification(self) -> bool:
@@ -80,21 +80,21 @@ class OeSNN_AD:
         )
 
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
-        candidate = self.output_layer.make_candidate(window, self.input_layer.orders,
+        candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
                                                      self.mod, self.C, neuron_age)
 
         if not self.anomalies[-1]:
-            candidate.output_value += (window[-1] -
-                                       candidate.output_value) * self.ksi
+            candidate_neuron.output_value += (window[-1] -
+                                       candidate_neuron.output_value) * self.ksi
 
-        most_familiar, dist = self.output_layer.find_most_similar(candidate)
+        most_familiar_neuron, dist = self.output_layer.find_most_similar(candidate_neuron)
 
         if dist <= self.sim:
-            most_familiar.update_neuron(candidate)
-        elif len(self.output_layer.num_neurons) < self.output_layer.max_outpt_size:
-            self.output_layer.add_new_neuron(candidate)
+            most_familiar_neuron.update_neuron(candidate_neuron)
+        elif self.output_layer.num_neurons < self.output_layer.max_outpt_size:
+            self.output_layer.add_new_neuron(candidate_neuron)
         else:
-            self.output_layer.replace_oldest(candidate)
+            self.output_layer.replace_oldest(candidate_neuron)
 
     def _update_psp(self, idx_in: int) -> Generator[Output_Neuron, None, None]:
         for n_out in self.output_layer.neurons:

@@ -9,6 +9,66 @@ WINDOW = np.array([0.5, 0.3, 0.4,
                    0.1, 0.5])
 
 
+def test__anomaly_classification_without_correct_values():
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.0 for _ in range(5)]
+    oesnn_ad.anomalies = [True for _ in range(4)]
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_with_anomaly_classified():
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
+    oesnn_ad.anomalies = [False for _ in range(4)]
+    assert oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_with_not_anomaly_classified():
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
+    oesnn_ad.values = [False for _ in range(4)]
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__get_window_from_stream():
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    result = oesnn_ad._get_window_from_stream(0, 5)
+    correct = np.array([0.5, 0.3, 0.4, 0.3, 0.6])
+    np.testing.assert_array_equal(result, correct)
+
+
+def test__init_new_arrays_for_predict():
+    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert len(oesnn_ad.values) == 0
+    assert len(oesnn_ad.anomalies) == 0
+    assert len(oesnn_ad.errors) == 0
+
+    oesnn_ad._init_new_arrays_for_predict(WINDOW[0:5])
+    np.testing.assert_array_equal(oesnn_ad.anomalies, [False] * 5)
+    assert len(oesnn_ad.values) == 5
+    assert len(oesnn_ad.errors) == 5
+
+
+def test_predict():
+    assert True
+
+
+def test__anomaly_detection():
+    assert True
+
+
+def test__anomaly_classification():
+    assert True
+
+
+def test__learning():
+    assert True
+
+
+def test__update_psp():
+    assert True
+
+
 def test__fires_first_with_none():
     oesnn_ad = OeSNN_AD(WINDOW, 14, 10, 10, 0.5, 0.5, 0.5, 0.5)
 
@@ -55,24 +115,3 @@ def test__fires_first():
     result = oesnn_ad._fires_first()
 
     assert isinstance(result, Output_Neuron)
-
-
-def test__anomaly_classification_without_correct_values():
-    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    oesnn_ad.errors = [0.0 for _ in range(5)]
-    oesnn_ad.anomalies = [True for _ in range(4)]
-    assert not oesnn_ad._anomaly_classification()
-
-
-def test__anomaly_classification_with_anomaly_classified():
-    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
-    oesnn_ad.anomalies = [False for _ in range(4)]
-    assert oesnn_ad._anomaly_classification()
-
-
-def test__anomaly_classification_with_not_anomaly_classified():
-    oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
-    oesnn_ad.values = [False for _ in range(4)]
-    assert not oesnn_ad._anomaly_classification()
