@@ -58,17 +58,3 @@ def test_get_order():
     result = grf.get_order()
     correct = np.array([6, 5, 3, 1, 0, 2, 4])
     np.testing.assert_array_equal(result, correct)
-
-# def test__get_weights():
-#     grf = GRF_Init(WINDOW, 7, 10, 1, 0.5)
-#     orders = np.array([6,5,3,1,0,2,4])
-
-#     result = grf._get_weights(orders)
-#     correct = np.array([np.repeat(0.015625, 10),
-#                        np.repeat(0.03125, 10),
-#                        np.repeat(0.125, 10),
-#                        np.repeat(0.5, 10),
-#                        np.repeat(1, 10),
-#                        np.repeat(0.25, 10),
-#                        np.repeat(0.0625, 10)])
-#     np.testing.assert_array_almost_equal(result, correct, decimal = 3)

@@ -9,22 +9,22 @@ from typing import List, Generator
 class OeSNN_AD:
 
     def __init__(self, stream: np.ndarray, window_size: int,
-                 input_neurons_n: int, output_neurons_n: int,
+                 num_in_neurons: int, num_out_neurons: int,
                  TS: float, mod: float, C: float, epsilon: float, ksi: float = 0.0, sim: float = 0.0) -> None:
 
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
 
-        self.input_layer: Input_Layer = Input_Layer(input_neurons_n)
-        self.output_layer: Output_Layer = Output_Layer(output_neurons_n)
+        self.input_layer: Input_Layer = Input_Layer(num_in_neurons)
+        self.output_layer: Output_Layer = Output_Layer(num_out_neurons)
 
         self.TS = TS
         self.mod = mod
         self.C = C
 
         self.gamma = self.C * \
-            (1 - self.mod**(2*input_neurons_n)) / (1 - self.mod**2)
+            (1 - self.mod**(2*num_in_neurons)) / (1 - self.mod**2)
         self.epsilon = epsilon
         self.ksi = ksi
         self.sim = sim
@@ -91,8 +91,8 @@ class OeSNN_AD:
 
         if dist <= self.sim:
             most_familiar.update_neuron(candidate)
-        elif len(self.output_layer.neurons) < self.output_layer.max_outpt_size:
-            self.output_layer.neurons.append(candidate)
+        elif len(self.output_layer.num_neurons) < self.output_layer.max_outpt_size:
+            self.output_layer.add_new_neuron(candidate)
         else:
             self.output_layer.replace_oldest(candidate)
 
@@ -111,7 +111,7 @@ class OeSNN_AD:
     def _fires_first(self) -> Output_Neuron | None:
         self._reset_psp()
 
-        for idx_in in range(len(self.input_layer.neurons)):
+        for idx_in in range(self.input_layer.num_neurons):
             to_fire = [n_out for n_out in self._update_psp(idx_in)]
 
             if to_fire:

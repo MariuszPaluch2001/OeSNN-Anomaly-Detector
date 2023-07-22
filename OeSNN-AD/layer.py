@@ -8,8 +8,8 @@ from neuron import Input_Neuron, Output_Neuron
 
 class Layer:
 
-    def __init__(self, neurons_n: int) -> None:
-        self.neurons_n = neurons_n
+    def __init__(self, num_neurons: int) -> None:
+        self.num_neurons = num_neurons
 
         self.neurons: List[Neuron]
 
@@ -24,7 +24,7 @@ class Input_Layer(Layer):
         self.orders: np.ndarray = None
 
     def set_orders(self, window: np.ndarray, TS: float, mod: float) -> None:
-        grf = GRF_Init(window, self.neurons_n, TS, mod)
+        grf = GRF_Init(window, self.num_neurons, TS, mod)
 
         self.orders = grf.get_order()
 
@@ -60,6 +60,10 @@ class Output_Layer(Layer):
 
         return most_similar_neuron, min_distance
 
+    def add_new_neuron(self, neuron : Output_Neuron):
+        self.neurons.append(neuron)
+        self.num_neurons += 1
+    
     def replace_oldest(self, candidate: Output_Neuron) -> None:
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.pop(oldest)

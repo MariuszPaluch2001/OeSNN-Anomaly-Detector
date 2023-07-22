@@ -48,9 +48,9 @@ def test__fires_first():
         max_PSP=1
     )
 
-    oesnn_ad.output_layer.neurons.append(out_n1)
-    oesnn_ad.output_layer.neurons.append(out_n2)
-    oesnn_ad.output_layer.neurons.append(out_n3)
+    oesnn_ad.output_layer.add_new_neuron(out_n1)
+    oesnn_ad.output_layer.add_new_neuron(out_n2)
+    oesnn_ad.output_layer.add_new_neuron(out_n3)
 
     result = oesnn_ad._fires_first()
 
