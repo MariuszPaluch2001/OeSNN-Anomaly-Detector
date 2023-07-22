@@ -10,14 +10,14 @@ class OeSNN_AD:
 
     def __init__(self, stream: np.ndarray, window_size: int,
                  input_neurons_n: int, output_neurons_n: int,
-                 TS: float, mod: float, C: float, epsilon: float) -> None:
+                 TS: float, mod: float, C: float, epsilon: float, ksi: float = 0.0, sim: float = 0.0) -> None:
 
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
 
         self.input_layer: Input_Layer = Input_Layer(input_neurons_n)
-        self.output_layer: Output_Layer = Output_Layer(0, output_neurons_n)
+        self.output_layer: Output_Layer = Output_Layer(output_neurons_n)
 
         self.TS = TS
         self.mod = mod
@@ -26,6 +26,8 @@ class OeSNN_AD:
         self.gamma = self.C * \
             (1 - self.mod**(2*input_neurons_n)) / (1 - self.mod**2)
         self.epsilon = epsilon
+        self.ksi = ksi
+        self.sim = sim
 
         self.values: List[float] = []
         self.anomalies: List[bool] = []
@@ -80,6 +82,19 @@ class OeSNN_AD:
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
         candidate = self.output_layer.make_candidate(window, self.input_layer.orders,
                                                      self.mod, self.C, neuron_age)
+
+        if not self.anomalies[-1]:
+            candidate.output_value += (window[-1] -
+                                       candidate.output_value) * self.ksi
+
+        most_familiar, dist = self.output_layer.find_most_similar(candidate)
+
+        if dist <= self.sim:
+            most_familiar.update_neuron(candidate)
+        elif len(self.output_layer.neurons) < self.output_layer.max_outpt_size:
+            self.output_layer.neurons.append(candidate)
+        else:
+            self.output_layer.replace_oldest(candidate)
 
     def _reset_psp(self):
         for n in self.output_layer.neurons:

@@ -13,7 +13,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 
 def test_make_candidate():
-    output_layer = Output_Layer(0, 10)
+    output_layer = Output_Layer(10)
 
     order, mod, C, neuron_age = np.array([6, 5, 3, 1, 0, 2, 4]), 0.5, 0.5, 10
 
@@ -35,7 +35,7 @@ def test_make_candidate():
 
 
 def test_find_most_similar_without_neurons():
-    output_layer = Output_Layer(0, 10)
+    output_layer = Output_Layer(10)
     neuron = Output_Neuron(
         np.array([0.25, 0.25, 0.25]), 0.25, 0.1, 1, 0.25, 0.75, 2)
 
@@ -46,7 +46,7 @@ def test_find_most_similar_without_neurons():
 
 
 def test_find_most_similar_with_neurons():
-    output_layer = Output_Layer(0, 10)
+    output_layer = Output_Layer(10)
 
     neuron1 = Output_Neuron(
         np.array([0.26, 0.26, 0.26]), 0.25, 0.1, 1, 0.25, 0.75, 2)

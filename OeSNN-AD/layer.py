@@ -31,8 +31,8 @@ class Input_Layer(Layer):
 
 class Output_Layer(Layer):
 
-    def __init__(self, neurons_n: int, max_output_size: int) -> None:
-        super().__init__(neurons_n)
+    def __init__(self, max_output_size: int) -> None:
+        super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[Output_Neuron] = []
@@ -59,3 +59,8 @@ class Output_Layer(Layer):
         min_distance = dist_f(most_similar_neuron)
 
         return most_similar_neuron, min_distance
+
+    def replace_oldest(self, candidate : Output_Neuron):
+        oldest = min(self.neurons, key=lambda n: n.addition_time)
+        self.neurons.pop(oldest)
+        self.neurons.append(candidate)
