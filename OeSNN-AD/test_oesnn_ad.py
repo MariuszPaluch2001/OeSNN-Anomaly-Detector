@@ -59,17 +59,20 @@ def test__fires_first():
 
 def test__anomaly_classification_without_correct_values():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    assert not oesnn_ad._anomaly_classification(
-        [0.0 for _ in range(5)], [True for _ in range(4)])
+    oesnn_ad.errors = [0.0 for _ in range(5)]
+    oesnn_ad.anomalies = [True for _ in range(4)]
+    assert not oesnn_ad._anomaly_classification()
 
 
 def test__anomaly_classification_with_anomaly_classified():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    assert oesnn_ad._anomaly_classification(
-        [0.1, 0.2, 0.15, 0.1, 0.9], [False for _ in range(4)])
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
+    oesnn_ad.anomalies = [False for _ in range(4)]
+    assert oesnn_ad._anomaly_classification()
 
 
 def test__anomaly_classification_with_not_anomaly_classified():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    assert not oesnn_ad._anomaly_classification(
-        [0.1, 0.2, 0.15, 0.1, 0.16], [False for _ in range(4)])
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
+    oesnn_ad.values = [False for _ in range(4)]
+    assert not oesnn_ad._anomaly_classification()

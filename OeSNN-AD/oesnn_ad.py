@@ -31,16 +31,23 @@ class OeSNN_AD:
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def predict(self) -> np.ndarray:
-        window = self.stream[0:self.window_size]
+    def _get_window_from_stream(self, begin_idx: int, end_idx: int):
+        return self.stream[begin_idx: end_idx]
+
+    def _init_new_arrays_for_predict(self, window: np.ndarray):
         self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False for _ in range(self.window_size)]
+
+    def predict(self) -> np.ndarray:
+        window = self._get_window_from_stream(0, self.window_size)
+
+        self._init_new_arrays_for_predict(window)
         for t in range(self.window_size + 1, self.stream_len):
             self.input_layer.set_orders(window, self.TS, self.mod)
 
-            window = self.stream[t - self.window_size: t]
+            window = self._get_window_from_stream(t - self.window_size, t)
 
             self._anomaly_detection(window)
 
@@ -57,15 +64,13 @@ class OeSNN_AD:
         else:
             self.values.append(nf.output_value)
             self.errors.append(np.abs(window[-1] - nf.output_value))
-            self.anomalies.append(self._anomaly_classification(
-                self.errors, self.anomalies))
+            self.anomalies.append(self._anomaly_classification())
 
-    def _anomaly_classification(self, errors: np.ndarray,
-                                anomalies: np.ndarray) -> bool:
-        err_t = errors[-1]
+    def _anomaly_classification(self) -> bool:
+        err_t = self.errors[-1]
 
         err_anom = [err for err, classification
-                    in zip(errors[-(self.window_size - 1):-1], anomalies[-(self.window_size - 1):]) if not classification]
+                    in zip(self.errors[-(self.window_size - 1):-1], self.anomalies[-(self.window_size - 1):]) if not classification]
 
         return not (
             (not err_anom) or (err_t - np.mean(err_anom)
