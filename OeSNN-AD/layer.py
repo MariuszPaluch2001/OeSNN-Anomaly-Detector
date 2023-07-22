@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Tuple, Generator
 
 from neuron import Neuron
 from grf_init import GRF_Init
@@ -13,6 +13,10 @@ class Layer:
 
         self.neurons: List[Neuron]
 
+    def __iter__(self) -> Generator[Neuron, None, None]:
+        for neuron in self.neurons:
+            yield neuron
+
 
 class Input_Layer(Layer):
 
@@ -20,15 +24,21 @@ class Input_Layer(Layer):
         super().__init__(input_size)
 
         self.neurons: List[Input_Neuron] = [
-            Input_Neuron(0.0) for _ in range(input_size)]
-        self.orders: np.ndarray = None
+            Input_Neuron(0.0, id) for id in range(input_size)]
+    
+    def __iter__(self) -> Generator[Input_Neuron, None, None]:
+        return super().__iter__()
+
+    @property
+    def orders(self):
+        return np.array([neuron.order for neuron in self.neurons])
 
     def set_orders(self, window: np.ndarray, TS: float, mod: float) -> None:
         grf = GRF_Init(window, self.num_neurons, TS, mod)
-
-        self.orders = grf.get_order()
-
-
+        
+        for neuron, new_order in zip(self.neurons, grf.get_order()):
+            neuron.set_order(new_order)
+    
 class Output_Layer(Layer):
 
     def __init__(self, max_output_size: int) -> None:
@@ -36,6 +46,9 @@ class Output_Layer(Layer):
 
         self.max_outpt_size = max_output_size
         self.neurons: List[Output_Neuron] = []
+
+    def __iter__(self) -> Generator[Output_Neuron, None, None]:
+        return super().__iter__()
 
     def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
                        C: float, neuron_age: int) -> Output_Neuron:
@@ -60,10 +73,10 @@ class Output_Layer(Layer):
 
         return most_similar_neuron, min_distance
 
-    def add_new_neuron(self, neuron : Output_Neuron) -> None:
+    def add_new_neuron(self, neuron: Output_Neuron) -> None:
         self.neurons.append(neuron)
         self.num_neurons += 1
-    
+
     def replace_oldest(self, candidate: Output_Neuron) -> None:
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.remove(oldest)

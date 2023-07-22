@@ -1,5 +1,5 @@
 from oesnn_ad import OeSNN_AD
-from neuron import Output_Neuron
+from neuron import Output_Neuron, Input_Neuron
 import numpy as np
 
 WINDOW = np.array([0.5, 0.3, 0.4,
@@ -76,9 +76,10 @@ def test__fires_first_with_none():
 
 
 def test__fires_first():
-    oesnn_ad = OeSNN_AD(WINDOW, 14, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad = OeSNN_AD(WINDOW, 3, 3, 3, 0.5, 0.5, 0.5, 0.5)
 
-    oesnn_ad.input_layer.orders = np.array([2, 1, 0])
+    oesnn_ad.input_layer.neurons = [Input_Neuron(
+        0.0, 2), Input_Neuron(0.0, 1), Input_Neuron(0.0, 0)]
 
     out_n1 = Output_Neuron(
         weights=np.array([0, 1, 2]),

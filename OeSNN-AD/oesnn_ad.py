@@ -1,5 +1,5 @@
 from layer import Input_Layer, Output_Layer
-from neuron import Output_Neuron
+from neuron import Output_Neuron, Input_Neuron
 
 import numpy as np
 
@@ -10,7 +10,8 @@ class OeSNN_AD:
 
     def __init__(self, stream: np.ndarray, window_size: int,
                  num_in_neurons: int, num_out_neurons: int,
-                 TS: float, mod: float, C: float, epsilon: float, ksi: float = 0.0, sim: float = 0.0) -> None:
+                 TS: float, mod: float, C: float, epsilon: float,
+                 ksi: float = 0.0, sim: float = 0.0) -> None:
 
         self.stream = stream
         self.stream_len = self.stream.shape[0]
@@ -58,6 +59,7 @@ class OeSNN_AD:
         return np.array(self.anomalies)
 
     def _anomaly_detection(self, window: np.ndarray) -> None:
+        xt = window[-1]
         first_fired_neuron = self._fires_first()
         if first_fired_neuron is None:
             self.values.append(None)
@@ -65,29 +67,34 @@ class OeSNN_AD:
             self.anomalies.append(True)
         else:
             self.values.append(first_fired_neuron.output_value)
-            self.errors.append(np.abs(window[-1] - first_fired_neuron.output_value))
+            self.errors.append(
+                np.abs(xt - first_fired_neuron.output_value))
             self.anomalies.append(self._anomaly_classification())
 
     def _anomaly_classification(self) -> bool:
-        err_t = self.errors[-1]
+        error_t = self.errors[-1]
+        errors_window = self.errors[-(self.window_size - 1):-1]
+        anomalies_window = self.anomalies[-(self.window_size - 1):]
 
-        err_anom = [err for err, classification
-                    in zip(self.errors[-(self.window_size - 1):-1], self.anomalies[-(self.window_size - 1):]) if not classification]
+        errors_for_anomalies = [err for err, classification in zip(
+            errors_window, anomalies_window) if not classification]
 
         return not (
-            (not err_anom) or (err_t - np.mean(err_anom)
-                               < np.std(err_anom) * self.epsilon)
+            (not errors_for_anomalies) or (error_t - np.mean(errors_for_anomalies)
+                                           < np.std(errors_for_anomalies) * self.epsilon)
         )
 
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
+        anomaly_t, xt = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
-                                                     self.mod, self.C, neuron_age)
+                                                            self.mod, self.C, neuron_age)
 
-        if not self.anomalies[-1]:
-            candidate_neuron.output_value += (window[-1] -
-                                       candidate_neuron.output_value) * self.ksi
+        if not anomaly_t:
+            candidate_neuron.output_value += (xt -
+                                              candidate_neuron.output_value) * self.ksi
 
-        most_familiar_neuron, dist = self.output_layer.find_most_similar(candidate_neuron)
+        most_familiar_neuron, dist = self.output_layer.find_most_similar(
+            candidate_neuron)
 
         if dist <= self.sim:
             most_familiar_neuron.update_neuron(candidate_neuron)
@@ -96,10 +103,10 @@ class OeSNN_AD:
         else:
             self.output_layer.replace_oldest(candidate_neuron)
 
-    def _update_psp(self, idx_in: int) -> Generator[Output_Neuron, None, None]:
-        for n_out in self.output_layer.neurons:
-            n_out.PSP += n_out.weights[idx_in] * \
-                (self.mod ** self.input_layer.orders[idx_in])
+    def _update_psp(self, neuron_input: Input_Neuron) -> Generator[Output_Neuron, None, None]:
+        for n_out in self.output_layer:
+            n_out.PSP += n_out.weights[neuron_input.id] * \
+                (self.mod ** neuron_input.order)
 
             if n_out.PSP > self.gamma:
                 yield n_out
@@ -107,8 +114,8 @@ class OeSNN_AD:
     def _fires_first(self) -> Output_Neuron | None:
         self.output_layer.reset_psp()
 
-        for idx_in in range(self.input_layer.num_neurons):
-            to_fire = [n_out for n_out in self._update_psp(idx_in)]
+        for neuron_input in self.input_layer:
+            to_fire = [n_out for n_out in self._update_psp(neuron_input)]
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.PSP)

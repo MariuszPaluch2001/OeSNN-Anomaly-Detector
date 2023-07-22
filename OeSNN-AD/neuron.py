@@ -7,9 +7,14 @@ class Neuron:
 
 
 class Input_Neuron(Neuron):
-    def __init__(self, firing_time: float) -> None:
+    def __init__(self, firing_time: float, id: int = 0, order: int = 0) -> None:
         super().__init__()
+        self.id = id
         self.firing_time = firing_time
+        self.order = order
+
+    def set_order(self, new_order: int):
+        self.order = new_order
 
 
 class Output_Neuron(Neuron):
