@@ -1,9 +1,32 @@
-from abstract_layer import Layer
-from neuron import Output_Neuron
-
+import numpy as np
 from typing import List, Tuple
 
-import numpy as np
+from neuron import Neuron
+from grf_init import GRF_Init
+from neuron import Input_Neuron, Output_Neuron
+
+
+class Layer:
+
+    def __init__(self, neurons_n: int) -> None:
+        self.neurons_n = neurons_n
+
+        self.neurons: List[Neuron]
+
+
+class Input_Layer(Layer):
+
+    def __init__(self, input_size: int) -> None:
+        super().__init__(input_size)
+
+        self.neurons: List[Input_Neuron] = [
+            Input_Neuron(0.0) for _ in range(input_size)]
+        self.orders: np.ndarray = None
+
+    def set_orders(self, window: np.ndarray, TS: float, mod: float):
+        grf = GRF_Init(window, self.neurons_n, TS, mod)
+
+        self.orders = grf.get_order()
 
 
 class Output_Layer(Layer):
@@ -30,7 +53,7 @@ class Output_Layer(Layer):
         if not self.neurons:
             return None, np.Inf
 
-        def dist_f(n : Output_Neuron): return np.linalg.norm(
+        def dist_f(n: Output_Neuron): return np.linalg.norm(
             n.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)

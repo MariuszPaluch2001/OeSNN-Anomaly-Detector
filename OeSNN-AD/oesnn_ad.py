@@ -1,5 +1,4 @@
-from input_layer import Input_Layer
-from output_layer import Output_Layer
+from layer import Input_Layer, Output_Layer
 from neuron import Output_Neuron
 
 import numpy as np
@@ -28,34 +27,38 @@ class OeSNN_AD:
             (1 - self.mod**(2*input_neurons_n)) / (1 - self.mod**2)
         self.epsilon = epsilon
 
+        self.values: List[float] = []
+        self.anomalies: List[bool] = []
+        self.errors: List[float] = []
+
     def predict(self) -> np.ndarray:
-        current_no_size = 0
         window = self.stream[0:self.window_size]
-        values = np.random.normal(
+        self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
-        errors = [np.abs(xt - yt) for xt, yt in zip(window, values)]
-        anomalies = [False for _ in range(self.window_size)]
+        self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
+        self.anomalies = [False for _ in range(self.window_size)]
         for t in range(self.window_size + 1, self.stream_len):
             self.input_layer.set_orders(window, self.TS, self.mod)
 
             window = self.stream[t - self.window_size: t]
 
-            self._anomaly_detection(window, errors, anomalies, values)
+            self._anomaly_detection(window)
 
             self._learning(window, t)
 
-        return np.array(anomalies)
+        return np.array(self.anomalies)
 
-    def _anomaly_detection(self, window: List, errors: List, anomalies: List, values: List) -> None:
+    def _anomaly_detection(self, window: np.ndarray) -> None:
         nf = self._fires_first()
         if nf is None:
-            values.append(None)
-            errors.append(np.inf)
-            anomalies.append(True)
+            self.values.append(None)
+            self.errors.append(np.inf)
+            self.anomalies.append(True)
         else:
-            values.append(nf.output_value)
-            errors.append(np.abs(window[-1] - nf.output_value))
-            anomalies.append(self._anomaly_classification(errors, anomalies))
+            self.values.append(nf.output_value)
+            self.errors.append(np.abs(window[-1] - nf.output_value))
+            self.anomalies.append(self._anomaly_classification(
+                self.errors, self.anomalies))
 
     def _anomaly_classification(self, errors: np.ndarray,
                                 anomalies: np.ndarray) -> bool:

@@ -1,4 +1,4 @@
-from output_layer import Output_Layer
+from layer import Output_Layer
 from neuron import Output_Neuron
 
 import numpy as np
