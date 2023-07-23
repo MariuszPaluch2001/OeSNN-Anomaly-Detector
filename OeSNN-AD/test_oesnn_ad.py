@@ -54,35 +54,110 @@ def test_predict():
     assert True
 
 
-def test__anomaly_detection():
-    assert True
+def test__anomaly_detection_without_firing():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
+    oesnn_ad._anomaly_detection(np.array([1, 2, 3]))
+    assert oesnn_ad.values[0] is None
+    assert np.isinf(oesnn_ad.errors[0])
+    assert oesnn_ad.anomalies[0]
+
+
+def test__anomaly_detection_with_firing():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07]
+    oesnn_ad.anomalies = [True, False, True, False]
+
+    neuron_input1 = Input_Neuron(firing_time=0.5, id=0, order=2)
+    neuron_input2 = Input_Neuron(firing_time=0.5, id=1, order=1)
+    neuron_input3 = Input_Neuron(firing_time=0.5, id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = Output_Neuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = Output_Neuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = Output_Neuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+    oesnn_ad._anomaly_detection(np.array([1.0, 0.55, 1.01, 0.57, 0.6]))
+    assert oesnn_ad.values[-1] == 0.5
+    assert oesnn_ad.errors[-1] == approx(0.1, abs=1e-1)
+    assert not oesnn_ad.anomalies[-1]
 
 
 def test__anomaly_classification_without_non_anomaly_in_window():
     oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
                         num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
-    oesnn_ad.errors = [0.99, 0.99, 0.99, 0.99, 0.99, 0.99]
-    oesnn_ad.anomalies = [True, True, True, True, True]
+    oesnn_ad.errors = [0.99, 0.99, 0.99, 0.99, 0.99]
+    oesnn_ad.anomalies = [True, True, True, True]
 
     assert not oesnn_ad._anomaly_classification()
+
 
 def test__anomaly_classification_without_anomaly_result():
     oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
                         num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
-    oesnn_ad.errors = [0.1, 0.99, 0.15, 0.99, 0.07, 0.09]
-    oesnn_ad.anomalies = [False, True, False, True, False]
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.09]
+    oesnn_ad.anomalies = [True, False, True, False]
     assert not oesnn_ad._anomaly_classification()
 
 
 def test__anomaly_classification_with_anomaly_result():
     oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
                         num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
-    oesnn_ad.errors = [0.1, 0.99, 0.15, 0.99, 0.07, 0.68]
-    oesnn_ad.anomalies = [False, True, False, True, False]
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.68]
+    oesnn_ad.anomalies = [True, False, True, False]
     assert oesnn_ad._anomaly_classification()
 
 
-def test__learning():
+def test__learning_with_update():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                        num_out_neurons=5, TS=0.5, mod=0.3, C=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = Input_Neuron(firing_time=0.5, id=0, order=2)
+    neuron_input2 = Input_Neuron(firing_time=0.5, id=1, order=1)
+    neuron_input3 = Input_Neuron(firing_time=0.5, id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = Output_Neuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, M=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = Output_Neuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, M=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = Output_Neuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, M=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+
+    assert len(oesnn_ad.output_layer.neurons) == 3
+    assert 1 in [n.M for n in oesnn_ad.output_layer]
+
+
+def test__learning_with_add_new_neuron():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=5,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+    assert len(oesnn_ad.output_layer.neurons) == 0
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+    assert len(oesnn_ad.output_layer.neurons) == 1
+
+
+def test__learning_with_replace_oldest():
     assert True
 
 

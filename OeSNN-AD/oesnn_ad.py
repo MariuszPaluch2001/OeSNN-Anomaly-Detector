@@ -73,8 +73,8 @@ class OeSNN_AD:
 
     def _anomaly_classification(self) -> bool:
         error_t = self.errors[-1]
-        errors_window = self.errors[-(self.window_size + 1):-1]
-        anomalies_window = self.anomalies[-(self.window_size):]
+        errors_window = self.errors[-(self.window_size):-1]
+        anomalies_window = self.anomalies[-(self.window_size - 1):]
 
         errors_for_non_anomalies = [err for err, classification in zip(
             errors_window, anomalies_window) if not classification]
