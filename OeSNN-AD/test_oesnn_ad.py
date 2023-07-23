@@ -158,7 +158,34 @@ def test__learning_with_add_new_neuron():
 
 
 def test__learning_with_replace_oldest():
-    assert True
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5, sim=0.1)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = Input_Neuron(firing_time=0.5, id=0, order=2)
+    neuron_input2 = Input_Neuron(firing_time=0.5, id=1, order=1)
+    neuron_input3 = Input_Neuron(firing_time=0.5, id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = Output_Neuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, M=0, addition_time=1, PSP=0.0, max_PSP=2)
+    neuron_output2 = Output_Neuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, M=0, addition_time=5, PSP=0.0, max_PSP=2)
+    neuron_output3 = Output_Neuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, M=0, addition_time=10, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    assert len(oesnn_ad.output_layer.neurons) == 3
+    oesnn_ad._learning(np.array([1, 2, 3]), 15)
+    assert len(oesnn_ad.output_layer.neurons) == 3
+    assert 5 == min([n.addition_time for n in oesnn_ad.output_layer])
+    assert 15 == max([n.addition_time for n in oesnn_ad.output_layer])
 
 
 def test__update_psp_case_with_one_input_neuron():
