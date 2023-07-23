@@ -73,15 +73,15 @@ class OeSNN_AD:
 
     def _anomaly_classification(self) -> bool:
         error_t = self.errors[-1]
-        errors_window = self.errors[-(self.window_size - 1):-1]
-        anomalies_window = self.anomalies[-(self.window_size - 1):]
+        errors_window = self.errors[-(self.window_size + 1):-1]
+        anomalies_window = self.anomalies[-(self.window_size):]
 
-        errors_for_anomalies = [err for err, classification in zip(
+        errors_for_non_anomalies = [err for err, classification in zip(
             errors_window, anomalies_window) if not classification]
 
         return not (
-            (not errors_for_anomalies) or (error_t - np.mean(errors_for_anomalies)
-                                           < np.std(errors_for_anomalies) * self.epsilon)
+            (not errors_for_non_anomalies) or (error_t - np.mean(errors_for_non_anomalies)
+                                               < np.std(errors_for_non_anomalies) * self.epsilon)
         )
 
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
