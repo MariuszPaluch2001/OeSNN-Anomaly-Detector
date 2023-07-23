@@ -1,3 +1,4 @@
+from pytest import approx
 from oesnn_ad import OeSNN_AD
 from neuron import Output_Neuron, Input_Neuron
 import numpy as np
@@ -65,8 +66,67 @@ def test__learning():
     assert True
 
 
-def test__update_psp():
-    assert True
+def test__update_psp_case_with_one_input_neuron():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=3, num_in_neurons=1,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
+    
+    assert oesnn_ad.gamma == 1.0
+    neuron_input = Input_Neuron(firing_time=0.5, id=0, order=0)
+    neuron_output1 = Output_Neuron(weights=np.array(
+        [0.1]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output2 = Output_Neuron(weights=np.array(
+        [0.2]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output3 = Output_Neuron(weights=np.array(
+        [0.3]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input))
+    assert len(updated_neurons) == 3
+    assert neuron_output1.PSP == 1.1
+    assert neuron_output2.PSP == 1.2
+    assert neuron_output3.PSP == 1.3
+
+
+def test__update_psp_case_with_multiple_input_neuron():
+    oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                        num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
+    
+    assert oesnn_ad.gamma == 1.0981
+    neuron_input1 = Input_Neuron(firing_time=0.5, id=0, order=2)
+    neuron_input2 = Input_Neuron(firing_time=0.5, id=1, order=1)
+    neuron_input3 = Input_Neuron(firing_time=0.5, id=2, order=0)
+    
+    neuron_output1 = Output_Neuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.2, max_PSP=2)
+    neuron_output2 = Output_Neuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.2, max_PSP=2)
+    neuron_output3 = Output_Neuron(weights=np.array(
+        [0.3, 0.8, 0.7]), gamma=0.5, output_value=0.5, M=0.5, addition_time=0.5, PSP=0.2, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+    
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input1))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.PSP == approx(0.209, abs=1e-3)
+    assert neuron_output2.PSP == approx(0.218, abs=1e-3)
+    assert neuron_output3.PSP == approx(0.227, abs=1e-3)
+    
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input2))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.PSP == approx(0.329, abs=1e-3)
+    assert neuron_output2.PSP == approx(0.248, abs=1e-3)
+    assert neuron_output3.PSP == approx(0.467, abs=1e-3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input3))
+    assert len(updated_neurons) == 1
+    assert neuron_output1.PSP == approx(1.029, abs=1e-3)
+    assert neuron_output2.PSP == approx(1.048, abs=1e-3)
+    assert neuron_output3.PSP == approx(1.167, abs=1e-3)
 
 
 def test__fires_first_with_none():
