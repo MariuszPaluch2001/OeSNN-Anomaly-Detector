@@ -1,6 +1,12 @@
 import os
+import json
 import numpy as np
-from typing import List, Tuple, Generator
+from typing import List, Tuple, Generator, Dict
+
+
+def read_parameters(path: str) -> Dict:
+    with open(path) as f:
+        return json.load(f)
 
 
 def convert_numpy_array_int_to_booleans(array: np.ndarray[int]) -> np.ndarray[bool]:
