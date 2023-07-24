@@ -70,9 +70,12 @@ def test_find_most_similar_with_neurons():
 
 def test_reset_psp():
     output_layer = Output_Layer(10)
-    neuron_out1 = Output_Neuron(None, None, None, None, None, 5, 10)
-    neuron_out2 = Output_Neuron(None, None, None, None, None, 6, 10)
-    neuron_out3 = Output_Neuron(None, None, None, None, None, 7, 10)
+    neuron_out1 = Output_Neuron(
+        np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=5.0, max_PSP=10.0)
+    neuron_out2 = Output_Neuron(
+        np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=6.0, max_PSP=10.0)
+    neuron_out3 = Output_Neuron(
+        np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=7.0, max_PSP=10.0)
 
     output_layer.add_new_neuron(neuron_out1)
     output_layer.add_new_neuron(neuron_out2)
@@ -89,13 +92,13 @@ def test_add_new_neuron():
     assert output_layer.num_neurons == 0
     assert len(output_layer) == 0
 
-    neuron_out1 = Output_Neuron(None, None, None, None, None, None, None)
+    neuron_out1 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     output_layer.add_new_neuron(neuron_out1)
     assert output_layer.num_neurons == 1
     assert len(output_layer) == 1
     assert output_layer[0] == neuron_out1
 
-    neuron_out2 = Output_Neuron(None, None, None, None, None, None, None)
+    neuron_out2 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     output_layer.add_new_neuron(neuron_out2)
     assert output_layer.num_neurons == 2
     assert len(output_layer) == 2
@@ -105,9 +108,9 @@ def test_add_new_neuron():
 def test_replace_oldest():
     output_layer = Output_Layer(10)
 
-    neuron_out1 = Output_Neuron(None, None, None, None, 1, None, None)
-    neuron_out2 = Output_Neuron(None, None, None, None, 2, None, None)
-    neuron_out3 = Output_Neuron(None, None, None, None, 3, None, None)
+    neuron_out1 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=1.0)
+    neuron_out2 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=2.0)
+    neuron_out3 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=3.0)
     candidate = output_layer.make_candidate(
         WINDOW, np.array([1, 2, 3]), 0.0, 0.0, 10)
 
@@ -123,13 +126,13 @@ def test_replace_oldest():
 
 def test_len_magic_method():
     input_layer = Input_Layer(10)
-    
+
     assert len(input_layer) == 10
-    
+
     output_layer = Output_Layer(10)
-    
+
     assert len(output_layer) == 0
-    
-    output_layer.add_new_neuron(Output_Neuron(*(None,)*7))
-    
+
+    output_layer.add_new_neuron(Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+
     assert len(output_layer) == 1

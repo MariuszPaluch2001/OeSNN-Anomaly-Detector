@@ -42,8 +42,8 @@ class Input_Layer(Layer):
     def orders(self):
         return np.array([neuron.order for neuron in self.neurons])
 
-    def set_orders(self, window: np.ndarray, TS: float, mod: float) -> None:
-        grf = GRF_Init(window, self.num_neurons, TS, mod)
+    def set_orders(self, window: np.ndarray, TS: float, mod: float, beta: float) -> None:
+        grf = GRF_Init(window, self.num_neurons, TS, mod, beta)
 
         for neuron, new_order in zip(self.neurons, grf.get_order()):
             neuron.set_order(new_order)

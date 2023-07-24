@@ -12,22 +12,22 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test__anomaly_classification_without_correct_values():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
-    oesnn_ad.errors = [0.0 for _ in range(5)]
-    oesnn_ad.anomalies = [True for _ in range(4)]
+    oesnn_ad.errors = [0.0]*5
+    oesnn_ad.anomalies = [True]*4
     assert not oesnn_ad._anomaly_classification()
 
 
 def test__anomaly_classification_with_anomaly_classified():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
-    oesnn_ad.anomalies = [False for _ in range(4)]
+    oesnn_ad.anomalies = [False]*4
     assert oesnn_ad._anomaly_classification()
 
 
 def test__anomaly_classification_with_not_anomaly_classified():
     oesnn_ad = OeSNN_AD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
-    oesnn_ad.values = [False for _ in range(4)]
+    oesnn_ad.values = [False]*4
     assert not oesnn_ad._anomaly_classification()
 
 
@@ -95,8 +95,8 @@ def test__anomaly_detection_with_firing():
 def test__anomaly_classification_without_non_anomaly_in_window():
     oesnn_ad = OeSNN_AD(stream=WINDOW, window_size=5, num_in_neurons=1,
                         num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5)
-    oesnn_ad.errors = [0.99, 0.99, 0.99, 0.99, 0.99]
-    oesnn_ad.anomalies = [True, True, True, True]
+    oesnn_ad.errors = [0.99]*5
+    oesnn_ad.anomalies = [True]*4
 
     assert not oesnn_ad._anomaly_classification()
 
@@ -184,8 +184,8 @@ def test__learning_with_replace_oldest():
     assert len(oesnn_ad.output_layer) == 3
     oesnn_ad._learning(np.array([1, 2, 3]), 15)
     assert len(oesnn_ad.output_layer) == 3
-    assert 5 == min([n.addition_time for n in oesnn_ad.output_layer])
-    assert 15 == max([n.addition_time for n in oesnn_ad.output_layer])
+    assert min([n.addition_time for n in oesnn_ad.output_layer]) == 5
+    assert max([n.addition_time for n in oesnn_ad.output_layer]) == 15
 
 
 def test__update_psp_case_with_one_input_neuron():
@@ -252,7 +252,8 @@ def test__update_psp_case_with_multiple_input_neuron():
 
 
 def test__fires_first_with_none():
-    oesnn_ad = OeSNN_AD(WINDOW, 14, 10, 10, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad = OeSNN_AD(WINDOW, window_size=14, num_in_neurons=10,
+                        num_out_neurons=10, TS=0.5, mod=0.5, C=0.5, epsilon=0.5)
 
     assert oesnn_ad._fires_first() is None
 

@@ -18,7 +18,7 @@ def parameters_tuning(stream: np.ndarray, labels: List[bool], parameters: Dict) 
                                     for ksi in np.arange(*parameters['ksi']):
                                         for epsilon in range(*parameters['epsilon']):
                                             oesnn_ad = OeSNN_AD(stream, window_size=w_size, num_in_neurons=ni_size, num_out_neurons=no_size,
-                                                                TS=TS, mod=mod, C=C, epsilon=epsilon, ksi=ksi, sim=sim)
+                                                                TS=TS, mod=mod, C=C, epsilon=epsilon, ksi=ksi, sim=sim, beta=beta)
                                             detection_result = oesnn_ad.predict()
                                             recall, precission, f1 = perf_measure(
                                                 detection_result, labels)

@@ -3,7 +3,7 @@ import numpy as np
 
 class GRF_Init:
 
-    def __init__(self, window: np.ndarray, input_size: int, TS: float, mod: int) -> None:
+    def __init__(self, window: np.ndarray, input_size: int, TS: float, mod: int, beta: float) -> None:
         self.min_w_i: float = window.min()
         self.max_w_i: float = window.max()
         self.xt: float = window[-1]
@@ -11,9 +11,10 @@ class GRF_Init:
         self.input_size = input_size
         self.TS = TS
         self.mod = mod
+        self.beta = beta
 
     def _get_width_vec(self) -> np.ndarray:
-        return np.repeat((self.max_w_i - self.min_w_i) / (self.input_size - 2), self.input_size)
+        return np.repeat((self.max_w_i - self.min_w_i) / ((self.input_size - 2) * self.beta), self.input_size)
 
     def _get_center_vec(self) -> np.ndarray:
         return np.array([self.min_w_i + (2*j - 3) / 2 * (self.max_w_i - self.min_w_i) / (self.input_size - 2)

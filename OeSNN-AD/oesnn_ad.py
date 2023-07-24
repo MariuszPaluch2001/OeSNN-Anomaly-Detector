@@ -30,7 +30,7 @@ class OeSNN_AD:
         self.ksi = ksi
         self.sim = sim
         self.beta = beta
-        
+
         self.values: List[float] = []
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
@@ -49,7 +49,7 @@ class OeSNN_AD:
 
         self._init_new_arrays_for_predict(window)
         for t in range(self.window_size + 1, self.stream_len):
-            self.input_layer.set_orders(window, self.TS, self.mod)
+            self.input_layer.set_orders(window, self.TS, self.mod, self.beta)
 
             window = self._get_window_from_stream(t - self.window_size, t)
 
