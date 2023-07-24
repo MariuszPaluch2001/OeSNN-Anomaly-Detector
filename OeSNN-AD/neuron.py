@@ -30,6 +30,9 @@ class Output_Neuron(Neuron):
         self.PSP = PSP
         self.max_PSP = max_PSP
 
+    def __getitem__(self, index: int) -> float:
+        return self.weights[index]
+
     def update_neuron(self, candidate_neuron: 'Output_Neuron') -> None:
         self.weights = (candidate_neuron.weights +
                         self.M * self.weights) / (self.M + 1)

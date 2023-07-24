@@ -1,4 +1,4 @@
-from layer import Output_Layer
+from layer import Output_Layer, Input_Layer
 from neuron import Output_Neuron
 
 import numpy as np
@@ -80,26 +80,26 @@ def test_reset_psp():
 
     output_layer.reset_psp()
 
-    for neuron in output_layer.neurons:
+    for neuron in output_layer:
         assert neuron.PSP == 0.0
 
 
 def test_add_new_neuron():
     output_layer = Output_Layer(10)
     assert output_layer.num_neurons == 0
-    assert len(output_layer.neurons) == 0
+    assert len(output_layer) == 0
 
     neuron_out1 = Output_Neuron(None, None, None, None, None, None, None)
     output_layer.add_new_neuron(neuron_out1)
     assert output_layer.num_neurons == 1
-    assert len(output_layer.neurons) == 1
-    assert output_layer.neurons[0] == neuron_out1
+    assert len(output_layer) == 1
+    assert output_layer[0] == neuron_out1
 
     neuron_out2 = Output_Neuron(None, None, None, None, None, None, None)
     output_layer.add_new_neuron(neuron_out2)
     assert output_layer.num_neurons == 2
-    assert len(output_layer.neurons) == 2
-    assert output_layer.neurons[1] == neuron_out2
+    assert len(output_layer) == 2
+    assert output_layer[1] == neuron_out2
 
 
 def test_replace_oldest():
@@ -117,5 +117,19 @@ def test_replace_oldest():
 
     output_layer.replace_oldest(candidate)
 
-    assert neuron_out1 not in output_layer.neurons
-    assert candidate in output_layer.neurons
+    assert neuron_out1 not in output_layer
+    assert candidate in output_layer
+
+
+def test_len_magic_method():
+    input_layer = Input_Layer(10)
+    
+    assert len(input_layer) == 10
+    
+    output_layer = Output_Layer(10)
+    
+    assert len(output_layer) == 0
+    
+    output_layer.add_new_neuron(Output_Neuron(*(None,)*7))
+    
+    assert len(output_layer) == 1

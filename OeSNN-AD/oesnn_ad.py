@@ -105,7 +105,7 @@ class OeSNN_AD:
 
     def _update_psp(self, neuron_input: Input_Neuron) -> Generator[Output_Neuron, None, None]:
         for n_out in self.output_layer:
-            n_out.PSP += n_out.weights[neuron_input.id] * \
+            n_out.PSP += n_out[neuron_input.id] * \
                 (self.mod ** neuron_input.order)
 
             if n_out.PSP > self.gamma:

@@ -17,6 +17,12 @@ class Layer:
         for neuron in self.neurons:
             yield neuron
 
+    def __len__(self) -> int:
+        return len(self.neurons)
+
+    def __getitem__(self, index: int) -> Neuron:
+        return self.neurons[index]
+
 
 class Input_Layer(Layer):
 
@@ -25,9 +31,12 @@ class Input_Layer(Layer):
 
         self.neurons: List[Input_Neuron] = [
             Input_Neuron(0.0, id) for id in range(input_size)]
-    
+
     def __iter__(self) -> Generator[Input_Neuron, None, None]:
         return super().__iter__()
+
+    def __getitem__(self, index: int) -> Input_Neuron:
+        return super().__getitem__(index)
 
     @property
     def orders(self):
@@ -35,10 +44,11 @@ class Input_Layer(Layer):
 
     def set_orders(self, window: np.ndarray, TS: float, mod: float) -> None:
         grf = GRF_Init(window, self.num_neurons, TS, mod)
-        
+
         for neuron, new_order in zip(self.neurons, grf.get_order()):
             neuron.set_order(new_order)
-    
+
+
 class Output_Layer(Layer):
 
     def __init__(self, max_output_size: int) -> None:
@@ -49,6 +59,9 @@ class Output_Layer(Layer):
 
     def __iter__(self) -> Generator[Output_Neuron, None, None]:
         return super().__iter__()
+
+    def __getitem__(self, index: int) -> Output_Neuron:
+        return super().__getitem__(index)
 
     def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
                        C: float, neuron_age: int) -> Output_Neuron:

@@ -143,7 +143,7 @@ def test__learning_with_update():
 
     oesnn_ad._learning(np.array([1, 2, 3]), 1)
 
-    assert len(oesnn_ad.output_layer.neurons) == 3
+    assert len(oesnn_ad.output_layer) == 3
     assert 1 in [n.M for n in oesnn_ad.output_layer]
 
 
@@ -152,9 +152,9 @@ def test__learning_with_add_new_neuron():
                         num_out_neurons=3, TS=0.5, mod=0.3, C=1.0, epsilon=0.5, sim=1.0)
 
     oesnn_ad.anomalies.append(True)
-    assert len(oesnn_ad.output_layer.neurons) == 0
+    assert len(oesnn_ad.output_layer) == 0
     oesnn_ad._learning(np.array([1, 2, 3]), 1)
-    assert len(oesnn_ad.output_layer.neurons) == 1
+    assert len(oesnn_ad.output_layer) == 1
 
 
 def test__learning_with_replace_oldest():
@@ -181,9 +181,9 @@ def test__learning_with_replace_oldest():
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
     oesnn_ad.output_layer.add_new_neuron(neuron_output3)
 
-    assert len(oesnn_ad.output_layer.neurons) == 3
+    assert len(oesnn_ad.output_layer) == 3
     oesnn_ad._learning(np.array([1, 2, 3]), 15)
-    assert len(oesnn_ad.output_layer.neurons) == 3
+    assert len(oesnn_ad.output_layer) == 3
     assert 5 == min([n.addition_time for n in oesnn_ad.output_layer])
     assert 15 == max([n.addition_time for n in oesnn_ad.output_layer])
 

@@ -18,3 +18,11 @@ def test_update_neuron():
     assert updated_neuron.addition_time == approx(0.5)
     np.testing.assert_array_almost_equal(
         updated_neuron.weights, np.array([0.5, 0.5, 0.5]), decimal=3)
+    
+def test__get_item__():
+    neuron = Output_Neuron(
+    np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, 0.75, 2)
+
+    assert neuron[0] == 0.25
+    assert neuron[1] == 0.5
+    assert neuron[2] == 0.75
