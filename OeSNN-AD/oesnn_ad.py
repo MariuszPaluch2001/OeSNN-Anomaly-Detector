@@ -8,10 +8,10 @@ from typing import List, Generator
 
 class OeSNN_AD:
 
-    def __init__(self, stream: np.ndarray, window_size: int,
-                 num_in_neurons: int, num_out_neurons: int,
-                 TS: float, mod: float, C: float, epsilon: float,
-                 ksi: float = 0.0, sim: float = 0.0) -> None:
+    def __init__(self, stream: np.ndarray, window_size: int = 100,
+                 num_in_neurons: int = 10, num_out_neurons: int = 50,
+                 TS: float = 1000.0, mod: float = 0.6, C: float = 0.6, epsilon: float = 2,
+                 ksi: float = 0.9, sim: float = 0.15, beta: float = 1.6) -> None:
 
         self.stream = stream
         self.stream_len = self.stream.shape[0]
@@ -29,7 +29,8 @@ class OeSNN_AD:
         self.epsilon = epsilon
         self.ksi = ksi
         self.sim = sim
-
+        self.beta = beta
+        
         self.values: List[float] = []
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
