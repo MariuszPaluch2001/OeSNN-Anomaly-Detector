@@ -4,6 +4,23 @@ import numpy as np
 from typing import List, Tuple, Generator, Dict
 
 
+def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
+    for path, _, files in os.walk(data_root_folder_name):
+        for name in files:
+            yield os.path.join(path, name)
+
+
+def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndarray]:
+    if is_nab:
+        data = np.loadtxt(filename, delimiter=",", dtype=float,
+                          skiprows=1, usecols=range(1, 3))
+    else:
+        data = np.loadtxt(filename, delimiter=",",
+                          dtype=float, usecols=range(1, 3))
+
+    return data[:, 0], data[:, 1]
+
+
 def read_parameters(path: str) -> Dict:
     with open(path) as f:
         return json.load(f)
@@ -41,20 +58,3 @@ def perf_measure(y_hat: List, y_actual: List) -> Tuple[float, float, float]:
     else:
         f1 = 0
     return recall, precission, f1
-
-
-def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
-    for path, _, files in os.walk(data_root_folder_name):
-        for name in files:
-            yield os.path.join(path, name)
-
-
-def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndarray]:
-    if is_nab:
-        data = np.loadtxt(filename, delimiter=",", dtype=float,
-                          skiprows=1, usecols=range(1, 3))
-    else:
-        data = np.loadtxt(filename, delimiter=",",
-                          dtype=float, usecols=range(1, 3))
-
-    return data[:, 0], data[:, 1]
