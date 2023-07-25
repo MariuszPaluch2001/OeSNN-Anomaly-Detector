@@ -81,3 +81,4 @@ def test_get_order():
     result = grf.get_order()
     correct = np.array([6, 5, 3, 1, 0, 2, 4])
     np.testing.assert_array_equal(result, correct)
+
