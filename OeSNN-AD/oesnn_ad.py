@@ -1,30 +1,37 @@
-from layer import Input_Layer, Output_Layer
-from neuron import Output_Neuron, Input_Neuron
-
-import numpy as np
+"""
+    Module docstring
+"""
 
 from typing import List, Generator
+import numpy as np
+
+from layer import InputLayer, OutputLayer
+from neuron import OutputNeuron, InputNeuron
 
 
-class OeSNN_AD:
+class OeSNNAD:
+    """
+        Class docstring
+    """
 
     def __init__(self, stream: np.ndarray, window_size: int = 100,
                  num_in_neurons: int = 10, num_out_neurons: int = 50,
-                 TS: float = 1000.0, mod: float = 0.6, C: float = 0.6, epsilon: float = 2,
-                 ksi: float = 0.9, sim: float = 0.15, beta: float = 1.6) -> None:
+                 ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6,
+                 epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
+                 beta: float = 1.6) -> None:
 
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
 
-        self.input_layer: Input_Layer = Input_Layer(num_in_neurons)
-        self.output_layer: Output_Layer = Output_Layer(num_out_neurons)
+        self.input_layer: InputLayer = InputLayer(num_in_neurons)
+        self.output_layer: OutputLayer = OutputLayer(num_out_neurons)
 
-        self.TS = TS
+        self.ts_factor = ts_factor
         self.mod = mod
-        self.C = C
+        self.c_factor = c_factor
 
-        self.gamma = self.C * \
+        self.gamma = self.c_factor * \
             (1 - self.mod**(2*num_in_neurons)) / (1 - self.mod**2)
         self.epsilon = epsilon
         self.ksi = ksi
@@ -36,31 +43,44 @@ class OeSNN_AD:
         self.errors: List[float] = []
 
     def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> np.ndarray:
+        """
+            Method docstring
+        """
         return self.stream[begin_idx: end_idx]
 
     def _init_new_arrays_for_predict(self, window: np.ndarray) -> None:
+        """
+            Method docstring
+        """
         self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False] * self.window_size
 
     def predict(self) -> np.ndarray:
+        """
+            Method docstring
+        """
         window = self._get_window_from_stream(0, self.window_size)
 
         self._init_new_arrays_for_predict(window)
-        for t in range(self.window_size + 1, self.stream_len):
-            self.input_layer.set_orders(window, self.TS, self.mod, self.beta)
+        for age in range(self.window_size + 1, self.stream_len):
+            self.input_layer.set_orders(
+                window, self.ts_factor, self.mod, self.beta)
 
-            window = self._get_window_from_stream(t - self.window_size, t)
+            window = self._get_window_from_stream(age - self.window_size, age)
 
             self._anomaly_detection(window)
 
-            self._learning(window, t)
+            self._learning(window, age)
 
         return np.array(self.anomalies)
 
     def _anomaly_detection(self, window: np.ndarray) -> None:
-        xt = window[-1]
+        """
+            Method docstring
+        """
+        window_head = window[-1]
         first_fired_neuron = self._fires_first()
         if first_fired_neuron is None:
             self.values.append(None)
@@ -69,10 +89,13 @@ class OeSNN_AD:
         else:
             self.values.append(first_fired_neuron.output_value)
             self.errors.append(
-                np.abs(xt - first_fired_neuron.output_value))
+                np.abs(window_head - first_fired_neuron.output_value))
             self.anomalies.append(self._anomaly_classification())
 
     def _anomaly_classification(self) -> bool:
+        """
+            Method docstring
+        """
         error_t = self.errors[-1]
         errors_window = self.errors[-(self.window_size):-1]
         anomalies_window = self.anomalies[-(self.window_size - 1):]
@@ -86,12 +109,15 @@ class OeSNN_AD:
         )
 
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
-        anomaly_t, xt = self.anomalies[-1], window[-1]
+        """
+            Method docstring
+        """
+        anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
-                                                            self.mod, self.C, neuron_age)
+                                                            self.mod, self.c_factor, neuron_age)
 
         if not anomaly_t:
-            candidate_neuron.output_value += (xt -
+            candidate_neuron.output_value += (window_head -
                                               candidate_neuron.output_value) * self.ksi
 
         most_familiar_neuron, dist = self.output_layer.find_most_similar(
@@ -104,19 +130,26 @@ class OeSNN_AD:
         else:
             self.output_layer.replace_oldest(candidate_neuron)
 
-    def _update_psp(self, neuron_input: Input_Neuron) -> Generator[Output_Neuron, None, None]:
+    def _update_psp(self, neuron_input: InputNeuron) -> Generator[OutputNeuron, None, None]:
+        """
+            Method docstring
+        """
         for n_out in self.output_layer:
-            n_out.PSP += n_out[neuron_input.id] * \
+            n_out.psp += n_out[neuron_input.neuron_id] * \
                 (self.mod ** neuron_input.order)
 
-            if n_out.PSP > self.gamma:
+            if n_out.psp > self.gamma:
                 yield n_out
 
-    def _fires_first(self) -> Output_Neuron | None:
+    def _fires_first(self) -> OutputNeuron | None:
+        """
+            Method docstring
+        """
         self.output_layer.reset_psp()
 
         for neuron_input in self.input_layer:
             to_fire = [n_out for n_out in self._update_psp(neuron_input)]
 
             if to_fire:
-                return max(to_fire, key=lambda x: x.PSP)
+                return max(to_fire, key=lambda x: x.psp)
+        return None

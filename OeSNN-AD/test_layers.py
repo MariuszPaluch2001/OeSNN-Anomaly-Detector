@@ -1,5 +1,9 @@
-from layer import Output_Layer, Input_Layer
-from neuron import Output_Neuron
+"""
+    Module docstring
+"""
+
+from layer import OutputLayer, InputLayer
+from neuron import OutputNeuron
 
 import numpy as np
 
@@ -13,30 +17,38 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 
 def test_make_candidate():
-    output_layer = Output_Layer(10)
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
 
-    order, mod, C, neuron_age = np.array([6, 5, 3, 1, 0, 2, 4]), 0.5, 0.5, 10
+    order, mod, c_coef, neuron_age = np.array(
+        [6, 5, 3, 1, 0, 2, 4]), 0.5, 0.5, 10
 
-    candidate = output_layer.make_candidate(WINDOW, order, mod, C, neuron_age)
+    candidate = output_layer.make_candidate(
+        WINDOW, order, mod, c_coef, neuron_age)
 
     correct_weights = np.array(
         [0.015625, 0.03125, 0.125, 0.5, 1, 0.25, 0.0625])
 
-    assert type(candidate.output_value) is float
+    assert isinstance(candidate.output_value, float)
 
     assert candidate.addition_time == neuron_age
-    assert candidate.PSP == 0
-    assert candidate.M == 1
+    assert candidate.psp == 0
+    assert candidate.modification_count == 1
 
     np.testing.assert_array_almost_equal(
         candidate.weights, correct_weights, decimal=3)
-    assert candidate.max_PSP == approx(1.333, abs=1e-3)
+    assert candidate.max_psp == approx(1.333, abs=1e-3)
     assert candidate.gamma == approx(0.666, abs=1e-3)
 
 
 def test_find_most_similar_without_neurons():
-    output_layer = Output_Layer(10)
-    candidate = Output_Neuron(
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
+    candidate = OutputNeuron(
         np.array([0.25, 0.25, 0.25]), 0.25, 0.1, 1, 0.25, 0.75, 2)
 
     neuron_result, distance = output_layer.find_most_similar(candidate)
@@ -46,20 +58,23 @@ def test_find_most_similar_without_neurons():
 
 
 def test_find_most_similar_with_neurons():
-    output_layer = Output_Layer(10)
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
 
-    neuron_out1 = Output_Neuron(
+    neuron_out1 = OutputNeuron(
         np.array([0.26, 0.26, 0.26]), 0.25, 0.1, 1, 0.25, 0.75, 2)
-    neuron_out2 = Output_Neuron(
+    neuron_out2 = OutputNeuron(
         np.array([1.0, 1.0, 1.0]), 0.25, 0.1, 1, 0.25, 0.75, 2)
-    neuron_out3 = Output_Neuron(
+    neuron_out3 = OutputNeuron(
         np.array([0.0, 0.0, 0.0]), 0.25, 0.1, 1, 0.25, 0.75, 2)
 
     output_layer.add_new_neuron(neuron_out1)
     output_layer.add_new_neuron(neuron_out2)
     output_layer.add_new_neuron(neuron_out3)
 
-    c_neuron = Output_Neuron(
+    c_neuron = OutputNeuron(
         np.array([0.25, 0.25, 0.25]), 0.25, 0.1, 1, 0.25, 0.75, 2)
 
     neuron_result, distance = output_layer.find_most_similar(c_neuron)
@@ -69,12 +84,15 @@ def test_find_most_similar_with_neurons():
 
 
 def test_reset_psp():
-    output_layer = Output_Layer(10)
-    neuron_out1 = Output_Neuron(
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
+    neuron_out1 = OutputNeuron(
         np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=5.0, max_PSP=10.0)
-    neuron_out2 = Output_Neuron(
+    neuron_out2 = OutputNeuron(
         np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=6.0, max_PSP=10.0)
-    neuron_out3 = Output_Neuron(
+    neuron_out3 = OutputNeuron(
         np.array([]), 0.0, 0.0, 0.0, 0.0, PSP=7.0, max_PSP=10.0)
 
     output_layer.add_new_neuron(neuron_out1)
@@ -84,21 +102,24 @@ def test_reset_psp():
     output_layer.reset_psp()
 
     for neuron in output_layer:
-        assert neuron.PSP == 0.0
+        assert neuron.psp == 0.0
 
 
 def test_add_new_neuron():
-    output_layer = Output_Layer(10)
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
     assert output_layer.num_neurons == 0
     assert len(output_layer) == 0
 
-    neuron_out1 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    neuron_out1 = OutputNeuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     output_layer.add_new_neuron(neuron_out1)
     assert output_layer.num_neurons == 1
     assert len(output_layer) == 1
     assert output_layer[0] == neuron_out1
 
-    neuron_out2 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    neuron_out2 = OutputNeuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     output_layer.add_new_neuron(neuron_out2)
     assert output_layer.num_neurons == 2
     assert len(output_layer) == 2
@@ -106,11 +127,17 @@ def test_add_new_neuron():
 
 
 def test_replace_oldest():
-    output_layer = Output_Layer(10)
+    """
+        Test docstring
+    """
+    output_layer = OutputLayer(10)
 
-    neuron_out1 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=1.0)
-    neuron_out2 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=2.0)
-    neuron_out3 = Output_Neuron(np.array([]), 0.0, 0.0, 0.0, PSP=0.0, max_PSP=0.0, addition_time=3.0)
+    neuron_out1 = OutputNeuron(np.array([]), 0.0, 0.0, 0.0,
+                                PSP=0.0, max_PSP=0.0, addition_time=1.0)
+    neuron_out2 = OutputNeuron(np.array([]), 0.0, 0.0, 0.0,
+                                PSP=0.0, max_PSP=0.0, addition_time=2.0)
+    neuron_out3 = OutputNeuron(np.array([]), 0.0, 0.0, 0.0,
+                                PSP=0.0, max_PSP=0.0, addition_time=3.0)
     candidate = output_layer.make_candidate(
         WINDOW, np.array([1, 2, 3]), 0.0, 0.0, 10)
 
@@ -125,14 +152,18 @@ def test_replace_oldest():
 
 
 def test_len_magic_method():
-    input_layer = Input_Layer(10)
+    """
+        Test docstring
+    """
+    input_layer = InputLayer(10)
 
     assert len(input_layer) == 10
 
-    output_layer = Output_Layer(10)
+    output_layer = OutputLayer(10)
 
     assert len(output_layer) == 0
 
-    output_layer.add_new_neuron(Output_Neuron(np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+    output_layer.add_new_neuron(OutputNeuron(
+        np.array([]), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
 
     assert len(output_layer) == 1

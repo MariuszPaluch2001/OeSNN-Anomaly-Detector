@@ -1,4 +1,9 @@
-from grf_init import GRF_Init
+"""
+    Module docstring
+"""
+# pylint: disable=W0212
+
+from grf_init import GRFInit
 import numpy as np
 
 WINDOW = np.array([0.5, 0.3, 0.4,
@@ -9,7 +14,10 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 
 def test__get_width_vec():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
     result = grf._get_width_vec()
     correct = np.repeat(0.11, 7)
@@ -17,7 +25,10 @@ def test__get_width_vec():
 
 
 def test__get_center_vec():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
     result = grf._get_center_vec()
     correct = np.array([-0.17,  0.01,  0.19,  0.37,  0.55,  0.73,  0.91])
@@ -25,7 +36,10 @@ def test__get_center_vec():
 
 
 def test__get_excitation():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     width_v = np.repeat(0.18, 7)
     center_v = np.array([-0.17,  0.01,  0.19,  0.37,  0.55,  0.73,  0.91])
 
@@ -35,7 +49,10 @@ def test__get_excitation():
 
 
 def test__get_firing_time():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     excitation = np.array([0.001, 0.024, 0.227, 0.770, 0.962, 0.442, 0.074])
 
     result = grf._get_firing_time(excitation)
@@ -44,7 +61,10 @@ def test__get_firing_time():
 
 
 def test__get_order():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     firing_time = np.array([0.999, 0.976, 0.773, 0.230, 0.038, 0.558, 0.926])
 
     result = grf._get_order(firing_time)
@@ -53,7 +73,10 @@ def test__get_order():
 
 
 def test_get_order():
-    grf = GRF_Init(WINDOW, 7, 1, 0.5, 1.6)
+    """
+        Test docstring
+    """
+    grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
     result = grf.get_order()
     correct = np.array([6, 5, 3, 1, 0, 2, 4])
