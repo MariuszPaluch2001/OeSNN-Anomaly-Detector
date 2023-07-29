@@ -1,5 +1,5 @@
 """
-    Moduł zawiera definicję i implementację klas warst.
+    Moduł zawiera definicję i implementację klas warstw.
 """
 
 from typing import List, Tuple, Generator
@@ -53,7 +53,9 @@ class InputLayer(Layer):
             InputNeuron(0.0, id) for id in range(input_size)]
 
     def __iter__(self) -> Generator[InputNeuron, None, None]:
-        return super().__iter__()
+        neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
+        for neuron in neurons:
+            yield neuron
 
     def __getitem__(self, index: int) -> InputNeuron:
         return super().__getitem__(index)

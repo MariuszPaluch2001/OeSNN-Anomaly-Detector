@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Module zawiera główną klasę algorytmu, stanowiącą główny interfejs modelu.
 """
 
 from typing import List, Generator

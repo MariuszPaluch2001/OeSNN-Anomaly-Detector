@@ -1,0 +1,3 @@
+"""
+    Pakiet OeSNN-AD.
+"""

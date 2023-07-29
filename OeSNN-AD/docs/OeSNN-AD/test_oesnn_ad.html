@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>OeSNN-AD.test_oesnn_ad API documentation</title>
+<meta name="description" content="Moduł testujący główny flow algorytmu." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>OeSNN-AD.test_oesnn_ad</code></h1>
+</header>
+<section id="section-intro">
+<p>Moduł testujący główny flow algorytmu.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+    Moduł testujący główny flow algorytmu.
+&#34;&#34;&#34;
+# pylint: disable=W0212
+
+from pytest import approx
+from oesnn_ad import OeSNNAD
+from neuron import OutputNeuron, InputNeuron
+import numpy as np
+
+WINDOW = np.array([0.5, 0.3, 0.4,
+                   0.3, 0.6, 0.2,
+                   1.0, 0.4, 0.3,
+                   0.4, 0.2, 0.4,
+                   0.1, 0.5])
+
+
+def test__anomaly_classification_without_correct_values():
+    &#34;&#34;&#34;
+        Test sprawdzający zachowanie metody _anomaly_classification
+        gdy w ostatnich anomaliach nie ma poprawnej wartości.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.0]*5
+    oesnn_ad.anomalies = [True]*4
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_with_anomaly_classified():
+    &#34;&#34;&#34;
+        Test sprawdzający czy została wykryta anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
+    oesnn_ad.anomalies = [False]*4
+    assert oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_with_not_anomaly_classified():
+    &#34;&#34;&#34;
+        Test sprawdzający czy nie została wykryta anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
+    oesnn_ad.values = [False]*4
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__get_window_from_stream():
+    &#34;&#34;&#34;
+        Test sprawdzający wyodrębnianie okna ze strumienia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    result = oesnn_ad._get_window_from_stream(0, 5)
+    correct = np.array([0.5, 0.3, 0.4, 0.3, 0.6])
+    np.testing.assert_array_equal(result, correct)
+
+
+def test__init_new_arrays_for_predict():
+    &#34;&#34;&#34;
+        Test sprawdzający czy wartości list values, anomalies, errors są
+        poprawnie inicjalizowane.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert len(oesnn_ad.values) == 0
+    assert len(oesnn_ad.anomalies) == 0
+    assert len(oesnn_ad.errors) == 0
+
+    oesnn_ad._init_new_arrays_for_predict(WINDOW[0:5])
+    np.testing.assert_array_equal(oesnn_ad.anomalies, [False] * 5)
+    assert len(oesnn_ad.values) == 5
+    assert len(oesnn_ad.errors) == 5
+
+
+def test_predict():
+    &#34;&#34;&#34;
+        @todo
+        
+        Test sprawdzający działanie interfejsu klasy.
+    &#34;&#34;&#34;
+    assert True
+
+
+def test__anomaly_detection_without_firing():
+    &#34;&#34;&#34;
+        Test sprawdzający czy anomalia jest wykryta, gdy żaden neuron nie wystrzelił.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad._anomaly_detection(np.array([1, 2, 3]))
+    assert oesnn_ad.values[0] is None
+    assert np.isinf(oesnn_ad.errors[0])
+    assert oesnn_ad.anomalies[0]
+
+
+def test__anomaly_detection_with_firing():
+    &#34;&#34;&#34;
+        Test sprawdzający czy anamolia nie została wykryta, gdy neuron wystrzelił.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07]
+    oesnn_ad.anomalies = [True, False, True, False]
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+    oesnn_ad._anomaly_detection(np.array([1.0, 0.55, 1.01, 0.57, 0.6]))
+    assert oesnn_ad.values[-1] == 0.5
+    assert oesnn_ad.errors[-1] == approx(0.1, abs=1e-1)
+    assert not oesnn_ad.anomalies[-1]
+
+
+def test__anomaly_classification_without_non_anomaly_in_window():
+    &#34;&#34;&#34;
+        Test sprawdzjący czy gdy w ostatnich iteracjach były same anomalie to czy
+        w tej iteracji poprawnie zaklasyfikuje wartość jako nie-anomalie.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99]*5
+    oesnn_ad.anomalies = [True]*4
+
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_without_anomaly_result():
+    &#34;&#34;&#34;
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako nie-anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.09]
+    oesnn_ad.anomalies = [True, False, True, False]
+    assert not oesnn_ad._anomaly_classification()
+
+
+def test__anomaly_classification_with_anomaly_result():
+    &#34;&#34;&#34;
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.68]
+    oesnn_ad.anomalies = [True, False, True, False]
+    assert oesnn_ad._anomaly_classification()
+
+
+def test__learning_with_update():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez aktualizację neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                       num_out_neurons=5, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+
+    assert len(oesnn_ad.output_layer) == 3
+    assert 1 in [n.modification_count for n in oesnn_ad.output_layer]
+
+
+def test__learning_with_add_new_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez dodanie nowego neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=5,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+    assert len(oesnn_ad.output_layer) == 0
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+    assert len(oesnn_ad.output_layer) == 1
+
+
+def test__learning_with_replace_oldest():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez zastąpienie najstarszego neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=0.1)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=1, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=10, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    assert len(oesnn_ad.output_layer) == 3
+    oesnn_ad._learning(np.array([1, 2, 3]), 15)
+    assert len(oesnn_ad.output_layer) == 3
+    assert min((n.addition_time for n in oesnn_ad.output_layer)) == 5
+    assert max((n.addition_time for n in oesnn_ad.output_layer)) == 15
+
+
+def test__update_psp_case_with_one_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest tylko jeden neuron.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    assert oesnn_ad.gamma == 1.0
+    neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input))
+    assert len(updated_neurons) == 3
+    assert neuron_output1.psp == 1.1
+    assert neuron_output2.psp == 1.2
+    assert neuron_output3.psp == 1.3
+
+
+def test__update_psp_case_with_multiple_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest wiele neuronów.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    assert oesnn_ad.gamma == 1.0981
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input1))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.psp == approx(0.009, abs=1e-3)
+    assert neuron_output2.psp == approx(0.018, abs=1e-3)
+    assert neuron_output3.psp == approx(0.027, abs=1e-3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input2))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.psp == approx(0.129, abs=1e-3)
+    assert neuron_output2.psp == approx(0.048, abs=1e-3)
+    assert neuron_output3.psp == approx(0.267, abs=1e-3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input3))
+    assert len(updated_neurons) == 1
+    assert neuron_output1.psp == approx(0.829, abs=1e-3)
+    assert neuron_output2.psp == approx(0.848, abs=1e-3)
+    assert neuron_output3.psp == approx(1.167, abs=1e-3)
+
+
+def test__fires_first_with_none():
+    &#34;&#34;&#34;
+        Test sprawdzający czy zwracany jest None gdy nie ma neuronów w warstwie wyjściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
+                       num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
+
+    assert oesnn_ad._fires_first() is None
+
+
+def test__fires_first_with_one_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający przypadek dla jednego neuronu w warstwie wejściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [1.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [1.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [1.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.input_layer.neurons = [neuron_input]
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    result = oesnn_ad._fires_first()
+
+    assert result == neuron_output3
+    assert result.psp == 1.3
+
+
+def test__fires_first_with_multiple_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający przypadek dla wielu neuronów w warstwie wejściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    result = oesnn_ad._fires_first()
+
+    assert result == neuron_output3
+    assert result.psp == approx(1.14, abs=1e-1)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_classified"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_with_anomaly_classified</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy została wykryta anomalia.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_with_anomaly_classified():
+    &#34;&#34;&#34;
+        Test sprawdzający czy została wykryta anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
+    oesnn_ad.anomalies = [False]*4
+    assert oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_result"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_with_anomaly_result</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy próbka zostanie zaklasyfikowana jako anomalia.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_with_anomaly_result():
+    &#34;&#34;&#34;
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.68]
+    oesnn_ad.anomalies = [True, False, True, False]
+    assert oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_not_anomaly_classified"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_with_not_anomaly_classified</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy nie została wykryta anomalia.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_with_not_anomaly_classified():
+    &#34;&#34;&#34;
+        Test sprawdzający czy nie została wykryta anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
+    oesnn_ad.values = [False]*4
+    assert not oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_anomaly_result"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_without_anomaly_result</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy próbka zostanie zaklasyfikowana jako nie-anomalia.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_without_anomaly_result():
+    &#34;&#34;&#34;
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako nie-anomalia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.09]
+    oesnn_ad.anomalies = [True, False, True, False]
+    assert not oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_correct_values"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_without_correct_values</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający zachowanie metody _anomaly_classification
+gdy w ostatnich anomaliach nie ma poprawnej wartości.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_without_correct_values():
+    &#34;&#34;&#34;
+        Test sprawdzający zachowanie metody _anomaly_classification
+        gdy w ostatnich anomaliach nie ma poprawnej wartości.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad.errors = [0.0]*5
+    oesnn_ad.anomalies = [True]*4
+    assert not oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_non_anomaly_in_window"><code class="name flex">
+<span>def <span class="ident">test__anomaly_classification_without_non_anomaly_in_window</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzjący czy gdy w ostatnich iteracjach były same anomalie to czy
+w tej iteracji poprawnie zaklasyfikuje wartość jako nie-anomalie.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_classification_without_non_anomaly_in_window():
+    &#34;&#34;&#34;
+        Test sprawdzjący czy gdy w ostatnich iteracjach były same anomalie to czy
+        w tej iteracji poprawnie zaklasyfikuje wartość jako nie-anomalie.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99]*5
+    oesnn_ad.anomalies = [True]*4
+
+    assert not oesnn_ad._anomaly_classification()</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_detection_with_firing"><code class="name flex">
+<span>def <span class="ident">test__anomaly_detection_with_firing</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy anamolia nie została wykryta, gdy neuron wystrzelił.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_detection_with_firing():
+    &#34;&#34;&#34;
+        Test sprawdzający czy anamolia nie została wykryta, gdy neuron wystrzelił.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07]
+    oesnn_ad.anomalies = [True, False, True, False]
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+    oesnn_ad._anomaly_detection(np.array([1.0, 0.55, 1.01, 0.57, 0.6]))
+    assert oesnn_ad.values[-1] == 0.5
+    assert oesnn_ad.errors[-1] == approx(0.1, abs=1e-1)
+    assert not oesnn_ad.anomalies[-1]</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__anomaly_detection_without_firing"><code class="name flex">
+<span>def <span class="ident">test__anomaly_detection_without_firing</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy anomalia jest wykryta, gdy żaden neuron nie wystrzelił.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__anomaly_detection_without_firing():
+    &#34;&#34;&#34;
+        Test sprawdzający czy anomalia jest wykryta, gdy żaden neuron nie wystrzelił.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    oesnn_ad._anomaly_detection(np.array([1, 2, 3]))
+    assert oesnn_ad.values[0] is None
+    assert np.isinf(oesnn_ad.errors[0])
+    assert oesnn_ad.anomalies[0]</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__fires_first_with_multiple_input_neuron"><code class="name flex">
+<span>def <span class="ident">test__fires_first_with_multiple_input_neuron</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający przypadek dla wielu neuronów w warstwie wejściowej.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__fires_first_with_multiple_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający przypadek dla wielu neuronów w warstwie wejściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    result = oesnn_ad._fires_first()
+
+    assert result == neuron_output3
+    assert result.psp == approx(1.14, abs=1e-1)</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__fires_first_with_none"><code class="name flex">
+<span>def <span class="ident">test__fires_first_with_none</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy zwracany jest None gdy nie ma neuronów w warstwie wyjściowej.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__fires_first_with_none():
+    &#34;&#34;&#34;
+        Test sprawdzający czy zwracany jest None gdy nie ma neuronów w warstwie wyjściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
+                       num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
+
+    assert oesnn_ad._fires_first() is None</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__fires_first_with_one_input_neuron"><code class="name flex">
+<span>def <span class="ident">test__fires_first_with_one_input_neuron</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający przypadek dla jednego neuronu w warstwie wejściowej.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__fires_first_with_one_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający przypadek dla jednego neuronu w warstwie wejściowej.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [1.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [1.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [1.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.input_layer.neurons = [neuron_input]
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    result = oesnn_ad._fires_first()
+
+    assert result == neuron_output3
+    assert result.psp == 1.3</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__get_window_from_stream"><code class="name flex">
+<span>def <span class="ident">test__get_window_from_stream</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający wyodrębnianie okna ze strumienia.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__get_window_from_stream():
+    &#34;&#34;&#34;
+        Test sprawdzający wyodrębnianie okna ze strumienia.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    result = oesnn_ad._get_window_from_stream(0, 5)
+    correct = np.array([0.5, 0.3, 0.4, 0.3, 0.6])
+    np.testing.assert_array_equal(result, correct)</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__init_new_arrays_for_predict"><code class="name flex">
+<span>def <span class="ident">test__init_new_arrays_for_predict</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający czy wartości list values, anomalies, errors są
+poprawnie inicjalizowane.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__init_new_arrays_for_predict():
+    &#34;&#34;&#34;
+        Test sprawdzający czy wartości list values, anomalies, errors są
+        poprawnie inicjalizowane.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    assert len(oesnn_ad.values) == 0
+    assert len(oesnn_ad.anomalies) == 0
+    assert len(oesnn_ad.errors) == 0
+
+    oesnn_ad._init_new_arrays_for_predict(WINDOW[0:5])
+    np.testing.assert_array_equal(oesnn_ad.anomalies, [False] * 5)
+    assert len(oesnn_ad.values) == 5
+    assert len(oesnn_ad.errors) == 5</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__learning_with_add_new_neuron"><code class="name flex">
+<span>def <span class="ident">test__learning_with_add_new_neuron</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie
+się poprzez dodanie nowego neuronu.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__learning_with_add_new_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez dodanie nowego neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=5,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+    assert len(oesnn_ad.output_layer) == 0
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+    assert len(oesnn_ad.output_layer) == 1</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__learning_with_replace_oldest"><code class="name flex">
+<span>def <span class="ident">test__learning_with_replace_oldest</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie
+się poprzez zastąpienie najstarszego neuronu.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__learning_with_replace_oldest():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez zastąpienie najstarszego neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=0.1)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=1, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=10, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    assert len(oesnn_ad.output_layer) == 3
+    oesnn_ad._learning(np.array([1, 2, 3]), 15)
+    assert len(oesnn_ad.output_layer) == 3
+    assert min((n.addition_time for n in oesnn_ad.output_layer)) == 5
+    assert max((n.addition_time for n in oesnn_ad.output_layer)) == 15</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__learning_with_update"><code class="name flex">
+<span>def <span class="ident">test__learning_with_update</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie
+się poprzez aktualizację neuronu.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__learning_with_update():
+    &#34;&#34;&#34;
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez aktualizację neuronu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
+                       num_out_neurons=5, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
+
+    oesnn_ad.anomalies.append(True)
+
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    oesnn_ad.input_layer.neurons = [
+        neuron_input1, neuron_input2, neuron_input3]
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    oesnn_ad._learning(np.array([1, 2, 3]), 1)
+
+    assert len(oesnn_ad.output_layer) == 3
+    assert 1 in [n.modification_count for n in oesnn_ad.output_layer]</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_multiple_input_neuron"><code class="name flex">
+<span>def <span class="ident">test__update_psp_case_with_multiple_input_neuron</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest wiele neuronów.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__update_psp_case_with_multiple_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest wiele neuronów.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    assert oesnn_ad.gamma == 1.0981
+    neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
+    neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
+    neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
+
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input1))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.psp == approx(0.009, abs=1e-3)
+    assert neuron_output2.psp == approx(0.018, abs=1e-3)
+    assert neuron_output3.psp == approx(0.027, abs=1e-3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input2))
+    assert len(updated_neurons) == 0
+    assert neuron_output1.psp == approx(0.129, abs=1e-3)
+    assert neuron_output2.psp == approx(0.048, abs=1e-3)
+    assert neuron_output3.psp == approx(0.267, abs=1e-3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input3))
+    assert len(updated_neurons) == 1
+    assert neuron_output1.psp == approx(0.829, abs=1e-3)
+    assert neuron_output2.psp == approx(0.848, abs=1e-3)
+    assert neuron_output3.psp == approx(1.167, abs=1e-3)</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_one_input_neuron"><code class="name flex">
+<span>def <span class="ident">test__update_psp_case_with_one_input_neuron</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest tylko jeden neuron.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__update_psp_case_with_one_input_neuron():
+    &#34;&#34;&#34;
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest tylko jeden neuron.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    assert oesnn_ad.gamma == 1.0
+    neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
+    neuron_output1 = OutputNeuron(weights=np.array(
+        [0.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output2 = OutputNeuron(weights=np.array(
+        [0.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+    neuron_output3 = OutputNeuron(weights=np.array(
+        [0.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+
+    oesnn_ad.output_layer.add_new_neuron(neuron_output1)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output2)
+    oesnn_ad.output_layer.add_new_neuron(neuron_output3)
+
+    updated_neurons = list(oesnn_ad._update_psp(neuron_input))
+    assert len(updated_neurons) == 3
+    assert neuron_output1.psp == 1.1
+    assert neuron_output2.psp == 1.2
+    assert neuron_output3.psp == 1.3</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_oesnn_ad.test_predict"><code class="name flex">
+<span>def <span class="ident">test_predict</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>@todo</p>
+<p>Test sprawdzający działanie interfejsu klasy.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_predict():
+    &#34;&#34;&#34;
+        @todo
+        
+        Test sprawdzający działanie interfejsu klasy.
+    &#34;&#34;&#34;
+    assert True</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="OeSNN-AD" href="index.html">OeSNN-AD</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_classified" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_classified">test__anomaly_classification_with_anomaly_classified</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_result" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_anomaly_result">test__anomaly_classification_with_anomaly_result</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_not_anomaly_classified" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_with_not_anomaly_classified">test__anomaly_classification_with_not_anomaly_classified</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_anomaly_result" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_anomaly_result">test__anomaly_classification_without_anomaly_result</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_correct_values" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_correct_values">test__anomaly_classification_without_correct_values</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_non_anomaly_in_window" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_classification_without_non_anomaly_in_window">test__anomaly_classification_without_non_anomaly_in_window</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_detection_with_firing" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_detection_with_firing">test__anomaly_detection_with_firing</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__anomaly_detection_without_firing" href="#OeSNN-AD.test_oesnn_ad.test__anomaly_detection_without_firing">test__anomaly_detection_without_firing</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__fires_first_with_multiple_input_neuron" href="#OeSNN-AD.test_oesnn_ad.test__fires_first_with_multiple_input_neuron">test__fires_first_with_multiple_input_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__fires_first_with_none" href="#OeSNN-AD.test_oesnn_ad.test__fires_first_with_none">test__fires_first_with_none</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__fires_first_with_one_input_neuron" href="#OeSNN-AD.test_oesnn_ad.test__fires_first_with_one_input_neuron">test__fires_first_with_one_input_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__get_window_from_stream" href="#OeSNN-AD.test_oesnn_ad.test__get_window_from_stream">test__get_window_from_stream</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__init_new_arrays_for_predict" href="#OeSNN-AD.test_oesnn_ad.test__init_new_arrays_for_predict">test__init_new_arrays_for_predict</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__learning_with_add_new_neuron" href="#OeSNN-AD.test_oesnn_ad.test__learning_with_add_new_neuron">test__learning_with_add_new_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__learning_with_replace_oldest" href="#OeSNN-AD.test_oesnn_ad.test__learning_with_replace_oldest">test__learning_with_replace_oldest</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__learning_with_update" href="#OeSNN-AD.test_oesnn_ad.test__learning_with_update">test__learning_with_update</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_multiple_input_neuron" href="#OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_multiple_input_neuron">test__update_psp_case_with_multiple_input_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_one_input_neuron" href="#OeSNN-AD.test_oesnn_ad.test__update_psp_case_with_one_input_neuron">test__update_psp_case_with_one_input_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_oesnn_ad.test_predict" href="#OeSNN-AD.test_oesnn_ad.test_predict">test_predict</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

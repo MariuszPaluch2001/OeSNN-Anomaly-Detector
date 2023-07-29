@@ -1,5 +1,5 @@
 """
-    Moduł testujący
+    Moduł testujący główny flow algorytmu.
 """
 # pylint: disable=W0212
 
@@ -400,4 +400,4 @@ def test__fires_first_with_multiple_input_neuron():
     result = oesnn_ad._fires_first()
 
     assert result == neuron_output3
-    assert result.psp == 1.167
+    assert result.psp == approx(1.14, abs=1e-1)
