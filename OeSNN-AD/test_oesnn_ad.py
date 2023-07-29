@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Moduł testujący
 """
 # pylint: disable=W0212
 
@@ -17,7 +17,8 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test__anomaly_classification_without_correct_values():
     """
-        Test docstring
+        Test sprawdzający zachowanie metody _anomaly_classification
+        gdy w ostatnich anomaliach nie ma poprawnej wartości.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.0]*5
@@ -27,7 +28,7 @@ def test__anomaly_classification_without_correct_values():
 
 def test__anomaly_classification_with_anomaly_classified():
     """
-        Test docstring
+        Test sprawdzający czy została wykryta anomalia.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
@@ -37,7 +38,7 @@ def test__anomaly_classification_with_anomaly_classified():
 
 def test__anomaly_classification_with_not_anomaly_classified():
     """
-        Test docstring
+        Test sprawdzający czy nie została wykryta anomalia.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
@@ -47,7 +48,7 @@ def test__anomaly_classification_with_not_anomaly_classified():
 
 def test__get_window_from_stream():
     """
-        Test docstring
+        Test sprawdzający wyodrębnianie okna ze strumienia.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     result = oesnn_ad._get_window_from_stream(0, 5)
@@ -57,7 +58,8 @@ def test__get_window_from_stream():
 
 def test__init_new_arrays_for_predict():
     """
-        Test docstring
+        Test sprawdzający czy wartości list values, anomalies, errors są
+        poprawnie inicjalizowane.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     assert len(oesnn_ad.values) == 0
@@ -72,17 +74,19 @@ def test__init_new_arrays_for_predict():
 
 def test_predict():
     """
-        Test docstring
+        @todo
+        
+        Test sprawdzający działanie interfejsu klasy.
     """
     assert True
 
 
 def test__anomaly_detection_without_firing():
     """
-        Test docstring
+        Test sprawdzający czy anomalia jest wykryta, gdy żaden neuron nie wystrzelił.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad._anomaly_detection(np.array([1, 2, 3]))
     assert oesnn_ad.values[0] is None
     assert np.isinf(oesnn_ad.errors[0])
@@ -91,10 +95,10 @@ def test__anomaly_detection_without_firing():
 
 def test__anomaly_detection_with_firing():
     """
-        Test docstring
+        Test sprawdzający czy anamolia nie została wykryta, gdy neuron wystrzelił.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07]
     oesnn_ad.anomalies = [True, False, True, False]
 
@@ -106,11 +110,14 @@ def test__anomaly_detection_with_firing():
         neuron_input1, neuron_input2, neuron_input3]
 
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -123,10 +130,11 @@ def test__anomaly_detection_with_firing():
 
 def test__anomaly_classification_without_non_anomaly_in_window():
     """
-        Test docstring
+        Test sprawdzjący czy gdy w ostatnich iteracjach były same anomalie to czy
+        w tej iteracji poprawnie zaklasyfikuje wartość jako nie-anomalie.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad.errors = [0.99]*5
     oesnn_ad.anomalies = [True]*4
 
@@ -135,10 +143,10 @@ def test__anomaly_classification_without_non_anomaly_in_window():
 
 def test__anomaly_classification_without_anomaly_result():
     """
-        Test docstring
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako nie-anomalia.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.09]
     oesnn_ad.anomalies = [True, False, True, False]
     assert not oesnn_ad._anomaly_classification()
@@ -146,10 +154,10 @@ def test__anomaly_classification_without_anomaly_result():
 
 def test__anomaly_classification_with_anomaly_result():
     """
-        Test docstring
+        Test sprawdzający czy próbka zostanie zaklasyfikowana jako anomalia.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad.errors = [0.99, 0.15, 0.99, 0.07, 0.68]
     oesnn_ad.anomalies = [True, False, True, False]
     assert oesnn_ad._anomaly_classification()
@@ -157,10 +165,12 @@ def test__anomaly_classification_with_anomaly_result():
 
 def test__learning_with_update():
     """
-        Test docstring
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez aktualizację neuronu.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
-                        num_out_neurons=5, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5, sim=1.0)
+                       num_out_neurons=5, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
 
     oesnn_ad.anomalies.append(True)
 
@@ -172,11 +182,14 @@ def test__learning_with_update():
         neuron_input1, neuron_input2, neuron_input3]
 
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -190,10 +203,12 @@ def test__learning_with_update():
 
 def test__learning_with_add_new_neuron():
     """
-        Test docstring
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez dodanie nowego neuronu.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=5,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5, sim=1.0)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=1.0)
 
     oesnn_ad.anomalies.append(True)
     assert len(oesnn_ad.output_layer) == 0
@@ -203,10 +218,12 @@ def test__learning_with_add_new_neuron():
 
 def test__learning_with_replace_oldest():
     """
-        Test docstring
+        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
+        się poprzez zastąpienie najstarszego neuronu.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5, sim=0.1)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3,
+                       c_factor=1.0, epsilon=0.5, sim=0.1)
 
     oesnn_ad.anomalies.append(True)
 
@@ -218,11 +235,14 @@ def test__learning_with_replace_oldest():
         neuron_input1, neuron_input2, neuron_input3]
 
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=1, PSP=0.0, max_PSP=2)
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=1, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=5, PSP=0.0, max_PSP=2)
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0, addition_time=10, PSP=0.0, max_PSP=2)
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
+                                  addition_time=10, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -237,19 +257,22 @@ def test__learning_with_replace_oldest():
 
 def test__update_psp_case_with_one_input_neuron():
     """
-        Test docstring
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest tylko jeden neuron.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
 
     assert oesnn_ad.gamma == 1.0
     neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+        [0.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+        [0.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=1.0, max_PSP=2)
+        [0.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=1.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -264,10 +287,10 @@ def test__update_psp_case_with_one_input_neuron():
 
 def test__update_psp_case_with_multiple_input_neuron():
     """
-        Test docstring
+        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest wiele neuronów.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
 
     assert oesnn_ad.gamma == 1.0981
     neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
@@ -275,11 +298,14 @@ def test__update_psp_case_with_multiple_input_neuron():
     neuron_input3 = InputNeuron(firing_time=0.5, neuron_id=2, order=0)
 
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -306,28 +332,31 @@ def test__update_psp_case_with_multiple_input_neuron():
 
 def test__fires_first_with_none():
     """
-        Test docstring
+        Test sprawdzający czy zwracany jest None gdy nie ma neuronów w warstwie wyjściowej.
     """
     oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
-                        num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
+                       num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
 
     assert oesnn_ad._fires_first() is None
 
 
 def test__fires_first_with_one_input_neuron():
     """
-        Test docstring
+        Test sprawdzający przypadek dla jednego neuronu w warstwie wejściowej.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
 
     neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
     neuron_output1 = OutputNeuron(weights=np.array(
-        [1.1]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [1.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [1.2]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [1.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [1.3]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [1.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.input_layer.neurons = [neuron_input]
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
@@ -342,10 +371,10 @@ def test__fires_first_with_one_input_neuron():
 
 def test__fires_first_with_multiple_input_neuron():
     """
-        Test docstring
+        Test sprawdzający przypadek dla wielu neuronów w warstwie wejściowej.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
-                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+                       num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
 
     neuron_input1 = InputNeuron(firing_time=0.5, neuron_id=0, order=2)
     neuron_input2 = InputNeuron(firing_time=0.5, neuron_id=1, order=1)
@@ -355,11 +384,14 @@ def test__fires_first_with_multiple_input_neuron():
         neuron_input1, neuron_input2, neuron_input3]
 
     neuron_output1 = OutputNeuron(weights=np.array(
-        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
-        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
-        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5, addition_time=0.5, PSP=0.0, max_PSP=2)
+        [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
+                                  addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)

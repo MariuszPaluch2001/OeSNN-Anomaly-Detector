@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Moduł zawierający implementację i definicję klasy GRFInit.
 """
 
 import numpy as np
@@ -7,7 +7,10 @@ import numpy as np
 
 class GRFInit:
     """
-        Class docstring
+        Klasa zawiera zbiór funkcji, których celem jest inicjalizacja
+        kolejności wystrzeliwania neuronów w warstwie wejściowej.
+
+        Obiekt klasy jest definiowany na nowo w czasie każdej iteracji algorytmu.
     """
 
     def __init__(self, window: np.ndarray, input_size: int, ts_factor: float,
@@ -23,14 +26,14 @@ class GRFInit:
 
     def _get_width_vec(self) -> np.ndarray:
         """
-            Method docstring
+            Metoda do obliczania wektora szerokości GRF dla wszystkich neuronów w warstwie.
         """
         return np.repeat((self.max_w_i - self.min_w_i) / ((self.input_size - 2) * self.beta),
                          self.input_size)
 
     def _get_center_vec(self) -> np.ndarray:
         """
-            Method docstring
+            Metoda od obliczania wektora centrów GRF dla wszystkich neuronów w warstwie.
         """
         return np.array([(self.min_w_i + ((2*j - 3) / 2) *
                         (self.max_w_i - self.min_w_i) / (self.input_size - 2))
@@ -38,20 +41,22 @@ class GRFInit:
 
     def _get_excitation(self, width_v: np.ndarray, center_v: np.ndarray):
         """
-            Method docstring
+            Metoda do obliczania wektora ekscytacji GRF dla wszystkich neuronów w warstwie.
         """
         rep_xt = np.repeat(self.window_head, self.input_size)
         return np.exp(-0.5 * ((rep_xt - center_v) / width_v) ** 2)
 
     def _get_firing_time(self, excitation: np.ndarray) -> np.ndarray:
         """
-            Method docstring
+            Metoda do obliczania wektora czasu wystrzeliwania GRF dla 
+            wszystkich neuronów w warstwie.
         """
         return self.ts_factor * (np.ones(self.input_size) - excitation)
 
     def _get_order(self, firings_times: np.ndarray) -> np.ndarray:
         """
-            Method docstring
+            Metoda do obliczania wektora kolejności wystrzeliwania GRF dla 
+            wszystkich neuronów w warstwie.
         """
         arg_sorted = np.argsort(firings_times)
         return np.array([int(np.argwhere(arg_sorted == i))
@@ -59,7 +64,8 @@ class GRFInit:
 
     def get_order(self) -> np.ndarray:
         """
-            Method docstring
+            Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
+            wszystkich neuronów w warstwie. 
         """
         width_v = self._get_width_vec()
         center_v = self._get_center_vec()

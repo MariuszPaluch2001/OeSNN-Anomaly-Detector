@@ -1,5 +1,7 @@
 """
-    Module docstring
+    Główny moduł projektu, w którym testowana jest efektywność modelu.
+    
+    Funkcje z tego modułu nie powinny być importowane.
 """
 
 import csv
@@ -13,7 +15,20 @@ from utils import get_data_from_path, get_all_files_paths, perf_measure, read_pa
 def parameters_tuning(stream: np.ndarray,
                       labels: List[bool], parameters: Dict) -> Tuple[Dict, float, float, float]:
     """
-        Function docstring
+        Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
+        znalezienia najlepszychhiperparametrów oesnn-ad dla danego strumienia danych.
+        
+        Jako argumenty funkcja przyjmuje:\n
+            1. stream - strumień danych w postaci wektora najlepiej z biblioteki numpy
+            2. labels - listę etykiet mówiących o próbkach czy są anomaliami
+            3. parameters - słownik, w którym klucze to hiperparametry, a wartości to tuple,
+            które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
+        
+        Funkcja zwraca krotkę z następującymi wartościami:\n
+            1. słownik hiperparametr-wartośc dla najlepszego wyniku
+            2. recall najlepszego wyniku
+            3. precission najlepszego wyniku
+            4. f1 najlepszego wyniku
     """
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
     for no_size in range(*parameters['NOsize']):
@@ -62,7 +77,11 @@ def parameters_tuning(stream: np.ndarray,
 
 def main() -> None:
     """
-        Function docstring
+        Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
+        strumienie z plików csv, uruchamia strojenie hiperparametrów, zapisuje najlepsze wyniki
+        do pliku csv dla danego datasetu.
+        
+        Nie przyjmuje żadnych parametrów, i niczego nie zwraca.
     """
     parameters_nab = read_parameters("parameters_NAB.json")
     parameters_yahoo = read_parameters("parameters_Yahoo.json")

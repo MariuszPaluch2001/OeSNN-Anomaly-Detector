@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Moduł zawiera definicję i implementację klas warst.
 """
 
 from typing import List, Tuple, Generator
@@ -12,7 +12,14 @@ from grf_init import GRFInit
 
 class Layer:
     """
-        Class docstring
+        Bazowa klasa tworząca interfejs dla klas dziedziczących.
+
+        Oprócz atrybutów wspólnych dla wszystkich warst tworzy także,
+        implementuje także metody magiczne umożliwiające iterowanie się,
+        indeksowanie, a także liczenie ilości neuronów z pomocą wbudowanej
+        funkcji len z poziomu obiektu, bez odwoływania się do atrybutu neurons.
+
+        Nie powinna być tworzona jako osobny obiekt.
     """
 
     def __init__(self, num_neurons: int) -> None:
@@ -21,28 +28,22 @@ class Layer:
         self.neurons: List[Neuron]
 
     def __iter__(self) -> Generator[Neuron, None, None]:
-        """
-            Method docstring
-        """
         for neuron in self.neurons:
             yield neuron
 
     def __len__(self) -> int:
-        """
-            Method docstring
-        """
         return len(self.neurons)
 
     def __getitem__(self, index: int) -> Neuron:
-        """
-            Method docstring
-        """
         return self.neurons[index]
 
 
 class InputLayer(Layer):
     """
-        Class docstring
+        Klasa implementująca warstwę wejściową, dziedzicząca po bazowej
+        klasie Layer.
+
+        Klasa przechowuje i obsługuje listę neuronów wejściowych.
     """
 
     def __init__(self, input_size: int) -> None:
@@ -52,27 +53,23 @@ class InputLayer(Layer):
             InputNeuron(0.0, id) for id in range(input_size)]
 
     def __iter__(self) -> Generator[InputNeuron, None, None]:
-        """
-            Method docstring
-        """
         return super().__iter__()
 
     def __getitem__(self, index: int) -> InputNeuron:
-        """
-            Method docstring
-        """
         return super().__getitem__(index)
 
     @property
     def orders(self):
         """
-            Method docstring
+            Atrybut, który złącza kolejność wystrzylewania neuronów
+            w jedną listę.
         """
         return np.array([neuron.order for neuron in self.neurons])
 
     def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -> None:
         """
-            Method docstring
+            Metoda służy do ustawienia dla każdego neuronu wejściowego
+            nowej pozycji wystrzeliwania w warstwie.
         """
         grf = GRFInit(window, self.num_neurons, ts_coef, mod, beta)
 
@@ -82,7 +79,10 @@ class InputLayer(Layer):
 
 class OutputLayer(Layer):
     """
-        Class docstring
+        Klasa implementująca warstwę wyjściową, dziedzicząca po bazowej
+        klasie Layer.
+
+        Klasa przechowuje i obsługuje listę neuronów wyjściowych.
     """
 
     def __init__(self, max_output_size: int) -> None:
@@ -92,21 +92,15 @@ class OutputLayer(Layer):
         self.neurons: List[OutputNeuron] = []
 
     def __iter__(self) -> Generator[OutputNeuron, None, None]:
-        """
-            Method docstring
-        """
         return super().__iter__()
 
     def __getitem__(self, index: int) -> OutputNeuron:
-        """
-            Method docstring
-        """
         return super().__getitem__(index)
 
     def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
                        c_coef: float, neuron_age: int) -> OutputNeuron:
         """
-            Method docstring
+            Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
         """
         weights = np.array([mod ** o for o in order])
         output_value = np.random.normal(np.mean(window), np.std(window))
@@ -114,13 +108,15 @@ class OutputLayer(Layer):
         gamma = c_coef * psp_max
 
         return OutputNeuron(weights, gamma,
-                             output_value, 1, neuron_age,
-                             0, psp_max)
+                            output_value, 1, neuron_age,
+                            0, psp_max)
 
     def find_most_similar(self,
                           candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | None, float]:
         """
-            Method docstring
+            Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
+            neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
+            None, np.inf.
         """
         if not self.neurons:
             return None, np.Inf
@@ -134,14 +130,20 @@ class OutputLayer(Layer):
 
     def add_new_neuron(self, neuron: OutputNeuron) -> None:
         """
-            Method docstring
+            Metoda służy do dodawania nowego nowego neuronu, gdy
+            liczba neuronów w warstwie jest poniżej maksymalnej.
+
+            Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
+            num neurons.
         """
         self.neurons.append(neuron)
         self.num_neurons += 1
 
     def replace_oldest(self, candidate: OutputNeuron) -> None:
         """
-            Method docstring
+            Metoda służy do zastąpywania najstaszego neuronu w warstwie
+            przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
+            jest maksymalna.
         """
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.remove(oldest)
@@ -149,7 +151,8 @@ class OutputLayer(Layer):
 
     def reset_psp(self) -> None:
         """
-            Method docstring
+            Metoda zerująca potencjał post-synaptyczny wszystkich neuronów 
+            w warstwie.
         """
         for neuron in self.neurons:
             neuron.psp = 0

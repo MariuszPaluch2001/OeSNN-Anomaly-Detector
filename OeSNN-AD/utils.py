@@ -1,7 +1,9 @@
 """
-    Module docstring
+    Moduł zawiera pomocnicze funkcje, które nie mogły znaleźć się w innych modułach.
+    Głównie znajdują się tutaj funkcje do odczytywania danych z plików, oraz funkcja
+    perf_measure do zliczania miar jakości.
 """
-from typing import List, Tuple, Generator, Dict
+from typing import List, Dict, Tuple, Generator
 
 import os
 import json
@@ -10,7 +12,10 @@ import numpy as np
 
 def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
     """
-        Function docstring
+        Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
+        od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
+        
+        Funkcja ta jest generatorem.
     """
     for path, _, files in os.walk(data_root_folder_name):
         for name in files:
@@ -19,7 +24,11 @@ def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None
 
 def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndarray]:
     """
-        Function docstring
+        Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
+        etykietami.
+        
+        Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
+        jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.
     """
     if is_nab:
         data = np.loadtxt(filename, delimiter=",", dtype=float,
@@ -33,7 +42,9 @@ def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndar
 
 def read_parameters(path: str) -> Dict:
     """
-        Function docstring
+        Funkcja do otczytywania hiperparametrów z pliku json.
+        
+        Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.
     """
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
@@ -41,14 +52,19 @@ def read_parameters(path: str) -> Dict:
 
 def convert_numpy_array_int_to_booleans(array: np.ndarray[int]) -> np.ndarray[bool]:
     """
-        Function docstring
+        Funkcja do konwersji numpy listy z intów do wartości bool.
     """
     return array.astype(bool)
 
 
 def perf_measure(y_hat: List, y_actual: List) -> Tuple[float, float, float]:
     """
-        Function docstring
+        Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
+        W takiej kolejności też te wartości są zwracane.
+        
+        Jako argumenty funkcja przyjmuje:\n
+            1. y_hat - listę z wartościami stworzonymi przez model
+            2. y_actual - listę z prawdziwymi wartościami
     """
     true_positives = 0
     false_positives = 0

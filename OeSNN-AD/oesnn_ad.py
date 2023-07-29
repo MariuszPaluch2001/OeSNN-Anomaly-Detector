@@ -11,7 +11,10 @@ from neuron import OutputNeuron, InputNeuron
 
 class OeSNNAD:
     """
-        Class docstring
+        Klasa implementująca całościowo algorytm OeSNN-AD. Strumień danych
+        jest przekazywany jako parametr w konstruktorze, wraz z wszystkimi
+        hiperparametrami algorytmu. Głównym interfejsem klasy jest metoda 
+        predict, która zwraca wektor z detekcjami.
     """
 
     def __init__(self, stream: np.ndarray, window_size: int = 100,
@@ -44,13 +47,14 @@ class OeSNNAD:
 
     def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> np.ndarray:
         """
-            Method docstring
+            Metoda zwracająca okno z danymi.
         """
         return self.stream[begin_idx: end_idx]
 
     def _init_new_arrays_for_predict(self, window: np.ndarray) -> None:
         """
-            Method docstring
+            Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
+            są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
         """
         self.values = np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
@@ -59,7 +63,8 @@ class OeSNNAD:
 
     def predict(self) -> np.ndarray:
         """
-            Method docstring
+            Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
+            główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
         """
         window = self._get_window_from_stream(0, self.window_size)
 
@@ -78,7 +83,7 @@ class OeSNNAD:
 
     def _anomaly_detection(self, window: np.ndarray) -> None:
         """
-            Method docstring
+            Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
         """
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
@@ -94,7 +99,8 @@ class OeSNNAD:
 
     def _anomaly_classification(self) -> bool:
         """
-            Method docstring
+            Metoda obliczająca, czy na podstawie ostatniej iteracji algorytmu, głowa okna jest
+            anomalią.
         """
         error_t = self.errors[-1]
         errors_window = self.errors[-(self.window_size):-1]
@@ -110,7 +116,7 @@ class OeSNNAD:
 
     def _learning(self, window: np.ndarray, neuron_age: int) -> None:
         """
-            Method docstring
+            Metoda odpowiadająca za naukę i strojenie parametrów sieci.
         """
         anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
@@ -132,7 +138,12 @@ class OeSNNAD:
 
     def _update_psp(self, neuron_input: InputNeuron) -> Generator[OutputNeuron, None, None]:
         """
-            Method docstring
+            Metoda uaktualniąca potencjał postsynaptyczny dla neuronów wyjściowych połączonych z 
+            neuronem wejściowym przekazywanym jako parametr funkcji.
+
+            Metoda ta powinna być wywoływana tylko w metodzie _fires_first.
+
+            Metoda ta zwraca generator.
         """
         for n_out in self.output_layer:
             n_out.psp += n_out[neuron_input.neuron_id] * \
@@ -143,12 +154,13 @@ class OeSNNAD:
 
     def _fires_first(self) -> OutputNeuron | None:
         """
-            Method docstring
+            Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
+            zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
         """
         self.output_layer.reset_psp()
 
-        for neuron_input in self.input_layer:
-            to_fire = [n_out for n_out in self._update_psp(neuron_input)]
+        for neuron_input in self.input_layer:  # błąd !!! brak sortowania na podstawie order
+            to_fire = list(self._update_psp(neuron_input))
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.psp)

@@ -1,12 +1,12 @@
 """
-    Module docstring
+    Moduł zawiera definicje i implementacje neuronów.
 """
 import numpy as np
 
 
 class Neuron:
     """
-        Class docstring
+        Klasa bazowa neuronu.
     """
 
     def __init__(self) -> None:
@@ -15,7 +15,7 @@ class Neuron:
 
 class InputNeuron(Neuron):
     """
-        Class docstring
+        Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.
     """
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -> None:
@@ -26,14 +26,14 @@ class InputNeuron(Neuron):
 
     def set_order(self, new_order: int):
         """
-            Method docstring
+            Setter dla atrybtu order.
         """
         self.order = new_order
 
 
 class OutputNeuron(Neuron):
     """
-        Class docstring
+        Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
     """
 
     def __init__(self, weights: np.ndarray, gamma: float,
@@ -53,7 +53,8 @@ class OutputNeuron(Neuron):
 
     def update_neuron(self, candidate_neuron: 'OutputNeuron') -> None:
         """
-            Method docstring
+            Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
+            przekazywanego jako parametr.
         """
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)

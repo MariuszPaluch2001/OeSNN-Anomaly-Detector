@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Moduł testujący metody klas Layer.
 """
 
 from layer import OutputLayer, InputLayer
@@ -18,7 +18,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test_make_candidate():
     """
-        Test docstring
+        Test sprawdzający czy tworzenie kandydata działa poprawnie.
     """
     output_layer = OutputLayer(10)
 
@@ -45,7 +45,7 @@ def test_make_candidate():
 
 def test_find_most_similar_without_neurons():
     """
-        Test docstring
+        Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.
     """
     output_layer = OutputLayer(10)
     candidate = OutputNeuron(
@@ -59,7 +59,8 @@ def test_find_most_similar_without_neurons():
 
 def test_find_most_similar_with_neurons():
     """
-        Test docstring
+        Test sprawdzający czy gdy neurony w są w liście to czy 
+        faktycznie zwracany jest najbliższy neuron.
     """
     output_layer = OutputLayer(10)
 
@@ -85,7 +86,7 @@ def test_find_most_similar_with_neurons():
 
 def test_reset_psp():
     """
-        Test docstring
+        Test sprawdzający czy resetowanie PSP działa poprawnie.
     """
     output_layer = OutputLayer(10)
     neuron_out1 = OutputNeuron(
@@ -107,7 +108,7 @@ def test_reset_psp():
 
 def test_add_new_neuron():
     """
-        Test docstring
+        Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.
     """
     output_layer = OutputLayer(10)
     assert output_layer.num_neurons == 0
@@ -128,7 +129,7 @@ def test_add_new_neuron():
 
 def test_replace_oldest():
     """
-        Test docstring
+        Test sprawdzający czy zastąpywanie najstarszego neuronu działa poprawnie.
     """
     output_layer = OutputLayer(10)
 
@@ -153,7 +154,7 @@ def test_replace_oldest():
 
 def test_len_magic_method():
     """
-        Test docstring
+        Test sprawdzający czy operator len działa poprawnie dla hierarchii klas Layer.
     """
     input_layer = InputLayer(10)
 

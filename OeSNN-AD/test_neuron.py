@@ -1,5 +1,5 @@
 """
-    Module docstring
+    Moduł testujący metody klas neuronów.
 """
 
 from neuron import OutputNeuron
@@ -11,7 +11,7 @@ from pytest import approx
 
 def test_update_neuron():
     """
-        Test docstring
+        Test sprawdzający czy neuron faktycznie jest aktualizowany.
     """
     updated_neuron = OutputNeuron(
         np.array([0.25]*3), 0.25, 0.1, 1, 0.25, 0.75, 2)
@@ -29,7 +29,8 @@ def test_update_neuron():
 
 def test__get_item__():
     """
-        Test docstring
+        Test sprawdzający czy indeksowanie neuronu faktycznie zwraca wartości
+        w wektorze wag.
     """
     neuron = OutputNeuron(
         np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, 0.75, 2)
