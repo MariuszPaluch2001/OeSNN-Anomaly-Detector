@@ -4,9 +4,9 @@
 # pylint: disable=W0212
 
 from pytest import approx
-from oesnn_ad import OeSNNAD
-from neuron import OutputNeuron, InputNeuron
 import numpy as np
+from neuron import OutputNeuron, InputNeuron
+from oesnn_ad import OeSNNAD
 
 WINDOW = np.array([0.5, 0.3, 0.4,
                    0.3, 0.6, 0.2,
@@ -73,12 +73,14 @@ def test__init_new_arrays_for_predict():
 
 
 def test_predict():
-    """
-        @todo
-        
+    """        
         Test sprawdzający działanie interfejsu klasy.
     """
-    assert True
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=2, num_in_neurons=5,
+                       num_out_neurons=10, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+    result = oesnn_ad.predict()
+    np.testing.assert_array_equal(result, np.array(
+        [False, False, True, True, True, True, True, True, True, True, True, True, True]))
 
 
 def test__anomaly_detection_without_firing():
@@ -111,13 +113,13 @@ def test__anomaly_detection_with_firing():
 
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -183,13 +185,13 @@ def test__learning_with_update():
 
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -236,13 +238,13 @@ def test__learning_with_replace_oldest():
 
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=1, PSP=0.0, max_PSP=2)
+        addition_time=1, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=5, PSP=0.0, max_PSP=2)
+        addition_time=5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0,
-                                  addition_time=10, PSP=0.0, max_PSP=2)
+        addition_time=10, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -266,13 +268,13 @@ def test__update_psp_case_with_one_input_neuron():
     neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+        addition_time=0.5, PSP=1.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+        addition_time=0.5, PSP=1.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=1.0, max_PSP=2)
+        addition_time=0.5, PSP=1.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -299,13 +301,13 @@ def test__update_psp_case_with_multiple_input_neuron():
 
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)
@@ -350,13 +352,13 @@ def test__fires_first_with_one_input_neuron():
     neuron_input = InputNeuron(firing_time=0.5, neuron_id=0, order=0)
     neuron_output1 = OutputNeuron(weights=np.array(
         [1.1]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [1.2]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [1.3]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.input_layer.neurons = [neuron_input]
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
@@ -385,13 +387,13 @@ def test__fires_first_with_multiple_input_neuron():
 
     neuron_output1 = OutputNeuron(weights=np.array(
         [0.1, 0.4, 0.7]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output2 = OutputNeuron(weights=np.array(
         [0.2, 0.1, 0.8]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
     neuron_output3 = OutputNeuron(weights=np.array(
         [0.3, 0.8, 0.9]), gamma=0.5, output_value=0.5, modification_count=0.5,
-                                  addition_time=0.5, PSP=0.0, max_PSP=2)
+        addition_time=0.5, PSP=0.0, max_PSP=2)
 
     oesnn_ad.output_layer.add_new_neuron(neuron_output1)
     oesnn_ad.output_layer.add_new_neuron(neuron_output2)

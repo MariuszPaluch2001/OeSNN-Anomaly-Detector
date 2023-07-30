@@ -37,6 +37,8 @@
 import csv
 from typing import List, Tuple, Dict
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 from oesnn_ad import OeSNNAD
 from utils import get_data_from_path, get_all_files_paths, perf_measure, read_parameters
@@ -47,13 +49,13 @@ def parameters_tuning(stream: np.ndarray,
     &#34;&#34;&#34;
         Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
         znalezienia najlepszychhiperparametrów oesnn-ad dla danego strumienia danych.
-        
+
         Jako argumenty funkcja przyjmuje:\n
             1. stream - strumień danych w postaci wektora najlepiej z biblioteki numpy
             2. labels - listę etykiet mówiących o próbkach czy są anomaliami
             3. parameters - słownik, w którym klucze to hiperparametry, a wartości to tuple,
             które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
-        
+
         Funkcja zwraca krotkę z następującymi wartościami:\n
             1. słownik hiperparametr-wartośc dla najlepszego wyniku
             2. recall najlepszego wyniku
@@ -72,16 +74,16 @@ def parameters_tuning(stream: np.ndarray,
                                     for ksi in np.arange(*parameters[&#39;ksi&#39;]):
                                         for epsilon in range(*parameters[&#39;epsilon&#39;]):
                                             oesnn_ad = OeSNNAD(stream,
-                                                                window_size=w_size,
-                                                                num_in_neurons=ni_size,
-                                                                num_out_neurons=no_size,
-                                                                ts_factor=ts_coef,
-                                                                mod=mod,
-                                                                c_factor=c_coef,
-                                                                epsilon=epsilon,
-                                                                ksi=ksi,
-                                                                sim=sim,
-                                                                beta=beta)
+                                                               window_size=w_size,
+                                                               num_in_neurons=ni_size,
+                                                               num_out_neurons=no_size,
+                                                               ts_factor=ts_coef,
+                                                               mod=mod,
+                                                               c_factor=c_coef,
+                                                               epsilon=epsilon,
+                                                               ksi=ksi,
+                                                               sim=sim,
+                                                               beta=beta)
                                             detection_result = oesnn_ad.predict()
                                             recall, precission, f_1 = perf_measure(
                                                 detection_result, labels)
@@ -105,12 +107,68 @@ def parameters_tuning(stream: np.ndarray,
     return best_parameters, best_recall, best_precission, best_f1
 
 
+def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_name: str) -&gt; None:
+    &#34;&#34;&#34;
+        Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream,
+                       window_size=best_parameters[&#39;Wsize&#39;],
+                       num_in_neurons=best_parameters[&#39;NIsize&#39;],
+                       num_out_neurons=best_parameters[&#39;NOsize&#39;],
+                       ts_factor=best_parameters[&#39;TS&#39;],
+                       mod=best_parameters[&#39;mod&#39;],
+                       c_factor=best_parameters[&#39;C&#39;],
+                       epsilon=best_parameters[&#39;epsilon&#39;],
+                       ksi=best_parameters[&#39;ksi&#39;],
+                       sim=best_parameters[&#39;sim&#39;],
+                       beta=best_parameters[&#39;Beta&#39;])
+    result = oesnn_ad.predict()
+    fn_list = []
+    fp_list = []
+    tn_list = []
+    tp_list = []
+    for index, (value, predict, label) in enumerate(
+            zip(stream.tolist(), result.tolist(), labels.tolist())):
+        if predict and label:
+            tp_list.append((index, value))
+        if predict and not label:
+            fp_list.append((index, value))
+        if not predict and not label:
+            tn_list.append((index, value))
+        if not predict and label:
+            fn_list.append((index, value))
+    plt.figure(figsize=(15, 5))
+    plt.title(stream_name)
+    plt.plot([x[0] for x in fn_list], [x[1]
+             for x in fn_list], &#39;+g&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in fp_list], [x[1]
+             for x in fp_list], &#39;sb&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tn_list], [x[1]
+             for x in tn_list], &#39;.k&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tp_list], [x[1]
+             for x in tp_list], &#39;2r&#39;, linestyle=&#39;None&#39;)
+    plt.grid()
+    green_plus = mlines.Line2D([], [], color=&#39;green&#39;, marker=&#39;+&#39;, linestyle=&#39;None&#39;,
+                               markersize=10, label=&#39;FN&#39;)
+    blue_square = mlines.Line2D([], [], color=&#39;blue&#39;, marker=&#39;s&#39;, linestyle=&#39;None&#39;,
+                                markersize=10, label=&#39;FP&#39;)
+    black_dot = mlines.Line2D([], [], color=&#39;black&#39;, marker=&#39;.&#39;, linestyle=&#39;None&#39;,
+                              markersize=10, label=&#39;TN&#39;)
+    red_triangle = mlines.Line2D([], [], color=&#39;red&#39;, marker=&#39;2&#39;, linestyle=&#39;None&#39;,
+                                 markersize=10, label=&#39;TP&#39;)
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc=&#34;center left&#34;, borderaxespad=0, handles=[
+               green_plus, blue_square, black_dot, red_triangle])
+    plt.xlabel(&#34;Timestamp&#34;)
+    plt.ylabel(&#34;Input value (X)&#34;)
+    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)
+
+
 def main() -&gt; None:
     &#34;&#34;&#34;
         Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
         strumienie z plików csv, uruchamia strojenie hiperparametrów, zapisuje najlepsze wyniki
         do pliku csv dla danego datasetu.
-        
+
         Nie przyjmuje żadnych parametrów, i niczego nie zwraca.
     &#34;&#34;&#34;
     parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
@@ -127,9 +185,12 @@ def main() -&gt; None:
             data, labels = get_data_from_path(path, True)
             param, recall, precission, f_1 = parameters_tuning(
                 data, labels, parameters_nab)
+
             if param is not None:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + tuple(param.values()))
+
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
@@ -148,6 +209,7 @@ def main() -&gt; None:
             if param is not None:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + tuple(param.values()))
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
@@ -181,7 +243,7 @@ do pliku csv dla danego datasetu.</p>
         Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
         strumienie z plików csv, uruchamia strojenie hiperparametrów, zapisuje najlepsze wyniki
         do pliku csv dla danego datasetu.
-        
+
         Nie przyjmuje żadnych parametrów, i niczego nie zwraca.
     &#34;&#34;&#34;
     parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
@@ -198,9 +260,12 @@ do pliku csv dla danego datasetu.</p>
             data, labels = get_data_from_path(path, True)
             param, recall, precission, f_1 = parameters_tuning(
                 data, labels, parameters_nab)
+
             if param is not None:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + tuple(param.values()))
+
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
@@ -219,6 +284,7 @@ do pliku csv dla danego datasetu.</p>
             if param is not None:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + tuple(param.values()))
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)</code></pre>
@@ -251,13 +317,13 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
     &#34;&#34;&#34;
         Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
         znalezienia najlepszychhiperparametrów oesnn-ad dla danego strumienia danych.
-        
+
         Jako argumenty funkcja przyjmuje:\n
             1. stream - strumień danych w postaci wektora najlepiej z biblioteki numpy
             2. labels - listę etykiet mówiących o próbkach czy są anomaliami
             3. parameters - słownik, w którym klucze to hiperparametry, a wartości to tuple,
             które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
-        
+
         Funkcja zwraca krotkę z następującymi wartościami:\n
             1. słownik hiperparametr-wartośc dla najlepszego wyniku
             2. recall najlepszego wyniku
@@ -276,16 +342,16 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
                                     for ksi in np.arange(*parameters[&#39;ksi&#39;]):
                                         for epsilon in range(*parameters[&#39;epsilon&#39;]):
                                             oesnn_ad = OeSNNAD(stream,
-                                                                window_size=w_size,
-                                                                num_in_neurons=ni_size,
-                                                                num_out_neurons=no_size,
-                                                                ts_factor=ts_coef,
-                                                                mod=mod,
-                                                                c_factor=c_coef,
-                                                                epsilon=epsilon,
-                                                                ksi=ksi,
-                                                                sim=sim,
-                                                                beta=beta)
+                                                               window_size=w_size,
+                                                               num_in_neurons=ni_size,
+                                                               num_out_neurons=no_size,
+                                                               ts_factor=ts_coef,
+                                                               mod=mod,
+                                                               c_factor=c_coef,
+                                                               epsilon=epsilon,
+                                                               ksi=ksi,
+                                                               sim=sim,
+                                                               beta=beta)
                                             detection_result = oesnn_ad.predict()
                                             recall, precission, f_1 = perf_measure(
                                                 detection_result, labels)
@@ -309,6 +375,71 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
     return best_parameters, best_recall, best_precission, best_f1</code></pre>
 </details>
 </dd>
+<dt id="OeSNN-AD.main.plots"><code class="name flex">
+<span>def <span class="ident">plots</span></span>(<span>stream: numpy.ndarray, best_parameters: dict, labels: numpy.ndarray, stream_name: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_name: str) -&gt; None:
+    &#34;&#34;&#34;
+        Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream,
+                       window_size=best_parameters[&#39;Wsize&#39;],
+                       num_in_neurons=best_parameters[&#39;NIsize&#39;],
+                       num_out_neurons=best_parameters[&#39;NOsize&#39;],
+                       ts_factor=best_parameters[&#39;TS&#39;],
+                       mod=best_parameters[&#39;mod&#39;],
+                       c_factor=best_parameters[&#39;C&#39;],
+                       epsilon=best_parameters[&#39;epsilon&#39;],
+                       ksi=best_parameters[&#39;ksi&#39;],
+                       sim=best_parameters[&#39;sim&#39;],
+                       beta=best_parameters[&#39;Beta&#39;])
+    result = oesnn_ad.predict()
+    fn_list = []
+    fp_list = []
+    tn_list = []
+    tp_list = []
+    for index, (value, predict, label) in enumerate(
+            zip(stream.tolist(), result.tolist(), labels.tolist())):
+        if predict and label:
+            tp_list.append((index, value))
+        if predict and not label:
+            fp_list.append((index, value))
+        if not predict and not label:
+            tn_list.append((index, value))
+        if not predict and label:
+            fn_list.append((index, value))
+    plt.figure(figsize=(15, 5))
+    plt.title(stream_name)
+    plt.plot([x[0] for x in fn_list], [x[1]
+             for x in fn_list], &#39;+g&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in fp_list], [x[1]
+             for x in fp_list], &#39;sb&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tn_list], [x[1]
+             for x in tn_list], &#39;.k&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tp_list], [x[1]
+             for x in tp_list], &#39;2r&#39;, linestyle=&#39;None&#39;)
+    plt.grid()
+    green_plus = mlines.Line2D([], [], color=&#39;green&#39;, marker=&#39;+&#39;, linestyle=&#39;None&#39;,
+                               markersize=10, label=&#39;FN&#39;)
+    blue_square = mlines.Line2D([], [], color=&#39;blue&#39;, marker=&#39;s&#39;, linestyle=&#39;None&#39;,
+                                markersize=10, label=&#39;FP&#39;)
+    black_dot = mlines.Line2D([], [], color=&#39;black&#39;, marker=&#39;.&#39;, linestyle=&#39;None&#39;,
+                              markersize=10, label=&#39;TN&#39;)
+    red_triangle = mlines.Line2D([], [], color=&#39;red&#39;, marker=&#39;2&#39;, linestyle=&#39;None&#39;,
+                                 markersize=10, label=&#39;TP&#39;)
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc=&#34;center left&#34;, borderaxespad=0, handles=[
+               green_plus, blue_square, black_dot, red_triangle])
+    plt.xlabel(&#34;Timestamp&#34;)
+    plt.ylabel(&#34;Input value (X)&#34;)
+    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -329,6 +460,7 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
 <ul class="">
 <li><code><a title="OeSNN-AD.main.main" href="#OeSNN-AD.main.main">main</a></code></li>
 <li><code><a title="OeSNN-AD.main.parameters_tuning" href="#OeSNN-AD.main.parameters_tuning">parameters_tuning</a></code></li>
+<li><code><a title="OeSNN-AD.main.plots" href="#OeSNN-AD.main.plots">plots</a></code></li>
 </ul>
 </li>
 </ul>
