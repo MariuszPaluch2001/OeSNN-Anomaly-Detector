@@ -131,6 +131,7 @@ def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_
     plt.xlabel("Timestamp")
     plt.ylabel("Input value (X)")
     plt.savefig(f"./plots/{stream_name}.png")
+    plt.close()
 
 
 def main() -> None:

@@ -35,9 +35,8 @@ class GRFInit:
         """
             Metoda od obliczania wektora centrów GRF dla wszystkich neuronów w warstwie.
         """
-        return np.array([(self.min_w_i + ((2*j - 3) / 2) *
-                        (self.max_w_i - self.min_w_i) / (self.input_size - 2))
-            for j in range(self.input_size)])
+        return (self.min_w_i + ((2*np.arange(0, self.input_size, 1) - 3) / 2) *
+                (self.max_w_i - self.min_w_i) / (self.input_size - 2))
 
     def _get_excitation(self, width_v: np.ndarray, center_v: np.ndarray):
         """
@@ -59,8 +58,9 @@ class GRFInit:
             wszystkich neuronów w warstwie.
         """
         arg_sorted = np.argsort(firings_times)
-        return np.array([int(np.argwhere(arg_sorted == i))
-                         for i in range(self.input_size)])
+        orders = np.empty_like(arg_sorted)
+        orders[arg_sorted] = np.arange(len(firings_times))
+        return orders
 
     def get_order(self) -> np.ndarray:
         """

@@ -66,7 +66,8 @@ class InputLayer(Layer):
             Atrybut, który złącza kolejność wystrzylewania neuronów
             w jedną listę.
         """
-        return np.array([neuron.order for neuron in self.neurons])
+        vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
+        return vectorized_get_order(self.neurons)
 
     def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -> None:
         """
@@ -104,7 +105,7 @@ class OutputLayer(Layer):
         """
             Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
         """
-        weights = np.array([mod ** o for o in order])
+        weights = mod ** order
         output_value = np.random.normal(np.mean(window), np.std(window))
         psp_max = (weights * (mod ** order)).sum()
         gamma = c_coef * psp_max

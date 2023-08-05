@@ -159,7 +159,7 @@ class OeSNNAD:
         """
         self.output_layer.reset_psp()
 
-        for neuron_input in self.input_layer:  # błąd !!! brak sortowania na podstawie order
+        for neuron_input in self.input_layer:
             to_fire = list(self._update_psp(neuron_input))
 
             if to_fire:
