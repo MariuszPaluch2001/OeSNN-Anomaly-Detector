@@ -3,7 +3,9 @@
 """
 
 from typing import List, Generator
+
 import numpy as np
+import numpy.typing as npt
 
 from layer import InputLayer, OutputLayer
 from neuron import OutputNeuron, InputNeuron
@@ -17,7 +19,7 @@ class OeSNNAD:
         predict, która zwraca wektor z detekcjami.
     """
 
-    def __init__(self, stream: np.ndarray, window_size: int = 100,
+    def __init__(self, stream: npt.NDArray[np.float64], window_size: int = 100,
                  num_in_neurons: int = 10, num_out_neurons: int = 50,
                  ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6,
                  epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
@@ -45,13 +47,13 @@ class OeSNNAD:
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> np.ndarray:
+    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> npt.NDArray[np.float64]:
         """
             Metoda zwracająca okno z danymi.
         """
         return self.stream[begin_idx: end_idx]
 
-    def _init_new_arrays_for_predict(self, window: np.ndarray) -> None:
+    def _init_new_arrays_for_predict(self, window: npt.NDArray[np.float64]) -> None:
         """
             Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
             są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
@@ -61,7 +63,7 @@ class OeSNNAD:
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False] * self.window_size
 
-    def predict(self) -> np.ndarray:
+    def predict(self) -> npt.NDArray[np.bool_]:
         """
             Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
             główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
@@ -75,27 +77,27 @@ class OeSNNAD:
 
             window = self._get_window_from_stream(age - self.window_size, age)
 
-            self._anomaly_detection(window)
-
             self._learning(window, age)
+
+            self._anomaly_detection(window)
 
         return np.array(self.anomalies)
 
-    def _anomaly_detection(self, window: np.ndarray) -> None:
+    def _anomaly_detection(self, window: npt.NDArray[np.float64]) -> None:
         """
             Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
         """
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
-        if first_fired_neuron is None:
-            self.values.append(None)
-            self.errors.append(np.inf)
-            self.anomalies.append(True)
-        else:
+        if first_fired_neuron:
             self.values.append(first_fired_neuron.output_value)
             self.errors.append(
                 np.abs(window_head - first_fired_neuron.output_value))
             self.anomalies.append(self._anomaly_classification())
+        else:
+            self.values.append(None)
+            self.errors.append(np.abs(window_head))
+            self.anomalies.append(True)
 
     def _anomaly_classification(self) -> bool:
         """
@@ -103,18 +105,16 @@ class OeSNNAD:
             anomalią.
         """
         error_t = self.errors[-1]
-        errors_window = self.errors[-(self.window_size):-1]
-        anomalies_window = self.anomalies[-(self.window_size - 1):]
+        errors_window = np.array(self.errors[-(self.window_size):-1])
+        anomalies_window = np.array(self.anomalies[-(self.window_size - 1):])
 
-        errors_for_non_anomalies = [err for err, classification in zip(
-            errors_window, anomalies_window) if not classification]
-
+        errors_for_non_anomalies = errors_window[np.where(~anomalies_window)]
         return not (
-            (not errors_for_non_anomalies) or (error_t - np.mean(errors_for_non_anomalies)
-                                               < np.std(errors_for_non_anomalies) * self.epsilon)
+            (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
+                                                       < np.std(errors_for_non_anomalies) * self.epsilon)
         )
 
-    def _learning(self, window: np.ndarray, neuron_age: int) -> None:
+    def _learning(self, window: npt.NDArray[np.float64], neuron_age: int) -> None:
         """
             Metoda odpowiadająca za naukę i strojenie parametrów sieci.
         """
@@ -123,7 +123,7 @@ class OeSNNAD:
                                                             self.mod, self.c_factor, neuron_age)
 
         if not anomaly_t:
-            candidate_neuron.output_value += (window_head -
+            candidate_neuron.output_value += (window_head -  # @TODO: Wydziel tą linię do funkcji error_correction
                                               candidate_neuron.output_value) * self.ksi
 
         most_familiar_neuron, dist = self.output_layer.find_most_similar(
@@ -152,7 +152,7 @@ class OeSNNAD:
             if n_out.psp > self.gamma:
                 yield n_out
 
-    def _fires_first(self) -> OutputNeuron | None:
+    def _fires_first(self) -> OutputNeuron | bool:
         """
             Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
             zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
@@ -164,4 +164,4 @@ class OeSNNAD:
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.psp)
-        return None
+        return False

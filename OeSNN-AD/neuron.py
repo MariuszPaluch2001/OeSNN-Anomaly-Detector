@@ -2,6 +2,7 @@
     Moduł zawiera definicje i implementacje neuronów.
 """
 import numpy as np
+import numpy.typing as npt
 
 
 class Neuron:
@@ -36,7 +37,7 @@ class OutputNeuron(Neuron):
         Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
     """
 
-    def __init__(self, weights: np.ndarray, gamma: float,
+    def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -> None:
         super().__init__()

@@ -40,9 +40,9 @@ def test__anomaly_classification_with_not_anomaly_classified():
     """
         Test sprawdzający czy nie została wykryta anomalia.
     """
-    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
+    oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 1.0)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
-    oesnn_ad.values = [False]*4
+    oesnn_ad.anomalies = [False]*4
     assert not oesnn_ad._anomaly_classification()
 
 
@@ -91,7 +91,7 @@ def test__anomaly_detection_without_firing():
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
     oesnn_ad._anomaly_detection(np.array([1, 2, 3]))
     assert oesnn_ad.values[0] is None
-    assert np.isinf(oesnn_ad.errors[0])
+    assert oesnn_ad.errors[0] == 3
     assert oesnn_ad.anomalies[0]
 
 
@@ -339,7 +339,7 @@ def test__fires_first_with_none():
     oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
                        num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
 
-    assert oesnn_ad._fires_first() is None
+    assert not oesnn_ad._fires_first()
 
 
 def test__fires_first_with_one_input_neuron():

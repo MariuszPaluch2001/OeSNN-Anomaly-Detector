@@ -4,6 +4,8 @@
 
 from typing import List, Tuple, Generator
 import numpy as np
+import numpy.typing as npt
+
 
 from neuron import Neuron
 from neuron import InputNeuron, OutputNeuron
@@ -69,7 +71,11 @@ class InputLayer(Layer):
         vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
         return vectorized_get_order(self.neurons)
 
-    def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -> None:
+    def set_orders(self,
+                   window: npt.NDArray[np.float64],
+                   ts_coef: float,
+                   mod: float,
+                   beta: float) -> None:
         """
             Metoda służy do ustawienia dla każdego neuronu wejściowego
             nowej pozycji wystrzeliwania w warstwie.
@@ -100,8 +106,12 @@ class OutputLayer(Layer):
     def __getitem__(self, index: int) -> OutputNeuron:
         return super().__getitem__(index)
 
-    def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
-                       c_coef: float, neuron_age: int) -> OutputNeuron:
+    def make_candidate(self,
+                       window: npt.NDArray[np.float64],
+                       order: npt.NDArray[np.intp],
+                       mod: float,
+                       c_coef: float,
+                       neuron_age: int) -> OutputNeuron:
         """
             Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
         """
@@ -115,20 +125,19 @@ class OutputLayer(Layer):
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | None, float]:
+                          candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | bool, float]:
         """
             Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
             neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
             None, np.inf.
         """
         if not self.neurons:
-            return None, np.Inf
+            return False, np.Inf
 
         def dist_f(neuron: OutputNeuron) -> float:
             return np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
-
         return most_similar_neuron, min_distance
 
     def add_new_neuron(self, neuron: OutputNeuron) -> None:

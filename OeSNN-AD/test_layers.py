@@ -53,7 +53,7 @@ def test_find_most_similar_without_neurons():
 
     neuron_result, distance = output_layer.find_most_similar(candidate)
 
-    assert neuron_result is None
+    assert not neuron_result
     assert np.isinf(distance)
 
 

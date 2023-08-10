@@ -7,6 +7,7 @@
 import csv
 from typing import List, Tuple, Dict
 import numpy as np
+import numpy.typing as npt
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
@@ -14,7 +15,7 @@ from oesnn_ad import OeSNNAD
 from utils import get_data_from_path, get_all_files_paths, perf_measure, read_parameters
 
 
-def parameters_tuning(stream: np.ndarray,
+def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -> Tuple[Dict, float, float, float]:
     """
         Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
@@ -77,7 +78,10 @@ def parameters_tuning(stream: np.ndarray,
     return best_parameters, best_recall, best_precission, best_f1
 
 
-def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_name: str) -> None:
+def plots(stream: npt.NDArray[np.float64],
+          best_parameters: dict,
+          labels: npt.NDArray[np.bool_],
+          stream_name: str) -> None:
     """
         Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
     """

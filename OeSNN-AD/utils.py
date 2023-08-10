@@ -8,13 +8,14 @@ from typing import List, Dict, Tuple, Generator
 import os
 import json
 import numpy as np
+import numpy.typing as npt
 
 
 def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
     """
         Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
         od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
-        
+
         Funkcja ta jest generatorem.
     """
     for path, _, files in os.walk(data_root_folder_name):
@@ -22,11 +23,12 @@ def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None
             yield os.path.join(path, name)
 
 
-def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndarray]:
+def get_data_from_path(filename: str,
+                       is_nab: bool) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]:
     """
         Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
         etykietami.
-        
+
         Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
         jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.
     """
@@ -43,14 +45,14 @@ def get_data_from_path(filename: str, is_nab: bool) -> Tuple[np.ndarray, np.ndar
 def read_parameters(path: str) -> Dict:
     """
         Funkcja do otczytywania hiperparametrów z pliku json.
-        
+
         Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.
     """
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
 
-def convert_numpy_array_int_to_booleans(array: np.ndarray[int]) -> np.ndarray[bool]:
+def convert_numpy_array_int_to_booleans(array: npt.NDArray[np.intp]) -> npt.NDArray[np.bool_]:
     """
         Funkcja do konwersji numpy listy z intów do wartości bool.
     """
@@ -61,7 +63,7 @@ def perf_measure(y_hat: List, y_actual: List) -> Tuple[float, float, float]:
     """
         Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
         W takiej kolejności też te wartości są zwracane.
-        
+
         Jako argumenty funkcja przyjmuje:\n
             1. y_hat - listę z wartościami stworzonymi przez model
             2. y_actual - listę z prawdziwymi wartościami
