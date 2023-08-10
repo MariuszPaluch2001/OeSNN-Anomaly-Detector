@@ -152,9 +152,8 @@ class OeSNNAD:
             Metoda ta zwraca generator.
         """
         for n_out in self.output_layer:
-            n_out.psp += n_out[neuron_input.neuron_id] * \
-                (self.mod ** neuron_input.order)
-
+            n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
+            
             if n_out.psp > self.gamma:
                 yield n_out
 

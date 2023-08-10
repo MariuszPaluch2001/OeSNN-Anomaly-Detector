@@ -148,7 +148,7 @@ def main() -> None:
     """
     parameters_nab = read_parameters("parameters_NAB.json")
     parameters_yahoo = read_parameters("parameters_Yahoo.json")
-    with open('nab_result.csv', 'w', encoding='UTF8') as file:
+    with open('results/nab_result.csv', 'w', encoding='UTF8') as file:
         writer = csv.writer(file)
 
         writer.writerow(("dataset", "filename", "f1", "recall",
@@ -169,7 +169,7 @@ def main() -> None:
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
-    with open('yahoo_result.csv', 'w', encoding='UTF8') as file:
+    with open('results/yahoo_result.csv', 'w', encoding='UTF8') as file:
         writer = csv.writer(file)
 
         writer.writerow(("dataset", "filename", "f1", "recall",

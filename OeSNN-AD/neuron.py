@@ -80,3 +80,10 @@ class OutputNeuron(Neuron):
         """
         # TODO: dodaj testy do tego
         return np.abs(window_head - self.output_value)
+
+    def update_psp(self, psp_update : float):
+        """
+            Dodaj docstring
+        """
+        # TODO dodaj testy do tego
+        self.psp += psp_update
