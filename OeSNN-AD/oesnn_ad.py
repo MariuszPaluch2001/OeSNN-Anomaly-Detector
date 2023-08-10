@@ -123,8 +123,7 @@ class OeSNNAD:
                                                             self.mod, self.c_factor, neuron_age)
 
         if not anomaly_t:
-            candidate_neuron.output_value += (window_head -  # @TODO: Wydziel tą linię do funkcji error_correction
-                                              candidate_neuron.output_value) * self.ksi
+            candidate_neuron.error_correction(window_head, self.ksi)
 
         most_familiar_neuron, dist = self.output_layer.find_most_similar(
             candidate_neuron)

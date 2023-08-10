@@ -66,3 +66,9 @@ class OutputNeuron(Neuron):
             candidate_neuron.addition_time + self.modification_count * self.addition_time) /
             (self.modification_count + 1))
         self.modification_count += 1
+
+    def error_correction(self, window_head: float, ksi: float) -> None:
+        """
+            @TODO: Dodać testy do tego
+        """
+        self.output_value += (window_head - self.output_value) * ksi
