@@ -53,13 +53,20 @@ class OeSNNAD:
         """
         return self.stream[begin_idx: end_idx]
 
+    def _init_values_rand(self, window: npt.NDArray) -> List[float]:
+        """
+            Dodaj docstring
+        """
+        # TODO: dodaj testy
+        return np.random.normal(
+            np.mean(window), np.std(window), self.window_size).tolist()
+
     def _init_new_arrays_for_predict(self, window: npt.NDArray[np.float64]) -> None:
         """
             Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
             są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
         """
-        self.values = np.random.normal(
-            np.mean(window), np.std(window), self.window_size).tolist()
+        self.values = self._init_values_rand(window)
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False] * self.window_size
 
@@ -91,8 +98,7 @@ class OeSNNAD:
         first_fired_neuron = self._fires_first()
         if first_fired_neuron:
             self.values.append(first_fired_neuron.output_value)
-            self.errors.append(
-                np.abs(window_head - first_fired_neuron.output_value))
+            self.errors.append(first_fired_neuron.error_calc(window_head))
             self.anomalies.append(self._anomaly_classification())
         else:
             self.values.append(None)
@@ -109,6 +115,7 @@ class OeSNNAD:
         anomalies_window = np.array(self.anomalies[-(self.window_size - 1):])
 
         errors_for_non_anomalies = errors_window[np.where(~anomalies_window)]
+        #TODO: Zadługie, wydziel osobną metodę do tego
         return not (
             (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
                                                        < np.std(errors_for_non_anomalies) * self.epsilon)

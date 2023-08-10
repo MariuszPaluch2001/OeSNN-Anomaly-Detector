@@ -69,6 +69,14 @@ class OutputNeuron(Neuron):
 
     def error_correction(self, window_head: float, ksi: float) -> None:
         """
-            @TODO: Dodać testy do tego
+            Dodaj docstring
         """
+        # TODO: Dodać testy do tego
         self.output_value += (window_head - self.output_value) * ksi
+
+    def error_calc(self, window_head: float) -> float:
+        """
+            Dodaj docstring
+        """
+        # TODO: dodaj testy do tego
+        return np.abs(window_head - self.output_value)
