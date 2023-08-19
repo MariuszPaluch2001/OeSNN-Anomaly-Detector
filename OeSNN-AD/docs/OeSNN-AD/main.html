@@ -37,6 +37,7 @@
 import csv
 from typing import List, Tuple, Dict
 import numpy as np
+import numpy.typing as npt
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
@@ -44,7 +45,7 @@ from oesnn_ad import OeSNNAD
 from utils import get_data_from_path, get_all_files_paths, perf_measure, read_parameters
 
 
-def parameters_tuning(stream: np.ndarray,
+def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -&gt; Tuple[Dict, float, float, float]:
     &#34;&#34;&#34;
         Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
@@ -61,6 +62,14 @@ def parameters_tuning(stream: np.ndarray,
             2. recall najlepszego wyniku
             3. precission najlepszego wyniku
             4. f1 najlepszego wyniku
+
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            labels (List[bool]): _description_
+            parameters (Dict): _description_
+
+        Returns:
+            Tuple[Dict, float, float, float]: _description_
     &#34;&#34;&#34;
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
     for no_size in range(*parameters[&#39;NOsize&#39;]):
@@ -107,9 +116,18 @@ def parameters_tuning(stream: np.ndarray,
     return best_parameters, best_recall, best_precission, best_f1
 
 
-def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_name: str) -&gt; None:
+def plots(stream: npt.NDArray[np.float64],
+          best_parameters: dict,
+          labels: npt.NDArray[np.bool_],
+          stream_name: str) -&gt; None:
     &#34;&#34;&#34;
         Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+        
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            best_parameters (dict): _description_
+            labels (npt.NDArray[np.bool_]): _description_
+            stream_name (str): _description_
     &#34;&#34;&#34;
     oesnn_ad = OeSNNAD(stream,
                        window_size=best_parameters[&#39;Wsize&#39;],
@@ -161,6 +179,7 @@ def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_
     plt.xlabel(&#34;Timestamp&#34;)
     plt.ylabel(&#34;Input value (X)&#34;)
     plt.savefig(f&#34;./plots/{stream_name}.png&#34;)
+    plt.close()
 
 
 def main() -&gt; None:
@@ -173,7 +192,7 @@ def main() -&gt; None:
     &#34;&#34;&#34;
     parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
     parameters_yahoo = read_parameters(&#34;parameters_Yahoo.json&#34;)
-    with open(&#39;nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+    with open(&#39;results/nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
         writer = csv.writer(file)
 
         writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
@@ -194,7 +213,7 @@ def main() -&gt; None:
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
-    with open(&#39;yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+    with open(&#39;results/yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
         writer = csv.writer(file)
 
         writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
@@ -248,7 +267,7 @@ do pliku csv dla danego datasetu.</p>
     &#34;&#34;&#34;
     parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
     parameters_yahoo = read_parameters(&#34;parameters_Yahoo.json&#34;)
-    with open(&#39;nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+    with open(&#39;results/nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
         writer = csv.writer(file)
 
         writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
@@ -269,7 +288,7 @@ do pliku csv dla danego datasetu.</p>
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
-    with open(&#39;yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+    with open(&#39;results/yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
         writer = csv.writer(file)
 
         writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
@@ -291,7 +310,7 @@ do pliku csv dla danego datasetu.</p>
 </details>
 </dd>
 <dt id="OeSNN-AD.main.parameters_tuning"><code class="name flex">
-<span>def <span class="ident">parameters_tuning</span></span>(<span>stream: numpy.ndarray, labels: List[bool], parameters: Dict) ‑> Tuple[Dict, float, float, float]</span>
+<span>def <span class="ident">parameters_tuning</span></span>(<span>stream: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], labels: List[bool], parameters: Dict) ‑> Tuple[Dict, float, float, float]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Funkcja implementująca algorytm grid-search, który jest wykorzystywany do
@@ -307,12 +326,26 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
 2. recall najlepszego wyniku
 3. precission najlepszego wyniku
 4. f1 najlepszego wyniku
-</code></pre></div>
+</code></pre>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>List[bool]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>parameters</code></strong> :&ensp;<code>Dict</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[Dict, float, float, float]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def parameters_tuning(stream: np.ndarray,
+<pre><code class="python">def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -&gt; Tuple[Dict, float, float, float]:
     &#34;&#34;&#34;
         Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
@@ -329,6 +362,14 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
             2. recall najlepszego wyniku
             3. precission najlepszego wyniku
             4. f1 najlepszego wyniku
+
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            labels (List[bool]): _description_
+            parameters (Dict): _description_
+
+        Returns:
+            Tuple[Dict, float, float, float]: _description_
     &#34;&#34;&#34;
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
     for no_size in range(*parameters[&#39;NOsize&#39;]):
@@ -376,17 +417,37 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
 </details>
 </dd>
 <dt id="OeSNN-AD.main.plots"><code class="name flex">
-<span>def <span class="ident">plots</span></span>(<span>stream: numpy.ndarray, best_parameters: dict, labels: numpy.ndarray, stream_name: str) ‑> None</span>
+<span>def <span class="ident">plots</span></span>(<span>stream: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], best_parameters: dict, labels: numpy.ndarray[typing.Any, numpy.dtype[numpy.bool_]], stream_name: str) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.</p></div>
+<div class="desc"><p>Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>best_parameters</code></strong> :&ensp;<code>dict</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>npt.NDArray[np.bool_]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>stream_name</code></strong> :&ensp;<code>str</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def plots(stream: np.ndarray, best_parameters: dict, labels: np.ndarray, stream_name: str) -&gt; None:
+<pre><code class="python">def plots(stream: npt.NDArray[np.float64],
+          best_parameters: dict,
+          labels: npt.NDArray[np.bool_],
+          stream_name: str) -&gt; None:
     &#34;&#34;&#34;
         Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+        
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            best_parameters (dict): _description_
+            labels (npt.NDArray[np.bool_]): _description_
+            stream_name (str): _description_
     &#34;&#34;&#34;
     oesnn_ad = OeSNNAD(stream,
                        window_size=best_parameters[&#39;Wsize&#39;],
@@ -437,7 +498,8 @@ które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
                green_plus, blue_square, black_dot, red_triangle])
     plt.xlabel(&#34;Timestamp&#34;)
     plt.ylabel(&#34;Input value (X)&#34;)
-    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)</code></pre>
+    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)
+    plt.close()</code></pre>
 </details>
 </dd>
 </dl>

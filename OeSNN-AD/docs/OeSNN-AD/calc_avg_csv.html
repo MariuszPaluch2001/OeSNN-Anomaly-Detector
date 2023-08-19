@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>OeSNN-AD API documentation</title>
-<meta name="description" content="Pakiet OeSNN-AD." />
+<title>OeSNN-AD.calc_avg_csv API documentation</title>
+<meta name="description" content="Skrypt do wyliczania średnich dla danych datasetów." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,72 +19,34 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>OeSNN-AD</code></h1>
+<h1 class="title">Module <code>OeSNN-AD.calc_avg_csv</code></h1>
 </header>
 <section id="section-intro">
-<p>Pakiet OeSNN-AD.</p>
+<p>Skrypt do wyliczania średnich dla danych datasetów.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Pakiet OeSNN-AD.
-&#34;&#34;&#34;</code></pre>
+    Skrypt do wyliczania średnich dla danych datasetów.
+&#34;&#34;&#34;
+
+import pandas as pd
+
+df = pd.read_csv(&#34;results/nab_result.csv&#34;)
+
+res = df.groupby(&#34;dataset&#34;)[[&#39;f1&#39;, &#39;recall&#39;, &#39;precission&#39;]].mean()
+
+print(res)
+
+df = pd.read_csv(&#34;results/yahoo_result.csv&#34;)
+
+res = df.groupby(&#34;dataset&#34;)[[&#39;f1&#39;, &#39;recall&#39;, &#39;precission&#39;]].mean()
+
+print(res)</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="OeSNN-AD.calc_avg_csv" href="calc_avg_csv.html">OeSNN-AD.calc_avg_csv</a></code></dt>
-<dd>
-<div class="desc"><p>Skrypt do wyliczania średnich dla danych datasetów.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.grf_init" href="grf_init.html">OeSNN-AD.grf_init</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł zawierający implementację i definicję klasy GRFInit.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.layer" href="layer.html">OeSNN-AD.layer</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł zawiera definicję i implementację klas warstw.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.main" href="main.html">OeSNN-AD.main</a></code></dt>
-<dd>
-<div class="desc"><p>Główny moduł projektu, w którym testowana jest efektywność modelu …</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.neuron" href="neuron.html">OeSNN-AD.neuron</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł zawiera definicje i implementacje neuronów.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.oesnn_ad" href="oesnn_ad.html">OeSNN-AD.oesnn_ad</a></code></dt>
-<dd>
-<div class="desc"><p>Module zawiera główną klasę algorytmu, stanowiącą główny interfejs modelu.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.test_grf" href="test_grf.html">OeSNN-AD.test_grf</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł testujący metody klas GRFInit.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.test_layers" href="test_layers.html">OeSNN-AD.test_layers</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł testujący metody klas Layer.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.test_neuron" href="test_neuron.html">OeSNN-AD.test_neuron</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł testujący metody klas neuronów.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.test_oesnn_ad" href="test_oesnn_ad.html">OeSNN-AD.test_oesnn_ad</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł testujący główny flow algorytmu.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.test_utils" href="test_utils.html">OeSNN-AD.test_utils</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł testujący wybrane funkcje z modułu utils.</p></div>
-</dd>
-<dt><code class="name"><a title="OeSNN-AD.utils" href="utils.html">OeSNN-AD.utils</a></code></dt>
-<dd>
-<div class="desc"><p>Moduł zawiera pomocnicze funkcje, które nie mogły znaleźć się w innych modułach.
-Głównie znajdują się tutaj funkcje do odczytywania danych z plików, …</p></div>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -99,20 +61,9 @@ Głównie znajdują się tutaj funkcje do odczytywania danych z plików, …</p>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="OeSNN-AD.calc_avg_csv" href="calc_avg_csv.html">OeSNN-AD.calc_avg_csv</a></code></li>
-<li><code><a title="OeSNN-AD.grf_init" href="grf_init.html">OeSNN-AD.grf_init</a></code></li>
-<li><code><a title="OeSNN-AD.layer" href="layer.html">OeSNN-AD.layer</a></code></li>
-<li><code><a title="OeSNN-AD.main" href="main.html">OeSNN-AD.main</a></code></li>
-<li><code><a title="OeSNN-AD.neuron" href="neuron.html">OeSNN-AD.neuron</a></code></li>
-<li><code><a title="OeSNN-AD.oesnn_ad" href="oesnn_ad.html">OeSNN-AD.oesnn_ad</a></code></li>
-<li><code><a title="OeSNN-AD.test_grf" href="test_grf.html">OeSNN-AD.test_grf</a></code></li>
-<li><code><a title="OeSNN-AD.test_layers" href="test_layers.html">OeSNN-AD.test_layers</a></code></li>
-<li><code><a title="OeSNN-AD.test_neuron" href="test_neuron.html">OeSNN-AD.test_neuron</a></code></li>
-<li><code><a title="OeSNN-AD.test_oesnn_ad" href="test_oesnn_ad.html">OeSNN-AD.test_oesnn_ad</a></code></li>
-<li><code><a title="OeSNN-AD.test_utils" href="test_utils.html">OeSNN-AD.test_utils</a></code></li>
-<li><code><a title="OeSNN-AD.utils" href="utils.html">OeSNN-AD.utils</a></code></li>
+<li><code><a title="OeSNN-AD" href="index.html">OeSNN-AD</a></code></li>
 </ul>
 </li>
 </ul>

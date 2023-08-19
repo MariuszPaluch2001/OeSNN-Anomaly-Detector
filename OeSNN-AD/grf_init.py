@@ -16,6 +16,16 @@ class GRFInit:
 
     def __init__(self, window: npt.NDArray[np.float64], input_size: int, ts_factor: float,
                  mod: int, beta: float) -> None:
+        """
+            _summary_
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                input_size (int): _description_
+                ts_factor (float): _description_
+                mod (int): _description_
+                beta (float): _description_
+        """
         self.min_w_i: float = window.min()
         self.max_w_i: float = window.max()
         self.window_head: float = window[-1]
@@ -28,6 +38,9 @@ class GRFInit:
     def _get_width_vec(self) -> npt.NDArray[np.float64]:
         """
             Metoda do obliczania wektora szerokości GRF dla wszystkich neuronów w warstwie.
+
+            Returns:
+                npt.NDArray[np.float64]: _description_
         """
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
@@ -38,6 +51,9 @@ class GRFInit:
     def _get_center_vec(self) -> npt.NDArray[np.float64]:
         """
             Metoda od obliczania wektora centrów GRF dla wszystkich neuronów w warstwie.
+
+            Returns:
+                npt.NDArray[np.float64]: _description_
         """
         return (self.min_w_i + ((2*np.arange(0, self.input_size, 1) - 3) / 2) *
                 (self.max_w_i - self.min_w_i) / (self.input_size - 2))
@@ -47,6 +63,13 @@ class GRFInit:
                         center_v: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         """
             Metoda do obliczania wektora ekscytacji GRF dla wszystkich neuronów w warstwie.
+
+            Args:
+                width_v (npt.NDArray[np.float64]): _description_
+                center_v (npt.NDArray[np.float64]): _description_
+
+            Returns:
+                npt.NDArray[np.float64]: _description_
         """
         rep_xt = np.repeat(self.window_head, self.input_size)
         return np.exp(-0.5 * ((rep_xt - center_v) / width_v) ** 2)
@@ -55,6 +78,12 @@ class GRFInit:
         """
             Metoda do obliczania wektora czasu wystrzeliwania GRF dla 
             wszystkich neuronów w warstwie.
+
+            Args:
+                excitation (npt.NDArray[np.float64]): _description_
+
+            Returns:
+                npt.NDArray[np.float64]: _description_
         """
         return self.ts_factor * (np.ones(self.input_size) - excitation)
 
@@ -62,6 +91,12 @@ class GRFInit:
         """
             Metoda do obliczania wektora kolejności wystrzeliwania GRF dla 
             wszystkich neuronów w warstwie.
+            
+            Args:
+                firings_times (npt.NDArray[np.float64]): _description_
+
+            Returns:
+                npt.NDArray[np.intp]: _description_
         """
         arg_sorted = np.argsort(firings_times)
         orders = np.empty_like(arg_sorted)
@@ -69,9 +104,12 @@ class GRFInit:
         return orders
 
     def get_order(self) -> npt.NDArray[np.intp]:
-        """
+        """            
             Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
             wszystkich neuronów w warstwie. 
+
+            Returns:
+                npt.NDArray[np.intp]: _description_
         """
         width_v = self._get_width_vec()
         center_v = self._get_center_vec()

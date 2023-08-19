@@ -33,6 +33,8 @@
 
 from typing import List, Tuple, Generator
 import numpy as np
+import numpy.typing as npt
+
 
 from neuron import Neuron
 from neuron import InputNeuron, OutputNeuron
@@ -52,18 +54,45 @@ class Layer:
     &#34;&#34;&#34;
 
     def __init__(self, num_neurons: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                num_neurons (int): _description_
+        &#34;&#34;&#34;
         self.num_neurons = num_neurons
 
         self.neurons: List[Neuron]
 
     def __iter__(self) -&gt; Generator[Neuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Yields:
+                Generator[Neuron, None, None]: _description_
+        &#34;&#34;&#34;
         for neuron in self.neurons:
             yield neuron
 
     def __len__(self) -&gt; int:
+        &#34;&#34;&#34;
+            _summary_
+
+            Returns:
+                int: _description_
+        &#34;&#34;&#34;
         return len(self.neurons)
 
     def __getitem__(self, index: int) -&gt; Neuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                Neuron: _description_
+        &#34;&#34;&#34;
         return self.neurons[index]
 
 
@@ -76,31 +105,67 @@ class InputLayer(Layer):
     &#34;&#34;&#34;
 
     def __init__(self, input_size: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                input_size (int): _description_
+        &#34;&#34;&#34;
         super().__init__(input_size)
 
         self.neurons: List[InputNeuron] = [
             InputNeuron(0.0, id) for id in range(input_size)]
 
     def __iter__(self) -&gt; Generator[InputNeuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Yields:
+                Generator[InputNeuron, None, None]: _description_
+        &#34;&#34;&#34;
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
         for neuron in neurons:
             yield neuron
 
     def __getitem__(self, index: int) -&gt; InputNeuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                InputNeuron: _description_
+        &#34;&#34;&#34;
         return super().__getitem__(index)
 
     @property
-    def orders(self):
-        &#34;&#34;&#34;
+    def orders(self) -&gt; np.vectorize:
+        &#34;&#34;&#34; 
             Atrybut, który złącza kolejność wystrzylewania neuronów
             w jedną listę.
-        &#34;&#34;&#34;
-        return np.array([neuron.order for neuron in self.neurons])
 
-    def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -&gt; None:
+            Returns:
+                np.vectorize: _description_
         &#34;&#34;&#34;
+
+        vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
+        return vectorized_get_order(self.neurons)
+
+    def set_orders(self,
+                   window: npt.NDArray[np.float64],
+                   ts_coef: float,
+                   mod: float,
+                   beta: float) -&gt; None:
+        &#34;&#34;&#34;  
             Metoda służy do ustawienia dla każdego neuronu wejściowego
             nowej pozycji wystrzeliwania w warstwie.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                ts_coef (float): _description_
+                mod (float): _description_
+                beta (float): _description_
         &#34;&#34;&#34;
         grf = GRFInit(window, self.num_neurons, ts_coef, mod, beta)
 
@@ -117,23 +182,61 @@ class OutputLayer(Layer):
     &#34;&#34;&#34;
 
     def __init__(self, max_output_size: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                max_output_size (int): _description_
+        &#34;&#34;&#34;
         super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[OutputNeuron] = []
 
     def __iter__(self) -&gt; Generator[OutputNeuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Returns:
+                _type_: _description_
+
+            Yields:
+                Generator[OutputNeuron, None, None]: _description_
+        &#34;&#34;&#34;
         return super().__iter__()
 
     def __getitem__(self, index: int) -&gt; OutputNeuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                OutputNeuron: _description_
+        &#34;&#34;&#34;
         return super().__getitem__(index)
 
-    def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
-                       c_coef: float, neuron_age: int) -&gt; OutputNeuron:
+    def make_candidate(self,
+                       window: npt.NDArray[np.float64],
+                       order: npt.NDArray[np.intp],
+                       mod: float,
+                       c_coef: float,
+                       neuron_age: int) -&gt; OutputNeuron:
         &#34;&#34;&#34;
             Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                order (npt.NDArray[np.intp]): _description_
+                mod (float): _description_
+                c_coef (float): _description_
+                neuron_age (int): _description_
+
+            Returns:
+                OutputNeuron: _description_
         &#34;&#34;&#34;
-        weights = np.array([mod ** o for o in order])
+        weights = mod ** order
         output_value = np.random.normal(np.mean(window), np.std(window))
         psp_max = (weights * (mod ** order)).sum()
         gamma = c_coef * psp_max
@@ -143,29 +246,37 @@ class OutputLayer(Layer):
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
-        &#34;&#34;&#34;
+                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+        &#34;&#34;&#34; 
             Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
             neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
-            None, np.inf.
+            false, np.inf.
+
+            Args:
+                candidate_neuron (OutputNeuron): _description_
+
+            Returns:
+                Tuple[OutputNeuron | bool, float]: _description_
         &#34;&#34;&#34;
         if not self.neurons:
-            return None, np.Inf
+            return False, np.Inf
 
         def dist_f(neuron: OutputNeuron) -&gt; float:
             return np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
-
         return most_similar_neuron, min_distance
 
     def add_new_neuron(self, neuron: OutputNeuron) -&gt; None:
-        &#34;&#34;&#34;
+        &#34;&#34;&#34; 
             Metoda służy do dodawania nowego nowego neuronu, gdy
             liczba neuronów w warstwie jest poniżej maksymalnej.
 
             Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
             num neurons.
+
+            Args:
+                neuron (OutputNeuron): _description_
         &#34;&#34;&#34;
         self.neurons.append(neuron)
         self.num_neurons += 1
@@ -175,13 +286,16 @@ class OutputLayer(Layer):
             Metoda służy do zastąpywania najstaszego neuronu w warstwie
             przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
             jest maksymalna.
+
+            Args:
+                candidate (OutputNeuron): _description_
         &#34;&#34;&#34;
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.remove(oldest)
         self.neurons.append(candidate)
 
     def reset_psp(self) -&gt; None:
-        &#34;&#34;&#34;
+        &#34;&#34;&#34; 
             Metoda zerująca potencjał post-synaptyczny wszystkich neuronów 
             w warstwie.
         &#34;&#34;&#34;
@@ -205,7 +319,13 @@ class OutputLayer(Layer):
 <dd>
 <div class="desc"><p>Klasa implementująca warstwę wejściową, dziedzicząca po bazowej
 klasie Layer.</p>
-<p>Klasa przechowuje i obsługuje listę neuronów wejściowych.</p></div>
+<p>Klasa przechowuje i obsługuje listę neuronów wejściowych.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>input_size</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -219,31 +339,67 @@ klasie Layer.</p>
     &#34;&#34;&#34;
 
     def __init__(self, input_size: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                input_size (int): _description_
+        &#34;&#34;&#34;
         super().__init__(input_size)
 
         self.neurons: List[InputNeuron] = [
             InputNeuron(0.0, id) for id in range(input_size)]
 
     def __iter__(self) -&gt; Generator[InputNeuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Yields:
+                Generator[InputNeuron, None, None]: _description_
+        &#34;&#34;&#34;
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
         for neuron in neurons:
             yield neuron
 
     def __getitem__(self, index: int) -&gt; InputNeuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                InputNeuron: _description_
+        &#34;&#34;&#34;
         return super().__getitem__(index)
 
     @property
-    def orders(self):
-        &#34;&#34;&#34;
+    def orders(self) -&gt; np.vectorize:
+        &#34;&#34;&#34; 
             Atrybut, który złącza kolejność wystrzylewania neuronów
             w jedną listę.
-        &#34;&#34;&#34;
-        return np.array([neuron.order for neuron in self.neurons])
 
-    def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -&gt; None:
+            Returns:
+                np.vectorize: _description_
         &#34;&#34;&#34;
+
+        vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
+        return vectorized_get_order(self.neurons)
+
+    def set_orders(self,
+                   window: npt.NDArray[np.float64],
+                   ts_coef: float,
+                   mod: float,
+                   beta: float) -&gt; None:
+        &#34;&#34;&#34;  
             Metoda służy do ustawienia dla każdego neuronu wejściowego
             nowej pozycji wystrzeliwania w warstwie.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                ts_coef (float): _description_
+                mod (float): _description_
+                beta (float): _description_
         &#34;&#34;&#34;
         grf = GRFInit(window, self.num_neurons, ts_coef, mod, beta)
 
@@ -256,40 +412,71 @@ klasie Layer.</p>
 </ul>
 <h3>Instance variables</h3>
 <dl>
-<dt id="OeSNN-AD.layer.InputLayer.orders"><code class="name">var <span class="ident">orders</span></code></dt>
+<dt id="OeSNN-AD.layer.InputLayer.orders"><code class="name">var <span class="ident">orders</span> : numpy.vectorize</code></dt>
 <dd>
 <div class="desc"><p>Atrybut, który złącza kolejność wystrzylewania neuronów
-w jedną listę.</p></div>
+w jedną listę.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.vectorize</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
-def orders(self):
-    &#34;&#34;&#34;
+def orders(self) -&gt; np.vectorize:
+    &#34;&#34;&#34; 
         Atrybut, który złącza kolejność wystrzylewania neuronów
         w jedną listę.
+
+        Returns:
+            np.vectorize: _description_
     &#34;&#34;&#34;
-    return np.array([neuron.order for neuron in self.neurons])</code></pre>
+
+    vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
+    return vectorized_get_order(self.neurons)</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
 <dt id="OeSNN-AD.layer.InputLayer.set_orders"><code class="name flex">
-<span>def <span class="ident">set_orders</span></span>(<span>self, window: numpy.ndarray, ts_coef: float, mod: float, beta: float) ‑> None</span>
+<span>def <span class="ident">set_orders</span></span>(<span>self, window: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], ts_coef: float, mod: float, beta: float) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Metoda służy do ustawienia dla każdego neuronu wejściowego
-nowej pozycji wystrzeliwania w warstwie.</p></div>
+nowej pozycji wystrzeliwania w warstwie.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>window</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>ts_coef</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>mod</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>beta</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def set_orders(self, window: np.ndarray, ts_coef: float, mod: float, beta: float) -&gt; None:
-    &#34;&#34;&#34;
+<pre><code class="python">def set_orders(self,
+               window: npt.NDArray[np.float64],
+               ts_coef: float,
+               mod: float,
+               beta: float) -&gt; None:
+    &#34;&#34;&#34;  
         Metoda służy do ustawienia dla każdego neuronu wejściowego
         nowej pozycji wystrzeliwania w warstwie.
+
+        Args:
+            window (npt.NDArray[np.float64]): _description_
+            ts_coef (float): _description_
+            mod (float): _description_
+            beta (float): _description_
     &#34;&#34;&#34;
     grf = GRFInit(window, self.num_neurons, ts_coef, mod, beta)
 
@@ -309,7 +496,13 @@ nowej pozycji wystrzeliwania w warstwie.</p></div>
 implementuje także metody magiczne umożliwiające iterowanie się,
 indeksowanie, a także liczenie ilości neuronów z pomocą wbudowanej
 funkcji len z poziomu obiektu, bez odwoływania się do atrybutu neurons.</p>
-<p>Nie powinna być tworzona jako osobny obiekt.</p></div>
+<p>Nie powinna być tworzona jako osobny obiekt.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>num_neurons</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -327,18 +520,45 @@ funkcji len z poziomu obiektu, bez odwoływania się do atrybutu neurons.</p>
     &#34;&#34;&#34;
 
     def __init__(self, num_neurons: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                num_neurons (int): _description_
+        &#34;&#34;&#34;
         self.num_neurons = num_neurons
 
         self.neurons: List[Neuron]
 
     def __iter__(self) -&gt; Generator[Neuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Yields:
+                Generator[Neuron, None, None]: _description_
+        &#34;&#34;&#34;
         for neuron in self.neurons:
             yield neuron
 
     def __len__(self) -&gt; int:
+        &#34;&#34;&#34;
+            _summary_
+
+            Returns:
+                int: _description_
+        &#34;&#34;&#34;
         return len(self.neurons)
 
     def __getitem__(self, index: int) -&gt; Neuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                Neuron: _description_
+        &#34;&#34;&#34;
         return self.neurons[index]</code></pre>
 </details>
 <h3>Subclasses</h3>
@@ -354,7 +574,13 @@ funkcji len z poziomu obiektu, bez odwoływania się do atrybutu neurons.</p>
 <dd>
 <div class="desc"><p>Klasa implementująca warstwę wyjściową, dziedzicząca po bazowej
 klasie Layer.</p>
-<p>Klasa przechowuje i obsługuje listę neuronów wyjściowych.</p></div>
+<p>Klasa przechowuje i obsługuje listę neuronów wyjściowych.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>max_output_size</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -368,23 +594,61 @@ klasie Layer.</p>
     &#34;&#34;&#34;
 
     def __init__(self, max_output_size: int) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                max_output_size (int): _description_
+        &#34;&#34;&#34;
         super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[OutputNeuron] = []
 
     def __iter__(self) -&gt; Generator[OutputNeuron, None, None]:
+        &#34;&#34;&#34;
+            _summary_
+
+            Returns:
+                _type_: _description_
+
+            Yields:
+                Generator[OutputNeuron, None, None]: _description_
+        &#34;&#34;&#34;
         return super().__iter__()
 
     def __getitem__(self, index: int) -&gt; OutputNeuron:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                OutputNeuron: _description_
+        &#34;&#34;&#34;
         return super().__getitem__(index)
 
-    def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
-                       c_coef: float, neuron_age: int) -&gt; OutputNeuron:
+    def make_candidate(self,
+                       window: npt.NDArray[np.float64],
+                       order: npt.NDArray[np.intp],
+                       mod: float,
+                       c_coef: float,
+                       neuron_age: int) -&gt; OutputNeuron:
         &#34;&#34;&#34;
             Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                order (npt.NDArray[np.intp]): _description_
+                mod (float): _description_
+                c_coef (float): _description_
+                neuron_age (int): _description_
+
+            Returns:
+                OutputNeuron: _description_
         &#34;&#34;&#34;
-        weights = np.array([mod ** o for o in order])
+        weights = mod ** order
         output_value = np.random.normal(np.mean(window), np.std(window))
         psp_max = (weights * (mod ** order)).sum()
         gamma = c_coef * psp_max
@@ -394,29 +658,37 @@ klasie Layer.</p>
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
-        &#34;&#34;&#34;
+                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+        &#34;&#34;&#34; 
             Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
             neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
-            None, np.inf.
+            false, np.inf.
+
+            Args:
+                candidate_neuron (OutputNeuron): _description_
+
+            Returns:
+                Tuple[OutputNeuron | bool, float]: _description_
         &#34;&#34;&#34;
         if not self.neurons:
-            return None, np.Inf
+            return False, np.Inf
 
         def dist_f(neuron: OutputNeuron) -&gt; float:
             return np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
-
         return most_similar_neuron, min_distance
 
     def add_new_neuron(self, neuron: OutputNeuron) -&gt; None:
-        &#34;&#34;&#34;
+        &#34;&#34;&#34; 
             Metoda służy do dodawania nowego nowego neuronu, gdy
             liczba neuronów w warstwie jest poniżej maksymalnej.
 
             Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
             num neurons.
+
+            Args:
+                neuron (OutputNeuron): _description_
         &#34;&#34;&#34;
         self.neurons.append(neuron)
         self.num_neurons += 1
@@ -426,13 +698,16 @@ klasie Layer.</p>
             Metoda służy do zastąpywania najstaszego neuronu w warstwie
             przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
             jest maksymalna.
+
+            Args:
+                candidate (OutputNeuron): _description_
         &#34;&#34;&#34;
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.remove(oldest)
         self.neurons.append(candidate)
 
     def reset_psp(self) -&gt; None:
-        &#34;&#34;&#34;
+        &#34;&#34;&#34; 
             Metoda zerująca potencjał post-synaptyczny wszystkich neuronów 
             w warstwie.
         &#34;&#34;&#34;
@@ -452,67 +727,119 @@ klasie Layer.</p>
 <div class="desc"><p>Metoda służy do dodawania nowego nowego neuronu, gdy
 liczba neuronów w warstwie jest poniżej maksymalnej.</p>
 <p>Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
-num neurons.</p></div>
+num neurons.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>neuron</code></strong> :&ensp;<code>OutputNeuron</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_new_neuron(self, neuron: OutputNeuron) -&gt; None:
-    &#34;&#34;&#34;
+    &#34;&#34;&#34; 
         Metoda służy do dodawania nowego nowego neuronu, gdy
         liczba neuronów w warstwie jest poniżej maksymalnej.
 
         Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
         num neurons.
+
+        Args:
+            neuron (OutputNeuron): _description_
     &#34;&#34;&#34;
     self.neurons.append(neuron)
     self.num_neurons += 1</code></pre>
 </details>
 </dd>
 <dt id="OeSNN-AD.layer.OutputLayer.find_most_similar"><code class="name flex">
-<span>def <span class="ident">find_most_similar</span></span>(<span>self, candidate_neuron: neuron.OutputNeuron) ‑> Tuple[neuron.OutputNeuron | None, float]</span>
+<span>def <span class="ident">find_most_similar</span></span>(<span>self, candidate_neuron: neuron.OutputNeuron) ‑> Tuple[neuron.OutputNeuron | bool, float]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
 neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę
-None, np.inf.</p></div>
+false, np.inf.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>candidate_neuron</code></strong> :&ensp;<code>OutputNeuron</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>Tuple[OutputNeuron | bool, float]: <em>description</em></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def find_most_similar(self,
-                      candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
-    &#34;&#34;&#34;
+                      candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+    &#34;&#34;&#34; 
         Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
         neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
-        None, np.inf.
+        false, np.inf.
+
+        Args:
+            candidate_neuron (OutputNeuron): _description_
+
+        Returns:
+            Tuple[OutputNeuron | bool, float]: _description_
     &#34;&#34;&#34;
     if not self.neurons:
-        return None, np.Inf
+        return False, np.Inf
 
     def dist_f(neuron: OutputNeuron) -&gt; float:
         return np.linalg.norm(neuron.weights - candidate_neuron.weights)
     most_similar_neuron = min(self.neurons, key=dist_f)
     min_distance = dist_f(most_similar_neuron)
-
     return most_similar_neuron, min_distance</code></pre>
 </details>
 </dd>
 <dt id="OeSNN-AD.layer.OutputLayer.make_candidate"><code class="name flex">
-<span>def <span class="ident">make_candidate</span></span>(<span>self, window: numpy.ndarray, order: numpy.ndarray, mod: float, c_coef: float, neuron_age: int) ‑> neuron.OutputNeuron</span>
+<span>def <span class="ident">make_candidate</span></span>(<span>self, window: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], order: numpy.ndarray[typing.Any, numpy.dtype[numpy.int64]], mod: float, c_coef: float, neuron_age: int) ‑> neuron.OutputNeuron</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.</p></div>
+<div class="desc"><p>Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>window</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>order</code></strong> :&ensp;<code>npt.NDArray[np.intp]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>mod</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>c_coef</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>neuron_age</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>OutputNeuron</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def make_candidate(self, window: np.ndarray, order: np.ndarray, mod: float,
-                   c_coef: float, neuron_age: int) -&gt; OutputNeuron:
+<pre><code class="python">def make_candidate(self,
+                   window: npt.NDArray[np.float64],
+                   order: npt.NDArray[np.intp],
+                   mod: float,
+                   c_coef: float,
+                   neuron_age: int) -&gt; OutputNeuron:
     &#34;&#34;&#34;
         Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
+
+        Args:
+            window (npt.NDArray[np.float64]): _description_
+            order (npt.NDArray[np.intp]): _description_
+            mod (float): _description_
+            c_coef (float): _description_
+            neuron_age (int): _description_
+
+        Returns:
+            OutputNeuron: _description_
     &#34;&#34;&#34;
-    weights = np.array([mod ** o for o in order])
+    weights = mod ** order
     output_value = np.random.normal(np.mean(window), np.std(window))
     psp_max = (weights * (mod ** order)).sum()
     gamma = c_coef * psp_max
@@ -528,7 +855,12 @@ None, np.inf.</p></div>
 <dd>
 <div class="desc"><p>Metoda służy do zastąpywania najstaszego neuronu w warstwie
 przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
-jest maksymalna.</p></div>
+jest maksymalna.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>candidate</code></strong> :&ensp;<code>OutputNeuron</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -538,6 +870,9 @@ jest maksymalna.</p></div>
         Metoda służy do zastąpywania najstaszego neuronu w warstwie
         przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
         jest maksymalna.
+
+        Args:
+            candidate (OutputNeuron): _description_
     &#34;&#34;&#34;
     oldest = min(self.neurons, key=lambda n: n.addition_time)
     self.neurons.remove(oldest)
@@ -555,7 +890,7 @@ w warstwie.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reset_psp(self) -&gt; None:
-    &#34;&#34;&#34;
+    &#34;&#34;&#34; 
         Metoda zerująca potencjał post-synaptyczny wszystkich neuronów 
         w warstwie.
     &#34;&#34;&#34;

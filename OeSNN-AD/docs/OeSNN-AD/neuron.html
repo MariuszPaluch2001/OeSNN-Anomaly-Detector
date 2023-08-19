@@ -31,6 +31,7 @@
     Moduł zawiera definicje i implementacje neuronów.
 &#34;&#34;&#34;
 import numpy as np
+import numpy.typing as npt
 
 
 class Neuron:
@@ -39,8 +40,9 @@ class Neuron:
     &#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        pass
-
+        &#34;&#34;&#34;
+            Bazowy konstruktor neuronu
+        &#34;&#34;&#34;
 
 class InputNeuron(Neuron):
     &#34;&#34;&#34;
@@ -48,6 +50,14 @@ class InputNeuron(Neuron):
     &#34;&#34;&#34;
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                firing_time (float): _description_
+                neuron_id (int, optional): _description_. Defaults to 0.
+                order (int, optional): _description_. Defaults to 0.
+        &#34;&#34;&#34;
         super().__init__()
         self.neuron_id = neuron_id
         self.firing_time = firing_time
@@ -56,6 +66,9 @@ class InputNeuron(Neuron):
     def set_order(self, new_order: int):
         &#34;&#34;&#34;
             Setter dla atrybtu order.
+            
+            Args:
+                new_order (int): _description_
         &#34;&#34;&#34;
         self.order = new_order
 
@@ -65,9 +78,21 @@ class OutputNeuron(Neuron):
         Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
     &#34;&#34;&#34;
 
-    def __init__(self, weights: np.ndarray, gamma: float,
+    def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                weights (npt.NDArray[np.float64]): _description_
+                gamma (float): _description_
+                output_value (float): _description_
+                modification_count (float): _description_
+                addition_time (float): _description_
+                PSP (float): _description_
+                max_PSP (float): _description_
+        &#34;&#34;&#34;
         super().__init__()
         self.weights = weights
         self.gamma = gamma
@@ -78,12 +103,24 @@ class OutputNeuron(Neuron):
         self.max_psp = max_PSP
 
     def __getitem__(self, index: int) -&gt; float:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                float: _description_
+        &#34;&#34;&#34;
         return self.weights[index]
 
     def update_neuron(self, candidate_neuron: &#39;OutputNeuron&#39;) -&gt; None:
         &#34;&#34;&#34;
             Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
             przekazywanego jako parametr.
+
+            Args:
+                candidate_neuron (OutputNeuron): _description_
         &#34;&#34;&#34;
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)
@@ -93,7 +130,41 @@ class OutputNeuron(Neuron):
         self.addition_time = ((
             candidate_neuron.addition_time + self.modification_count * self.addition_time) /
             (self.modification_count + 1))
-        self.modification_count += 1</code></pre>
+        self.modification_count += 1
+
+    def error_correction(self, window_head: float, ksi: float) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                window_head (float): _description_
+                ksi (float): _description_
+        &#34;&#34;&#34;
+        # TODO: Dodać testy do tego
+        self.output_value += (window_head - self.output_value) * ksi
+
+    def error_calc(self, window_head: float) -&gt; float:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                window_head (float): _description_
+
+            Returns:
+                float: _description_
+        &#34;&#34;&#34;
+        # TODO: dodaj testy do tego
+        return np.abs(window_head - self.output_value)
+
+    def update_psp(self, psp_update : float):
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                psp_update (float): _description_
+        &#34;&#34;&#34;
+        # TODO dodaj testy do tego
+        self.psp += psp_update</code></pre>
 </details>
 </section>
 <section>
@@ -110,7 +181,17 @@ class OutputNeuron(Neuron):
 <span>(</span><span>firing_time: float, neuron_id: int = 0, order: int = 0)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p></div>
+<div class="desc"><p>Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>firing_time</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>neuron_id</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd><em>description</em>. Defaults to 0.</dd>
+<dt><strong><code>order</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd><em>description</em>. Defaults to 0.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -121,6 +202,14 @@ class OutputNeuron(Neuron):
     &#34;&#34;&#34;
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                firing_time (float): _description_
+                neuron_id (int, optional): _description_. Defaults to 0.
+                order (int, optional): _description_. Defaults to 0.
+        &#34;&#34;&#34;
         super().__init__()
         self.neuron_id = neuron_id
         self.firing_time = firing_time
@@ -129,6 +218,9 @@ class OutputNeuron(Neuron):
     def set_order(self, new_order: int):
         &#34;&#34;&#34;
             Setter dla atrybtu order.
+            
+            Args:
+                new_order (int): _description_
         &#34;&#34;&#34;
         self.order = new_order</code></pre>
 </details>
@@ -142,7 +234,12 @@ class OutputNeuron(Neuron):
 <span>def <span class="ident">set_order</span></span>(<span>self, new_order: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Setter dla atrybtu order.</p></div>
+<div class="desc"><p>Setter dla atrybtu order.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>new_order</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -150,6 +247,9 @@ class OutputNeuron(Neuron):
 <pre><code class="python">def set_order(self, new_order: int):
     &#34;&#34;&#34;
         Setter dla atrybtu order.
+        
+        Args:
+            new_order (int): _description_
     &#34;&#34;&#34;
     self.order = new_order</code></pre>
 </details>
@@ -160,7 +260,8 @@ class OutputNeuron(Neuron):
 <span>class <span class="ident">Neuron</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa bazowa neuronu.</p></div>
+<div class="desc"><p>Klasa bazowa neuronu.</p>
+<p>Bazowy konstruktor neuronu</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -171,7 +272,9 @@ class OutputNeuron(Neuron):
     &#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        pass</code></pre>
+        &#34;&#34;&#34;
+            Bazowy konstruktor neuronu
+        &#34;&#34;&#34;</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -181,10 +284,28 @@ class OutputNeuron(Neuron):
 </dd>
 <dt id="OeSNN-AD.neuron.OutputNeuron"><code class="flex name class">
 <span>class <span class="ident">OutputNeuron</span></span>
-<span>(</span><span>weights: numpy.ndarray, gamma: float, output_value: float, modification_count: float, addition_time: float, PSP: float, max_PSP: float)</span>
+<span>(</span><span>weights: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], gamma: float, output_value: float, modification_count: float, addition_time: float, PSP: float, max_PSP: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p></div>
+<div class="desc"><p>Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>weights</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>gamma</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>output_value</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>modification_count</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>addition_time</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>PSP</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>max_PSP</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -194,9 +315,21 @@ class OutputNeuron(Neuron):
         Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
     &#34;&#34;&#34;
 
-    def __init__(self, weights: np.ndarray, gamma: float,
+    def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                weights (npt.NDArray[np.float64]): _description_
+                gamma (float): _description_
+                output_value (float): _description_
+                modification_count (float): _description_
+                addition_time (float): _description_
+                PSP (float): _description_
+                max_PSP (float): _description_
+        &#34;&#34;&#34;
         super().__init__()
         self.weights = weights
         self.gamma = gamma
@@ -207,12 +340,24 @@ class OutputNeuron(Neuron):
         self.max_psp = max_PSP
 
     def __getitem__(self, index: int) -&gt; float:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                index (int): _description_
+
+            Returns:
+                float: _description_
+        &#34;&#34;&#34;
         return self.weights[index]
 
     def update_neuron(self, candidate_neuron: &#39;OutputNeuron&#39;) -&gt; None:
         &#34;&#34;&#34;
             Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
             przekazywanego jako parametr.
+
+            Args:
+                candidate_neuron (OutputNeuron): _description_
         &#34;&#34;&#34;
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)
@@ -222,7 +367,41 @@ class OutputNeuron(Neuron):
         self.addition_time = ((
             candidate_neuron.addition_time + self.modification_count * self.addition_time) /
             (self.modification_count + 1))
-        self.modification_count += 1</code></pre>
+        self.modification_count += 1
+
+    def error_correction(self, window_head: float, ksi: float) -&gt; None:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                window_head (float): _description_
+                ksi (float): _description_
+        &#34;&#34;&#34;
+        # TODO: Dodać testy do tego
+        self.output_value += (window_head - self.output_value) * ksi
+
+    def error_calc(self, window_head: float) -&gt; float:
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                window_head (float): _description_
+
+            Returns:
+                float: _description_
+        &#34;&#34;&#34;
+        # TODO: dodaj testy do tego
+        return np.abs(window_head - self.output_value)
+
+    def update_psp(self, psp_update : float):
+        &#34;&#34;&#34;
+            _summary_
+
+            Args:
+                psp_update (float): _description_
+        &#34;&#34;&#34;
+        # TODO dodaj testy do tego
+        self.psp += psp_update</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -230,12 +409,78 @@ class OutputNeuron(Neuron):
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="OeSNN-AD.neuron.OutputNeuron.error_calc"><code class="name flex">
+<span>def <span class="ident">error_calc</span></span>(<span>self, window_head: float) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>window_head</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error_calc(self, window_head: float) -&gt; float:
+    &#34;&#34;&#34;
+        _summary_
+
+        Args:
+            window_head (float): _description_
+
+        Returns:
+            float: _description_
+    &#34;&#34;&#34;
+    # TODO: dodaj testy do tego
+    return np.abs(window_head - self.output_value)</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.neuron.OutputNeuron.error_correction"><code class="name flex">
+<span>def <span class="ident">error_correction</span></span>(<span>self, window_head: float, ksi: float) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>window_head</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>ksi</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def error_correction(self, window_head: float, ksi: float) -&gt; None:
+    &#34;&#34;&#34;
+        _summary_
+
+        Args:
+            window_head (float): _description_
+            ksi (float): _description_
+    &#34;&#34;&#34;
+    # TODO: Dodać testy do tego
+    self.output_value += (window_head - self.output_value) * ksi</code></pre>
+</details>
+</dd>
 <dt id="OeSNN-AD.neuron.OutputNeuron.update_neuron"><code class="name flex">
 <span>def <span class="ident">update_neuron</span></span>(<span>self, candidate_neuron: <a title="OeSNN-AD.neuron.OutputNeuron" href="#OeSNN-AD.neuron.OutputNeuron">OutputNeuron</a>) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-przekazywanego jako parametr.</p></div>
+przekazywanego jako parametr.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>candidate_neuron</code></strong> :&ensp;<code><a title="OeSNN-AD.neuron.OutputNeuron" href="#OeSNN-AD.neuron.OutputNeuron">OutputNeuron</a></code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -244,6 +489,9 @@ przekazywanego jako parametr.</p></div>
     &#34;&#34;&#34;
         Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
         przekazywanego jako parametr.
+
+        Args:
+            candidate_neuron (OutputNeuron): _description_
     &#34;&#34;&#34;
     self.weights = (candidate_neuron.weights +
                     self.modification_count * self.weights) / (self.modification_count + 1)
@@ -254,6 +502,31 @@ przekazywanego jako parametr.</p></div>
         candidate_neuron.addition_time + self.modification_count * self.addition_time) /
         (self.modification_count + 1))
     self.modification_count += 1</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.neuron.OutputNeuron.update_psp"><code class="name flex">
+<span>def <span class="ident">update_psp</span></span>(<span>self, psp_update: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>psp_update</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_psp(self, psp_update : float):
+    &#34;&#34;&#34;
+        _summary_
+
+        Args:
+            psp_update (float): _description_
+    &#34;&#34;&#34;
+    # TODO dodaj testy do tego
+    self.psp += psp_update</code></pre>
 </details>
 </dd>
 </dl>
@@ -286,7 +559,10 @@ przekazywanego jako parametr.</p></div>
 <li>
 <h4><code><a title="OeSNN-AD.neuron.OutputNeuron" href="#OeSNN-AD.neuron.OutputNeuron">OutputNeuron</a></code></h4>
 <ul class="">
+<li><code><a title="OeSNN-AD.neuron.OutputNeuron.error_calc" href="#OeSNN-AD.neuron.OutputNeuron.error_calc">error_calc</a></code></li>
+<li><code><a title="OeSNN-AD.neuron.OutputNeuron.error_correction" href="#OeSNN-AD.neuron.OutputNeuron.error_correction">error_correction</a></code></li>
 <li><code><a title="OeSNN-AD.neuron.OutputNeuron.update_neuron" href="#OeSNN-AD.neuron.OutputNeuron.update_neuron">update_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.neuron.OutputNeuron.update_psp" href="#OeSNN-AD.neuron.OutputNeuron.update_psp">update_psp</a></code></li>
 </ul>
 </li>
 </ul>

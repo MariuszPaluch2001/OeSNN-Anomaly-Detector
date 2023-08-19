@@ -12,11 +12,15 @@ import numpy.typing as npt
 
 
 def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
-    """
+    """        
         Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
         od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
 
-        Funkcja ta jest generatorem.
+        Args:
+            data_root_folder_name (str): _description_
+
+        Yields:
+            Generator[str, None, None]: _description_
     """
     for path, _, files in os.walk(data_root_folder_name):
         for name in files:
@@ -29,8 +33,12 @@ def get_data_from_path(filename: str,
         Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
         etykietami.
 
-        Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
-        jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.
+        Args:
+            filename (str): _description_
+            is_nab (bool): _description_
+
+        Returns:
+            Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: _description_
     """
     if is_nab:
         data = np.loadtxt(filename, delimiter=",", dtype=float,
@@ -46,7 +54,11 @@ def read_parameters(path: str) -> Dict:
     """
         Funkcja do otczytywania hiperparametrów z pliku json.
 
-        Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.
+        Args:
+            path (str): _description_
+
+        Returns:
+            Dict: _description_
     """
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
@@ -55,6 +67,12 @@ def read_parameters(path: str) -> Dict:
 def convert_numpy_array_int_to_booleans(array: npt.NDArray[np.intp]) -> npt.NDArray[np.bool_]:
     """
         Funkcja do konwersji numpy listy z intów do wartości bool.
+
+        Args:
+            array (npt.NDArray[np.intp]): _description_
+
+        Returns:
+            npt.NDArray[np.bool_]: _description_
     """
     return array.astype(bool)
 
@@ -64,9 +82,12 @@ def perf_measure(y_hat: List, y_actual: List) -> Tuple[float, float, float]:
         Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
         W takiej kolejności też te wartości są zwracane.
 
-        Jako argumenty funkcja przyjmuje:\n
-            1. y_hat - listę z wartościami stworzonymi przez model
-            2. y_actual - listę z prawdziwymi wartościami
+        Args:
+            y_hat (List): _description_
+            y_actual (List): _description_
+
+        Returns:
+            Tuple[float, float, float]: _description_
     """
     true_positives = 0
     false_positives = 0

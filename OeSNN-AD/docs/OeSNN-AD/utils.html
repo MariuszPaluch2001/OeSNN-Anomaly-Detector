@@ -40,27 +40,37 @@ from typing import List, Dict, Tuple, Generator
 import os
 import json
 import numpy as np
+import numpy.typing as npt
 
 
 def get_all_files_paths(data_root_folder_name: str) -&gt; Generator[str, None, None]:
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;        
         Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
         od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
-        
-        Funkcja ta jest generatorem.
+
+        Args:
+            data_root_folder_name (str): _description_
+
+        Yields:
+            Generator[str, None, None]: _description_
     &#34;&#34;&#34;
     for path, _, files in os.walk(data_root_folder_name):
         for name in files:
             yield os.path.join(path, name)
 
 
-def get_data_from_path(filename: str, is_nab: bool) -&gt; Tuple[np.ndarray, np.ndarray]:
+def get_data_from_path(filename: str,
+                       is_nab: bool) -&gt; Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]:
     &#34;&#34;&#34;
         Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
         etykietami.
-        
-        Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
-        jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.
+
+        Args:
+            filename (str): _description_
+            is_nab (bool): _description_
+
+        Returns:
+            Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: _description_
     &#34;&#34;&#34;
     if is_nab:
         data = np.loadtxt(filename, delimiter=&#34;,&#34;, dtype=float,
@@ -75,16 +85,26 @@ def get_data_from_path(filename: str, is_nab: bool) -&gt; Tuple[np.ndarray, np.n
 def read_parameters(path: str) -&gt; Dict:
     &#34;&#34;&#34;
         Funkcja do otczytywania hiperparametrów z pliku json.
-        
-        Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.
+
+        Args:
+            path (str): _description_
+
+        Returns:
+            Dict: _description_
     &#34;&#34;&#34;
     with open(path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as file:
         return json.load(file)
 
 
-def convert_numpy_array_int_to_booleans(array: np.ndarray[int]) -&gt; np.ndarray[bool]:
+def convert_numpy_array_int_to_booleans(array: npt.NDArray[np.intp]) -&gt; npt.NDArray[np.bool_]:
     &#34;&#34;&#34;
         Funkcja do konwersji numpy listy z intów do wartości bool.
+
+        Args:
+            array (npt.NDArray[np.intp]): _description_
+
+        Returns:
+            npt.NDArray[np.bool_]: _description_
     &#34;&#34;&#34;
     return array.astype(bool)
 
@@ -93,10 +113,13 @@ def perf_measure(y_hat: List, y_actual: List) -&gt; Tuple[float, float, float]:
     &#34;&#34;&#34;
         Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
         W takiej kolejności też te wartości są zwracane.
-        
-        Jako argumenty funkcja przyjmuje:\n
-            1. y_hat - listę z wartościami stworzonymi przez model
-            2. y_actual - listę z prawdziwymi wartościami
+
+        Args:
+            y_hat (List): _description_
+            y_actual (List): _description_
+
+        Returns:
+            Tuple[float, float, float]: _description_
     &#34;&#34;&#34;
     true_positives = 0
     false_positives = 0
@@ -135,17 +158,33 @@ def perf_measure(y_hat: List, y_actual: List) -&gt; Tuple[float, float, float]:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="OeSNN-AD.utils.convert_numpy_array_int_to_booleans"><code class="name flex">
-<span>def <span class="ident">convert_numpy_array_int_to_booleans</span></span>(<span>array: numpy.ndarray[int]) ‑> numpy.ndarray[bool]</span>
+<span>def <span class="ident">convert_numpy_array_int_to_booleans</span></span>(<span>array: numpy.ndarray[typing.Any, numpy.dtype[numpy.int64]]) ‑> numpy.ndarray[typing.Any, numpy.dtype[numpy.bool_]]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Funkcja do konwersji numpy listy z intów do wartości bool.</p></div>
+<div class="desc"><p>Funkcja do konwersji numpy listy z intów do wartości bool.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>array</code></strong> :&ensp;<code>npt.NDArray[np.intp]</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>npt.NDArray[np.bool_]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def convert_numpy_array_int_to_booleans(array: np.ndarray[int]) -&gt; np.ndarray[bool]:
+<pre><code class="python">def convert_numpy_array_int_to_booleans(array: npt.NDArray[np.intp]) -&gt; npt.NDArray[np.bool_]:
     &#34;&#34;&#34;
         Funkcja do konwersji numpy listy z intów do wartości bool.
+
+        Args:
+            array (npt.NDArray[np.intp]): _description_
+
+        Returns:
+            npt.NDArray[np.bool_]: _description_
     &#34;&#34;&#34;
     return array.astype(bool)</code></pre>
 </details>
@@ -156,17 +195,30 @@ def perf_measure(y_hat: List, y_actual: List) -&gt; Tuple[float, float, float]:
 <dd>
 <div class="desc"><p>Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
 od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).</p>
-<p>Funkcja ta jest generatorem.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data_root_folder_name</code></strong> :&ensp;<code>str</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="yields">Yields</h2>
+<dl>
+<dt><code>Generator[str, None, None]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_all_files_paths(data_root_folder_name: str) -&gt; Generator[str, None, None]:
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;        
         Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
         od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
-        
-        Funkcja ta jest generatorem.
+
+        Args:
+            data_root_folder_name (str): _description_
+
+        Yields:
+            Generator[str, None, None]: _description_
     &#34;&#34;&#34;
     for path, _, files in os.walk(data_root_folder_name):
         for name in files:
@@ -174,24 +226,39 @@ od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_
 </details>
 </dd>
 <dt id="OeSNN-AD.utils.get_data_from_path"><code class="name flex">
-<span>def <span class="ident">get_data_from_path</span></span>(<span>filename: str, is_nab: bool) ‑> Tuple[numpy.ndarray, numpy.ndarray]</span>
+<span>def <span class="ident">get_data_from_path</span></span>(<span>filename: str, is_nab: bool) ‑> Tuple[numpy.ndarray[Any, numpy.dtype[numpy.float64]], numpy.ndarray[Any, numpy.dtype[numpy.int64]]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
 etykietami.</p>
-<p>Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
-jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>str</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>is_nab</code></strong> :&ensp;<code>bool</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_data_from_path(filename: str, is_nab: bool) -&gt; Tuple[np.ndarray, np.ndarray]:
+<pre><code class="python">def get_data_from_path(filename: str,
+                       is_nab: bool) -&gt; Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]:
     &#34;&#34;&#34;
         Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
         etykietami.
-        
-        Funkcja ta przyjmuje nazwę pliku w postaci stringa, oraz flagę is_nab, mówiącą czy
-        jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia.
+
+        Args:
+            filename (str): _description_
+            is_nab (bool): _description_
+
+        Returns:
+            Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: _description_
     &#34;&#34;&#34;
     if is_nab:
         data = np.loadtxt(filename, delimiter=&#34;,&#34;, dtype=float,
@@ -209,10 +276,18 @@ jest to zbiór nab. W przyszłości jak ujednolice zbiory danych to do wywalenia
 <dd>
 <div class="desc"><p>Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
 W takiej kolejności też te wartości są zwracane.</p>
-<p>Jako argumenty funkcja przyjmuje:</p>
-<pre><code>1. y_hat - listę z wartościami stworzonymi przez model
-2. y_actual - listę z prawdziwymi wartościami
-</code></pre></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>y_hat</code></strong> :&ensp;<code>List</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>y_actual</code></strong> :&ensp;<code>List</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[float, float, float]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -221,10 +296,13 @@ W takiej kolejności też te wartości są zwracane.</p>
     &#34;&#34;&#34;
         Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
         W takiej kolejności też te wartości są zwracane.
-        
-        Jako argumenty funkcja przyjmuje:\n
-            1. y_hat - listę z wartościami stworzonymi przez model
-            2. y_actual - listę z prawdziwymi wartościami
+
+        Args:
+            y_hat (List): _description_
+            y_actual (List): _description_
+
+        Returns:
+            Tuple[float, float, float]: _description_
     &#34;&#34;&#34;
     true_positives = 0
     false_positives = 0
@@ -260,7 +338,16 @@ W takiej kolejności też te wartości są zwracane.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Funkcja do otczytywania hiperparametrów z pliku json.</p>
-<p>Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.</p></div>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>str</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Dict</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -268,8 +355,12 @@ W takiej kolejności też te wartości są zwracane.</p>
 <pre><code class="python">def read_parameters(path: str) -&gt; Dict:
     &#34;&#34;&#34;
         Funkcja do otczytywania hiperparametrów z pliku json.
-        
-        Jako argument funkcja przyjmuje ścieżkę do pliku w postaci stringa.
+
+        Args:
+            path (str): _description_
+
+        Returns:
+            Dict: _description_
     &#34;&#34;&#34;
     with open(path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as file:
         return json.load(file)</code></pre>

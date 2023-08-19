@@ -32,6 +32,14 @@ def parameters_tuning(stream: npt.NDArray[np.float64],
             2. recall najlepszego wyniku
             3. precission najlepszego wyniku
             4. f1 najlepszego wyniku
+
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            labels (List[bool]): _description_
+            parameters (Dict): _description_
+
+        Returns:
+            Tuple[Dict, float, float, float]: _description_
     """
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
     for no_size in range(*parameters['NOsize']):
@@ -84,6 +92,12 @@ def plots(stream: npt.NDArray[np.float64],
           stream_name: str) -> None:
     """
         Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+        
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            best_parameters (dict): _description_
+            labels (npt.NDArray[np.bool_]): _description_
+            stream_name (str): _description_
     """
     oesnn_ad = OeSNNAD(stream,
                        window_size=best_parameters['Wsize'],

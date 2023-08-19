@@ -32,7 +32,9 @@
 &#34;&#34;&#34;
 
 from typing import List, Generator
+
 import numpy as np
+import numpy.typing as npt
 
 from layer import InputLayer, OutputLayer
 from neuron import OutputNeuron, InputNeuron
@@ -46,12 +48,27 @@ class OeSNNAD:
         predict, która zwraca wektor z detekcjami.
     &#34;&#34;&#34;
 
-    def __init__(self, stream: np.ndarray, window_size: int = 100,
+    def __init__(self, stream: npt.NDArray[np.float64], window_size: int = 100,
                  num_in_neurons: int = 10, num_out_neurons: int = 50,
                  ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6,
                  epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
                  beta: float = 1.6) -&gt; None:
+        &#34;&#34;&#34;
+        _summary_
 
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            window_size (int): _description_. Defaults to 100.
+            num_in_neurons (int): _description_. Defaults to 10.
+            num_out_neurons (int): _description_. Defaults to 50.
+            ts_factor (float): _description_. Defaults to 1000.0.
+            mod (float): _description_. Defaults to 0.6.
+            c_factor (float): _description_. Defaults to 0.6.
+            epsilon (float): _description_. Defaults to 2.
+            ksi (float): _description_. Defaults to 0.9.
+            sim (float): _description_. Defaults to 0.15.
+            beta (float): _description_. Defaults to 1.6.
+        &#34;&#34;&#34;
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
@@ -74,26 +91,56 @@ class OeSNNAD:
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -&gt; np.ndarray:
+    def _get_window_from_stream(self, begin_idx: int,
+                                end_idx: int) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
             Metoda zwracająca okno z danymi.
+
+            Args:
+                begin_idx (int): _description_
+                end_idx (int): _description_
+                
+            Returns:
+                npt.NDArray[np.float64]: _description_
         &#34;&#34;&#34;
         return self.stream[begin_idx: end_idx]
 
-    def _init_new_arrays_for_predict(self, window: np.ndarray) -&gt; None:
+    def _init_values_rand(self, window: npt.NDArray[np.float64]) -&gt; List[float]:
+        &#34;&#34;&#34;
+            Docstring here
+
+            Args:
+                window (npt.NDArray): _description_
+                
+            Returns:
+                List[float]: _description_
+        &#34;&#34;&#34;
+        # TODO: dodaj testy
+        return np.random.normal(
+            np.mean(window), np.std(window), self.window_size).tolist()
+
+    def _init_new_arrays_for_predict(self, window: npt.NDArray[np.float64]) -&gt; None:
         &#34;&#34;&#34;
             Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
             są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                
+            Returns:
+                List[float]: _description_
         &#34;&#34;&#34;
-        self.values = np.random.normal(
-            np.mean(window), np.std(window), self.window_size).tolist()
+        self.values = self._init_values_rand(window)
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False] * self.window_size
 
-    def predict(self) -&gt; np.ndarray:
+    def predict(self) -&gt; npt.NDArray[np.bool_]:
         &#34;&#34;&#34;
             Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
             główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
+
+            Returns:
+                npt.NDArray[np.bool_]: _description_
         &#34;&#34;&#34;
         window = self._get_window_from_stream(0, self.window_size)
 
@@ -104,56 +151,65 @@ class OeSNNAD:
 
             window = self._get_window_from_stream(age - self.window_size, age)
 
-            self._anomaly_detection(window)
-
             self._learning(window, age)
+
+            self._anomaly_detection(window)
 
         return np.array(self.anomalies)
 
-    def _anomaly_detection(self, window: np.ndarray) -&gt; None:
+    def _anomaly_detection(self, window: npt.NDArray[np.float64]) -&gt; None:
         &#34;&#34;&#34;
             Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
         &#34;&#34;&#34;
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
-        if first_fired_neuron is None:
-            self.values.append(None)
-            self.errors.append(np.inf)
-            self.anomalies.append(True)
-        else:
+        if first_fired_neuron:
             self.values.append(first_fired_neuron.output_value)
-            self.errors.append(
-                np.abs(window_head - first_fired_neuron.output_value))
+            self.errors.append(first_fired_neuron.error_calc(window_head))
             self.anomalies.append(self._anomaly_classification())
+        else:
+            self.values.append(None)
+            self.errors.append(np.abs(window_head))
+            self.anomalies.append(True)
 
     def _anomaly_classification(self) -&gt; bool:
         &#34;&#34;&#34;
             Metoda obliczająca, czy na podstawie ostatniej iteracji algorytmu, głowa okna jest
             anomalią.
+            
+            Args: None
+            
+            Returns:
+                bool: _description_
         &#34;&#34;&#34;
         error_t = self.errors[-1]
-        errors_window = self.errors[-(self.window_size):-1]
-        anomalies_window = self.anomalies[-(self.window_size - 1):]
+        errors_window = np.array(self.errors[-(self.window_size):-1])
+        anomalies_window = np.array(self.anomalies[-(self.window_size - 1):])
 
-        errors_for_non_anomalies = [err for err, classification in zip(
-            errors_window, anomalies_window) if not classification]
-
+        errors_for_non_anomalies = errors_window[np.where(~anomalies_window)]
+        #TODO: Zadługie, wydziel osobną metodę do tego
         return not (
-            (not errors_for_non_anomalies) or (error_t - np.mean(errors_for_non_anomalies)
-                                               &lt; np.std(errors_for_non_anomalies) * self.epsilon)
+            (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
+                                                &lt; np.std(errors_for_non_anomalies) * self.epsilon)
         )
 
-    def _learning(self, window: np.ndarray, neuron_age: int) -&gt; None:
+    def _learning(self, window: npt.NDArray[np.float64], neuron_age: int) -&gt; None:
         &#34;&#34;&#34;
             Metoda odpowiadająca za naukę i strojenie parametrów sieci.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                neuron_age (int): _description_
         &#34;&#34;&#34;
         anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
                                                             self.mod, self.c_factor, neuron_age)
 
         if not anomaly_t:
-            candidate_neuron.output_value += (window_head -
-                                              candidate_neuron.output_value) * self.ksi
+            candidate_neuron.error_correction(window_head, self.ksi)
 
         most_familiar_neuron, dist = self.output_layer.find_most_similar(
             candidate_neuron)
@@ -171,29 +227,35 @@ class OeSNNAD:
             neuronem wejściowym przekazywanym jako parametr funkcji.
 
             Metoda ta powinna być wywoływana tylko w metodzie _fires_first.
-
-            Metoda ta zwraca generator.
+            
+            Args:
+                neuron_input (InputNeuron): _description_
+                
+            Yields:
+                Generator[OutputNeuron, None, None]: _description_
         &#34;&#34;&#34;
         for n_out in self.output_layer:
-            n_out.psp += n_out[neuron_input.neuron_id] * \
-                (self.mod ** neuron_input.order)
+            n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
 
             if n_out.psp &gt; self.gamma:
                 yield n_out
 
-    def _fires_first(self) -&gt; OutputNeuron | None:
+    def _fires_first(self) -&gt; OutputNeuron | bool:
         &#34;&#34;&#34;
             Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
             zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
+            
+            Returns:
+                OutputNeuron | bool: _description_
         &#34;&#34;&#34;
         self.output_layer.reset_psp()
 
-        for neuron_input in self.input_layer:  # błąd !!! brak sortowania na podstawie order
+        for neuron_input in self.input_layer:
             to_fire = list(self._update_psp(neuron_input))
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.psp)
-        return None</code></pre>
+        return False</code></pre>
 </details>
 </section>
 <section>
@@ -207,13 +269,39 @@ class OeSNNAD:
 <dl>
 <dt id="OeSNN-AD.oesnn_ad.OeSNNAD"><code class="flex name class">
 <span>class <span class="ident">OeSNNAD</span></span>
-<span>(</span><span>stream: numpy.ndarray, window_size: int = 100, num_in_neurons: int = 10, num_out_neurons: int = 50, ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6, epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15, beta: float = 1.6)</span>
+<span>(</span><span>stream: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], window_size: int = 100, num_in_neurons: int = 10, num_out_neurons: int = 50, ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6, epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15, beta: float = 1.6)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Klasa implementująca całościowo algorytm OeSNN-AD. Strumień danych
 jest przekazywany jako parametr w konstruktorze, wraz z wszystkimi
 hiperparametrami algorytmu. Głównym interfejsem klasy jest metoda
-predict, która zwraca wektor z detekcjami.</p></div>
+predict, która zwraca wektor z detekcjami.</p>
+<p><em>summary</em></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd><em>description</em></dd>
+<dt><strong><code>window_size</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em>. Defaults to 100.</dd>
+<dt><strong><code>num_in_neurons</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em>. Defaults to 10.</dd>
+<dt><strong><code>num_out_neurons</code></strong> :&ensp;<code>int</code></dt>
+<dd><em>description</em>. Defaults to 50.</dd>
+<dt><strong><code>ts_factor</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 1000.0.</dd>
+<dt><strong><code>mod</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 0.6.</dd>
+<dt><strong><code>c_factor</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 0.6.</dd>
+<dt><strong><code>epsilon</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 2.</dd>
+<dt><strong><code>ksi</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 0.9.</dd>
+<dt><strong><code>sim</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 0.15.</dd>
+<dt><strong><code>beta</code></strong> :&ensp;<code>float</code></dt>
+<dd><em>description</em>. Defaults to 1.6.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -226,12 +314,27 @@ predict, która zwraca wektor z detekcjami.</p></div>
         predict, która zwraca wektor z detekcjami.
     &#34;&#34;&#34;
 
-    def __init__(self, stream: np.ndarray, window_size: int = 100,
+    def __init__(self, stream: npt.NDArray[np.float64], window_size: int = 100,
                  num_in_neurons: int = 10, num_out_neurons: int = 50,
                  ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6,
                  epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
                  beta: float = 1.6) -&gt; None:
+        &#34;&#34;&#34;
+        _summary_
 
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            window_size (int): _description_. Defaults to 100.
+            num_in_neurons (int): _description_. Defaults to 10.
+            num_out_neurons (int): _description_. Defaults to 50.
+            ts_factor (float): _description_. Defaults to 1000.0.
+            mod (float): _description_. Defaults to 0.6.
+            c_factor (float): _description_. Defaults to 0.6.
+            epsilon (float): _description_. Defaults to 2.
+            ksi (float): _description_. Defaults to 0.9.
+            sim (float): _description_. Defaults to 0.15.
+            beta (float): _description_. Defaults to 1.6.
+        &#34;&#34;&#34;
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
@@ -254,26 +357,56 @@ predict, która zwraca wektor z detekcjami.</p></div>
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -&gt; np.ndarray:
+    def _get_window_from_stream(self, begin_idx: int,
+                                end_idx: int) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
             Metoda zwracająca okno z danymi.
+
+            Args:
+                begin_idx (int): _description_
+                end_idx (int): _description_
+                
+            Returns:
+                npt.NDArray[np.float64]: _description_
         &#34;&#34;&#34;
         return self.stream[begin_idx: end_idx]
 
-    def _init_new_arrays_for_predict(self, window: np.ndarray) -&gt; None:
+    def _init_values_rand(self, window: npt.NDArray[np.float64]) -&gt; List[float]:
+        &#34;&#34;&#34;
+            Docstring here
+
+            Args:
+                window (npt.NDArray): _description_
+                
+            Returns:
+                List[float]: _description_
+        &#34;&#34;&#34;
+        # TODO: dodaj testy
+        return np.random.normal(
+            np.mean(window), np.std(window), self.window_size).tolist()
+
+    def _init_new_arrays_for_predict(self, window: npt.NDArray[np.float64]) -&gt; None:
         &#34;&#34;&#34;
             Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
             są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                
+            Returns:
+                List[float]: _description_
         &#34;&#34;&#34;
-        self.values = np.random.normal(
-            np.mean(window), np.std(window), self.window_size).tolist()
+        self.values = self._init_values_rand(window)
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
         self.anomalies = [False] * self.window_size
 
-    def predict(self) -&gt; np.ndarray:
+    def predict(self) -&gt; npt.NDArray[np.bool_]:
         &#34;&#34;&#34;
             Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
             główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
+
+            Returns:
+                npt.NDArray[np.bool_]: _description_
         &#34;&#34;&#34;
         window = self._get_window_from_stream(0, self.window_size)
 
@@ -284,56 +417,65 @@ predict, która zwraca wektor z detekcjami.</p></div>
 
             window = self._get_window_from_stream(age - self.window_size, age)
 
-            self._anomaly_detection(window)
-
             self._learning(window, age)
+
+            self._anomaly_detection(window)
 
         return np.array(self.anomalies)
 
-    def _anomaly_detection(self, window: np.ndarray) -&gt; None:
+    def _anomaly_detection(self, window: npt.NDArray[np.float64]) -&gt; None:
         &#34;&#34;&#34;
             Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
         &#34;&#34;&#34;
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
-        if first_fired_neuron is None:
-            self.values.append(None)
-            self.errors.append(np.inf)
-            self.anomalies.append(True)
-        else:
+        if first_fired_neuron:
             self.values.append(first_fired_neuron.output_value)
-            self.errors.append(
-                np.abs(window_head - first_fired_neuron.output_value))
+            self.errors.append(first_fired_neuron.error_calc(window_head))
             self.anomalies.append(self._anomaly_classification())
+        else:
+            self.values.append(None)
+            self.errors.append(np.abs(window_head))
+            self.anomalies.append(True)
 
     def _anomaly_classification(self) -&gt; bool:
         &#34;&#34;&#34;
             Metoda obliczająca, czy na podstawie ostatniej iteracji algorytmu, głowa okna jest
             anomalią.
+            
+            Args: None
+            
+            Returns:
+                bool: _description_
         &#34;&#34;&#34;
         error_t = self.errors[-1]
-        errors_window = self.errors[-(self.window_size):-1]
-        anomalies_window = self.anomalies[-(self.window_size - 1):]
+        errors_window = np.array(self.errors[-(self.window_size):-1])
+        anomalies_window = np.array(self.anomalies[-(self.window_size - 1):])
 
-        errors_for_non_anomalies = [err for err, classification in zip(
-            errors_window, anomalies_window) if not classification]
-
+        errors_for_non_anomalies = errors_window[np.where(~anomalies_window)]
+        #TODO: Zadługie, wydziel osobną metodę do tego
         return not (
-            (not errors_for_non_anomalies) or (error_t - np.mean(errors_for_non_anomalies)
-                                               &lt; np.std(errors_for_non_anomalies) * self.epsilon)
+            (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
+                                                &lt; np.std(errors_for_non_anomalies) * self.epsilon)
         )
 
-    def _learning(self, window: np.ndarray, neuron_age: int) -&gt; None:
+    def _learning(self, window: npt.NDArray[np.float64], neuron_age: int) -&gt; None:
         &#34;&#34;&#34;
             Metoda odpowiadająca za naukę i strojenie parametrów sieci.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                neuron_age (int): _description_
         &#34;&#34;&#34;
         anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
                                                             self.mod, self.c_factor, neuron_age)
 
         if not anomaly_t:
-            candidate_neuron.output_value += (window_head -
-                                              candidate_neuron.output_value) * self.ksi
+            candidate_neuron.error_correction(window_head, self.ksi)
 
         most_familiar_neuron, dist = self.output_layer.find_most_similar(
             candidate_neuron)
@@ -351,46 +493,60 @@ predict, która zwraca wektor z detekcjami.</p></div>
             neuronem wejściowym przekazywanym jako parametr funkcji.
 
             Metoda ta powinna być wywoływana tylko w metodzie _fires_first.
-
-            Metoda ta zwraca generator.
+            
+            Args:
+                neuron_input (InputNeuron): _description_
+                
+            Yields:
+                Generator[OutputNeuron, None, None]: _description_
         &#34;&#34;&#34;
         for n_out in self.output_layer:
-            n_out.psp += n_out[neuron_input.neuron_id] * \
-                (self.mod ** neuron_input.order)
+            n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
 
             if n_out.psp &gt; self.gamma:
                 yield n_out
 
-    def _fires_first(self) -&gt; OutputNeuron | None:
+    def _fires_first(self) -&gt; OutputNeuron | bool:
         &#34;&#34;&#34;
             Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
             zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
+            
+            Returns:
+                OutputNeuron | bool: _description_
         &#34;&#34;&#34;
         self.output_layer.reset_psp()
 
-        for neuron_input in self.input_layer:  # błąd !!! brak sortowania na podstawie order
+        for neuron_input in self.input_layer:
             to_fire = list(self._update_psp(neuron_input))
 
             if to_fire:
                 return max(to_fire, key=lambda x: x.psp)
-        return None</code></pre>
+        return False</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="OeSNN-AD.oesnn_ad.OeSNNAD.predict"><code class="name flex">
-<span>def <span class="ident">predict</span></span>(<span>self) ‑> numpy.ndarray</span>
+<span>def <span class="ident">predict</span></span>(<span>self) ‑> numpy.ndarray[typing.Any, numpy.dtype[numpy.bool_]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
-główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.</p></div>
+główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>npt.NDArray[np.bool_]</code></dt>
+<dd><em>description</em></dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def predict(self) -&gt; np.ndarray:
+<pre><code class="python">def predict(self) -&gt; npt.NDArray[np.bool_]:
     &#34;&#34;&#34;
         Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
         główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
+
+        Returns:
+            npt.NDArray[np.bool_]: _description_
     &#34;&#34;&#34;
     window = self._get_window_from_stream(0, self.window_size)
 
@@ -401,9 +557,9 @@ główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.</p
 
         window = self._get_window_from_stream(age - self.window_size, age)
 
-        self._anomaly_detection(window)
-
         self._learning(window, age)
+
+        self._anomaly_detection(window)
 
     return np.array(self.anomalies)</code></pre>
 </details>

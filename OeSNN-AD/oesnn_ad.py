@@ -24,7 +24,22 @@ class OeSNNAD:
                  ts_factor: float = 1000.0, mod: float = 0.6, c_factor: float = 0.6,
                  epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
                  beta: float = 1.6) -> None:
+        """
+        _summary_
 
+        Args:
+            stream (npt.NDArray[np.float64]): _description_
+            window_size (int): _description_. Defaults to 100.
+            num_in_neurons (int): _description_. Defaults to 10.
+            num_out_neurons (int): _description_. Defaults to 50.
+            ts_factor (float): _description_. Defaults to 1000.0.
+            mod (float): _description_. Defaults to 0.6.
+            c_factor (float): _description_. Defaults to 0.6.
+            epsilon (float): _description_. Defaults to 2.
+            ksi (float): _description_. Defaults to 0.9.
+            sim (float): _description_. Defaults to 0.15.
+            beta (float): _description_. Defaults to 1.6.
+        """
         self.stream = stream
         self.stream_len = self.stream.shape[0]
         self.window_size = window_size
@@ -47,15 +62,29 @@ class OeSNNAD:
         self.anomalies: List[bool] = []
         self.errors: List[float] = []
 
-    def _get_window_from_stream(self, begin_idx: int, end_idx: int) -> npt.NDArray[np.float64]:
+    def _get_window_from_stream(self, begin_idx: int,
+                                end_idx: int) -> npt.NDArray[np.float64]:
         """
             Metoda zwracająca okno z danymi.
+
+            Args:
+                begin_idx (int): _description_
+                end_idx (int): _description_
+                
+            Returns:
+                npt.NDArray[np.float64]: _description_
         """
         return self.stream[begin_idx: end_idx]
 
-    def _init_values_rand(self, window: npt.NDArray) -> List[float]:
+    def _init_values_rand(self, window: npt.NDArray[np.float64]) -> List[float]:
         """
-            Dodaj docstring
+            Docstring here
+
+            Args:
+                window (npt.NDArray): _description_
+                
+            Returns:
+                List[float]: _description_
         """
         # TODO: dodaj testy
         return np.random.normal(
@@ -65,6 +94,12 @@ class OeSNNAD:
         """
             Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
             są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                
+            Returns:
+                List[float]: _description_
         """
         self.values = self._init_values_rand(window)
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
@@ -74,6 +109,9 @@ class OeSNNAD:
         """
             Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
             główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
+
+            Returns:
+                npt.NDArray[np.bool_]: _description_
         """
         window = self._get_window_from_stream(0, self.window_size)
 
@@ -93,6 +131,9 @@ class OeSNNAD:
     def _anomaly_detection(self, window: npt.NDArray[np.float64]) -> None:
         """
             Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
         """
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
@@ -109,6 +150,11 @@ class OeSNNAD:
         """
             Metoda obliczająca, czy na podstawie ostatniej iteracji algorytmu, głowa okna jest
             anomalią.
+            
+            Args: None
+            
+            Returns:
+                bool: _description_
         """
         error_t = self.errors[-1]
         errors_window = np.array(self.errors[-(self.window_size):-1])
@@ -118,12 +164,16 @@ class OeSNNAD:
         #TODO: Zadługie, wydziel osobną metodę do tego
         return not (
             (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
-                                                       < np.std(errors_for_non_anomalies) * self.epsilon)
+                                                < np.std(errors_for_non_anomalies) * self.epsilon)
         )
 
     def _learning(self, window: npt.NDArray[np.float64], neuron_age: int) -> None:
         """
             Metoda odpowiadająca za naukę i strojenie parametrów sieci.
+
+            Args:
+                window (npt.NDArray[np.float64]): _description_
+                neuron_age (int): _description_
         """
         anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
@@ -148,12 +198,16 @@ class OeSNNAD:
             neuronem wejściowym przekazywanym jako parametr funkcji.
 
             Metoda ta powinna być wywoływana tylko w metodzie _fires_first.
-
-            Metoda ta zwraca generator.
+            
+            Args:
+                neuron_input (InputNeuron): _description_
+                
+            Yields:
+                Generator[OutputNeuron, None, None]: _description_
         """
         for n_out in self.output_layer:
             n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
-            
+
             if n_out.psp > self.gamma:
                 yield n_out
 
@@ -161,6 +215,9 @@ class OeSNNAD:
         """
             Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
             zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
+            
+            Returns:
+                OutputNeuron | bool: _description_
         """
         self.output_layer.reset_psp()
 

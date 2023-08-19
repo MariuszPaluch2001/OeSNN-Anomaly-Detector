@@ -1,3 +1,7 @@
+"""
+    Skrypt do wyliczania średnich dla danych datasetów.
+"""
+
 import pandas as pd
 
 df = pd.read_csv("results/nab_result.csv")
