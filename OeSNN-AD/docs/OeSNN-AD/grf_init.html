@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.grf_init API documentation</title>
-<meta name="description" content="Moduł zawierający implementację i definicję klasy GRFInit." />
+<meta name="description" content="Module contains definition and implementation of class GRFInit." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,13 +22,13 @@
 <h1 class="title">Module <code>OeSNN-AD.grf_init</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł zawierający implementację i definicję klasy GRFInit.</p>
+<p>Module contains definition and implementation of class GRFInit.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł zawierający implementację i definicję klasy GRFInit.
+    Module contains definition and implementation of class GRFInit.
 &#34;&#34;&#34;
 
 import numpy as np
@@ -37,23 +37,21 @@ import numpy.typing as npt
 
 class GRFInit:
     &#34;&#34;&#34;
-        Klasa zawiera zbiór funkcji, których celem jest inicjalizacja
-        kolejności wystrzeliwania neuronów w warstwie wejściowej.
-
-        Obiekt klasy jest definiowany na nowo w czasie każdej iteracji algorytmu.
+        Class contains functions which target is initialization of firing neurons order
+        in output layer.
+        
+        Class&#39;s object is redefined in every iteration of OeSNN-AD.
     &#34;&#34;&#34;
 
     def __init__(self, window: npt.NDArray[np.float64], input_size: int, ts_factor: float,
                  mod: int, beta: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                input_size (int): _description_
-                ts_factor (float): _description_
-                mod (int): _description_
-                beta (float): _description_
+                window (npt.NDArray[np.float64]): window of values in current iteration
+                input_size (int): number of neurons in input layer
+                ts_factor (float): factor from OeSNN-AD
+                mod (int): factor from OeSNN-AD
+                beta (float): factor from OeSNN-AD
         &#34;&#34;&#34;
         self.min_w_i: float = window.min()
         self.max_w_i: float = window.max()
@@ -66,10 +64,10 @@ class GRFInit:
 
     def _get_width_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora szerokości GRF dla wszystkich neuronów w warstwie.
-
+            Method to calculate Gaussian Receptor Field width vector for all neurons in input layer.
+            
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s width vector
         &#34;&#34;&#34;
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
@@ -79,10 +77,11 @@ class GRFInit:
 
     def _get_center_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda od obliczania wektora centrów GRF dla wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field center vector for all neurons 
+            in input layer.
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s center vector
         &#34;&#34;&#34;
         return (self.min_w_i + ((2*np.arange(0, self.input_size, 1) - 3) / 2) *
                 (self.max_w_i - self.min_w_i) / (self.input_size - 2))
@@ -91,41 +90,42 @@ class GRFInit:
                         width_v: npt.NDArray[np.float64],
                         center_v: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora ekscytacji GRF dla wszystkich neuronów w warstwie.
-
+            Method to calculate Gaussian Receptor Field excitation vector for all neurons 
+            in input layer.
+            
             Args:
-                width_v (npt.NDArray[np.float64]): _description_
-                center_v (npt.NDArray[np.float64]): _description_
+                width_v (npt.NDArray[np.float64]): GRF&#39;s width vector
+                center_v (npt.NDArray[np.float64]): GRF&#39;s center vector
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s excitation vector
         &#34;&#34;&#34;
         rep_xt = np.repeat(self.window_head, self.input_size)
         return np.exp(-0.5 * ((rep_xt - center_v) / width_v) ** 2)
 
     def _get_firing_time(self, excitation: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora czasu wystrzeliwania GRF dla 
-            wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field firing times vector for all neurons 
+            in input layer.
 
             Args:
-                excitation (npt.NDArray[np.float64]): _description_
+                excitation (npt.NDArray[np.float64]): GRF&#39;s excitation vector
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: firing times vector
         &#34;&#34;&#34;
         return self.ts_factor * (np.ones(self.input_size) - excitation)
 
     def _get_order(self, firings_times: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.intp]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora kolejności wystrzeliwania GRF dla 
-            wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field firing order vector for all neurons 
+            in input layer.
             
             Args:
-                firings_times (npt.NDArray[np.float64]): _description_
+                firings_times (npt.NDArray[np.float64]): firing times vector
 
             Returns:
-                npt.NDArray[np.intp]: _description_
+                npt.NDArray[np.intp]: orders vector
         &#34;&#34;&#34;
         arg_sorted = np.argsort(firings_times)
         orders = np.empty_like(arg_sorted)
@@ -134,11 +134,11 @@ class GRFInit:
 
     def get_order(self) -&gt; npt.NDArray[np.intp]:
         &#34;&#34;&#34;            
-            Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
-            wszystkich neuronów w warstwie. 
-
+            Method is public interface to calculate vector of firing&#39;s orders for all neurons
+            in input layer.
+            
             Returns:
-                npt.NDArray[np.intp]: _description_
+                npt.NDArray[np.intp]: orders vector
         &#34;&#34;&#34;
         width_v = self._get_width_vec()
         center_v = self._get_center_vec()
@@ -162,22 +162,21 @@ class GRFInit:
 <span>(</span><span>window: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], input_size: int, ts_factor: float, mod: int, beta: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa zawiera zbiór funkcji, których celem jest inicjalizacja
-kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
-<p>Obiekt klasy jest definiowany na nowo w czasie każdej iteracji algorytmu.</p>
-<p><em>summary</em></p>
+<div class="desc"><p>Class contains functions which target is initialization of firing neurons order
+in output layer.</p>
+<p>Class's object is redefined in every iteration of OeSNN-AD.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>window</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
-<dd><em>description</em></dd>
+<dd>window of values in current iteration</dd>
 <dt><strong><code>input_size</code></strong> :&ensp;<code>int</code></dt>
-<dd><em>description</em></dd>
+<dd>number of neurons in input layer</dd>
 <dt><strong><code>ts_factor</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>factor from OeSNN-AD</dd>
 <dt><strong><code>mod</code></strong> :&ensp;<code>int</code></dt>
-<dd><em>description</em></dd>
+<dd>factor from OeSNN-AD</dd>
 <dt><strong><code>beta</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>factor from OeSNN-AD</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -185,23 +184,21 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
 </summary>
 <pre><code class="python">class GRFInit:
     &#34;&#34;&#34;
-        Klasa zawiera zbiór funkcji, których celem jest inicjalizacja
-        kolejności wystrzeliwania neuronów w warstwie wejściowej.
-
-        Obiekt klasy jest definiowany na nowo w czasie każdej iteracji algorytmu.
+        Class contains functions which target is initialization of firing neurons order
+        in output layer.
+        
+        Class&#39;s object is redefined in every iteration of OeSNN-AD.
     &#34;&#34;&#34;
 
     def __init__(self, window: npt.NDArray[np.float64], input_size: int, ts_factor: float,
                  mod: int, beta: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                input_size (int): _description_
-                ts_factor (float): _description_
-                mod (int): _description_
-                beta (float): _description_
+                window (npt.NDArray[np.float64]): window of values in current iteration
+                input_size (int): number of neurons in input layer
+                ts_factor (float): factor from OeSNN-AD
+                mod (int): factor from OeSNN-AD
+                beta (float): factor from OeSNN-AD
         &#34;&#34;&#34;
         self.min_w_i: float = window.min()
         self.max_w_i: float = window.max()
@@ -214,10 +211,10 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
 
     def _get_width_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora szerokości GRF dla wszystkich neuronów w warstwie.
-
+            Method to calculate Gaussian Receptor Field width vector for all neurons in input layer.
+            
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s width vector
         &#34;&#34;&#34;
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
@@ -227,10 +224,11 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
 
     def _get_center_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda od obliczania wektora centrów GRF dla wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field center vector for all neurons 
+            in input layer.
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s center vector
         &#34;&#34;&#34;
         return (self.min_w_i + ((2*np.arange(0, self.input_size, 1) - 3) / 2) *
                 (self.max_w_i - self.min_w_i) / (self.input_size - 2))
@@ -239,41 +237,42 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
                         width_v: npt.NDArray[np.float64],
                         center_v: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora ekscytacji GRF dla wszystkich neuronów w warstwie.
-
+            Method to calculate Gaussian Receptor Field excitation vector for all neurons 
+            in input layer.
+            
             Args:
-                width_v (npt.NDArray[np.float64]): _description_
-                center_v (npt.NDArray[np.float64]): _description_
+                width_v (npt.NDArray[np.float64]): GRF&#39;s width vector
+                center_v (npt.NDArray[np.float64]): GRF&#39;s center vector
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: GRF&#39;s excitation vector
         &#34;&#34;&#34;
         rep_xt = np.repeat(self.window_head, self.input_size)
         return np.exp(-0.5 * ((rep_xt - center_v) / width_v) ** 2)
 
     def _get_firing_time(self, excitation: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora czasu wystrzeliwania GRF dla 
-            wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field firing times vector for all neurons 
+            in input layer.
 
             Args:
-                excitation (npt.NDArray[np.float64]): _description_
+                excitation (npt.NDArray[np.float64]): GRF&#39;s excitation vector
 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: firing times vector
         &#34;&#34;&#34;
         return self.ts_factor * (np.ones(self.input_size) - excitation)
 
     def _get_order(self, firings_times: npt.NDArray[np.float64]) -&gt; npt.NDArray[np.intp]:
         &#34;&#34;&#34;
-            Metoda do obliczania wektora kolejności wystrzeliwania GRF dla 
-            wszystkich neuronów w warstwie.
+            Method to calculate Gaussian Receptor Field firing order vector for all neurons 
+            in input layer.
             
             Args:
-                firings_times (npt.NDArray[np.float64]): _description_
+                firings_times (npt.NDArray[np.float64]): firing times vector
 
             Returns:
-                npt.NDArray[np.intp]: _description_
+                npt.NDArray[np.intp]: orders vector
         &#34;&#34;&#34;
         arg_sorted = np.argsort(firings_times)
         orders = np.empty_like(arg_sorted)
@@ -282,11 +281,11 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
 
     def get_order(self) -&gt; npt.NDArray[np.intp]:
         &#34;&#34;&#34;            
-            Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
-            wszystkich neuronów w warstwie. 
-
+            Method is public interface to calculate vector of firing&#39;s orders for all neurons
+            in input layer.
+            
             Returns:
-                npt.NDArray[np.intp]: _description_
+                npt.NDArray[np.intp]: orders vector
         &#34;&#34;&#34;
         width_v = self._get_width_vec()
         center_v = self._get_center_vec()
@@ -301,12 +300,12 @@ kolejności wystrzeliwania neuronów w warstwie wejściowej.</p>
 <span>def <span class="ident">get_order</span></span>(<span>self) ‑> numpy.ndarray[typing.Any, numpy.dtype[numpy.int64]]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
-wszystkich neuronów w warstwie. </p>
+<div class="desc"><p>Method is public interface to calculate vector of firing's orders for all neurons
+in input layer.</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>npt.NDArray[np.intp]</code></dt>
-<dd><em>description</em></dd>
+<dd>orders vector</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -314,11 +313,11 @@ wszystkich neuronów w warstwie. </p>
 </summary>
 <pre><code class="python">def get_order(self) -&gt; npt.NDArray[np.intp]:
     &#34;&#34;&#34;            
-        Metoda jako publiczny interfejs do obliczania wektora porządku wystrzeliwania dla
-        wszystkich neuronów w warstwie. 
-
+        Method is public interface to calculate vector of firing&#39;s orders for all neurons
+        in input layer.
+        
         Returns:
-            npt.NDArray[np.intp]: _description_
+            npt.NDArray[np.intp]: orders vector
     &#34;&#34;&#34;
     width_v = self._get_width_vec()
     center_v = self._get_center_vec()
