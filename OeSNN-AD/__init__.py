@@ -1,3 +1,3 @@
 """
-    Pakiet OeSNN-AD.
+    Module OeSNN-AD.
 """

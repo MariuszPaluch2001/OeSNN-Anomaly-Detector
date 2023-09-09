@@ -1,35 +1,29 @@
 """
-    Moduł zawiera definicję i implementację klas warstw.
+    Module contains definition and implementation of layer class.
 """
 
 from typing import List, Tuple, Generator
 import numpy as np
 import numpy.typing as npt
 
-
 from neuron import Neuron
 from neuron import InputNeuron, OutputNeuron
 from grf_init import GRFInit
 
-
 class Layer:
     """
-        Bazowa klasa tworząca interfejs dla klas dziedziczących.
-
-        Oprócz atrybutów wspólnych dla wszystkich warst tworzy także,
-        implementuje także metody magiczne umożliwiające iterowanie się,
-        indeksowanie, a także liczenie ilości neuronów z pomocą wbudowanej
-        funkcji len z poziomu obiektu, bez odwoływania się do atrybutu neurons.
-
-        Nie powinna być tworzona jako osobny obiekt.
+        Base class creates interface for inheritance classes.
+        
+        Beside of common attributes for all layers, class is making magic methods allowing
+        indexation, counting numer of neurons in layer thank to 'len' function.
+        
+        Class musn't be created as object.
     """
 
     def __init__(self, num_neurons: int) -> None:
         """
-            _summary_
-
             Args:
-                num_neurons (int): _description_
+                num_neurons (int): Number of neurons in layer
         """
         self.num_neurons = num_neurons
 
@@ -37,50 +31,48 @@ class Layer:
 
     def __iter__(self) -> Generator[Neuron, None, None]:
         """
-            _summary_
+            Magic method for iteration over list of neurons in layer.
 
             Yields:
-                Generator[Neuron, None, None]: _description_
+                Generator[Neuron, None, None]: generator which allow to iterate 
+                over object's neurons
         """
         for neuron in self.neurons:
             yield neuron
 
     def __len__(self) -> int:
         """
-            _summary_
+            Magic method returning count of neurons in layer.
 
             Returns:
-                int: _description_
+                int: count of neurons in layer
         """
         return len(self.neurons)
 
     def __getitem__(self, index: int) -> Neuron:
         """
-            _summary_
+            Magic method allowing to get neuron with usage of indexation.
 
             Args:
-                index (int): _description_
+                index (int): index of neuron in list
 
             Returns:
-                Neuron: _description_
+                Neuron: neuron under index in list
         """
         return self.neurons[index]
 
 
 class InputLayer(Layer):
     """
-        Klasa implementująca warstwę wejściową, dziedzicząca po bazowej
-        klasie Layer.
-
-        Klasa przechowuje i obsługuje listę neuronów wejściowych.
+        Class implementing input layer, inheriting after base class Layer.
+        
+        Class stores and handling list of input neurons.
     """
 
     def __init__(self, input_size: int) -> None:
         """
-            _summary_
-
             Args:
-                input_size (int): _description_
+                input_size (int): number of neurons in input layer
         """
         super().__init__(input_size)
 
@@ -89,10 +81,11 @@ class InputLayer(Layer):
 
     def __iter__(self) -> Generator[InputNeuron, None, None]:
         """
-            _summary_
+            Magic method for iteration over list of input neurons in layer.
 
             Yields:
-                Generator[InputNeuron, None, None]: _description_
+                Generator[InputNeuron, None, None]: generator which allow to iterate 
+                over input neurons
         """
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
         for neuron in neurons:
@@ -100,26 +93,24 @@ class InputLayer(Layer):
 
     def __getitem__(self, index: int) -> InputNeuron:
         """
-            _summary_
+            Magic method allowing to get input neuron with usage of indexation.
 
             Args:
-                index (int): _description_
+                index (int): index of input neuron in list
 
             Returns:
-                InputNeuron: _description_
+                InputNeuron: input neuron under index in list
         """
         return super().__getitem__(index)
 
     @property
     def orders(self) -> np.vectorize:
         """ 
-            Atrybut, który złącza kolejność wystrzylewania neuronów
-            w jedną listę.
-
+            Property, which lookup firing order of neurons in one list
+            
             Returns:
-                np.vectorize: _description_
+                np.vectorize: vectorized list of firing order of neurons
         """
-
         vectorized_get_order = np.vectorize(lambda neuron: neuron.order)
         return vectorized_get_order(self.neurons)
 
@@ -129,14 +120,13 @@ class InputLayer(Layer):
                    mod: float,
                    beta: float) -> None:
         """  
-            Metoda służy do ustawienia dla każdego neuronu wejściowego
-            nowej pozycji wystrzeliwania w warstwie.
+            Method set for all input neurons new firing order in layer.
 
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                ts_coef (float): _description_
-                mod (float): _description_
-                beta (float): _description_
+                window (npt.NDArray[np.float64]): list of input values from stream
+                ts_coef (float): factor from OeSNN-AD
+                mod (float): factor from OeSNN-AD
+                beta (float): factor from OeSNN-AD
         """
         grf = GRFInit(window, self.num_neurons, ts_coef, mod, beta)
 
@@ -146,18 +136,15 @@ class InputLayer(Layer):
 
 class OutputLayer(Layer):
     """
-        Klasa implementująca warstwę wyjściową, dziedzicząca po bazowej
-        klasie Layer.
-
-        Klasa przechowuje i obsługuje listę neuronów wyjściowych.
+        Class implementing output layer, inheriting after base class Layer.
+        
+        Class stores and handling list of output neurons.
     """
 
     def __init__(self, max_output_size: int) -> None:
         """
-            _summary_
-
             Args:
-                max_output_size (int): _description_
+                max_output_size (int): Max number of output neurons in layer
         """
         super().__init__(0)
 
@@ -166,25 +153,23 @@ class OutputLayer(Layer):
 
     def __iter__(self) -> Generator[OutputNeuron, None, None]:
         """
-            _summary_
-
-            Returns:
-                _type_: _description_
+            Magic method for iteration over list of output neurons in layer.
 
             Yields:
-                Generator[OutputNeuron, None, None]: _description_
+                Generator[InputNeuron, None, None]: generator which allow to iterate 
+                over output neurons
         """
         return super().__iter__()
 
     def __getitem__(self, index: int) -> OutputNeuron:
         """
-            _summary_
+            Magic method allowing to get output neuron with usage of indexation.
 
             Args:
-                index (int): _description_
+                index (int): index of output neuron in list
 
             Returns:
-                OutputNeuron: _description_
+                OutputNeuron: output neuron under index in list
         """
         return super().__getitem__(index)
 
@@ -195,17 +180,17 @@ class OutputLayer(Layer):
                        c_coef: float,
                        neuron_age: int) -> OutputNeuron:
         """
-            Metoda tworząca nowy neuron wyjściowy i ustawiająca jego składowe.
-
+            Method is making new output neuron and setting his properties
+            
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                order (npt.NDArray[np.intp]): _description_
-                mod (float): _description_
-                c_coef (float): _description_
-                neuron_age (int): _description_
+                window (npt.NDArray[np.float64]): list of values from stream
+                order (npt.NDArray[np.intp]): firing order of neuron
+                mod (float): factor from OeSNN-AD
+                c_coef (float): factor from OeSNN-AD
+                neuron_age (int): neuron's age
 
             Returns:
-                OutputNeuron: _description_
+                OutputNeuron: Candidate neuron
         """
         weights = mod ** order
         output_value = np.random.normal(np.mean(window), np.std(window))
@@ -219,15 +204,16 @@ class OutputLayer(Layer):
     def find_most_similar(self,
                           candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | bool, float]:
         """ 
-            Metoda zwracająca neuron mająca najmniejszą odległość euklidesową od
-            neuronu kandydata, wraz z odległością. Gdy warstwa nie ma neuronów zwraca parę 
-            false, np.inf.
-
+            Method return neuron which have lowest euclidean distance to candidate neuron and that
+            distance. If layer doesn't have neurons, method return Tuple[false, np.inf]
+            
             Args:
-                candidate_neuron (OutputNeuron): _description_
+                candidate_neuron (OutputNeuron): Neuron for which we need to find most similar
 
             Returns:
-                Tuple[OutputNeuron | bool, float]: _description_
+                Tuple[OutputNeuron | bool, float]: Two elements tuple, in which first position is
+                for neuron or boolean false if layer is empty and second position is for
+                euclidean distance (np.inf if layer is empty)
         """
         if not self.neurons:
             return False, np.Inf
@@ -240,26 +226,23 @@ class OutputLayer(Layer):
 
     def add_new_neuron(self, neuron: OutputNeuron) -> None:
         """ 
-            Metoda służy do dodawania nowego nowego neuronu, gdy
-            liczba neuronów w warstwie jest poniżej maksymalnej.
-
-            Dodatkowo metoda po dodaniu inkrementuje liczbę neuronów w warstwie w atrybucie
-            num neurons.
+            Method add new neuron when number of neurons is lower than max size of layer.
+            
+            Additionaly method after pushinh new neuron, update value of attribute num_neurons.
 
             Args:
-                neuron (OutputNeuron): _description_
+                neuron (OutputNeuron): New neuron in layer
         """
         self.neurons.append(neuron)
         self.num_neurons += 1
 
     def replace_oldest(self, candidate: OutputNeuron) -> None:
         """
-            Metoda służy do zastąpywania najstaszego neuronu w warstwie
-            przez nowo utworzonego kandydata, gdy liczba neuronów w warstwie
-            jest maksymalna.
-
+            Method replace oldest neuron in layer by new created candidate, when number
+            of neurons in layer is max.
+            
             Args:
-                candidate (OutputNeuron): _description_
+                candidate (OutputNeuron): new neuron which replace oldest neuron in layer
         """
         oldest = min(self.neurons, key=lambda n: n.addition_time)
         self.neurons.remove(oldest)
@@ -267,8 +250,7 @@ class OutputLayer(Layer):
 
     def reset_psp(self) -> None:
         """ 
-            Metoda zerująca potencjał post-synaptyczny wszystkich neuronów 
-            w warstwie.
+            Method zeroing postsynaptic potential all neurons in layer
         """
         for neuron in self.neurons:
             neuron.psp = 0

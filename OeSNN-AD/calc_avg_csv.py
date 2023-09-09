@@ -1,5 +1,5 @@
 """
-    Skrypt do wyliczania średnich dla danych datasetów.
+    Script that calc average results for all datasets.
 """
 
 import pandas as pd
