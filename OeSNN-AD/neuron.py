@@ -4,7 +4,6 @@
 import numpy as np
 import numpy.typing as npt
 
-
 class Neuron:
     """
         Base class of neuron
@@ -38,7 +37,6 @@ class InputNeuron(Neuron):
                 new_order (int): New neuron order
         """
         self.order = new_order
-
 
 class OutputNeuron(Neuron):
     """

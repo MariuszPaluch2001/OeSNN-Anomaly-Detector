@@ -12,7 +12,6 @@ WINDOW = np.array([0.5, 0.3, 0.4,
                    0.4, 0.2, 0.4,
                    0.1, 0.5])
 
-
 def test__get_width_vec():
     """
         Sprawdzanie czy szerokośc GRF jest liczona poprawnie.
@@ -23,7 +22,6 @@ def test__get_width_vec():
     correct = np.repeat(0.11, 7)
     np.testing.assert_array_almost_equal(result, correct, decimal=2)
 
-
 def test__get_center_vec():
     """
         Sprawdzanie czy centrum GRF jest liczone poprawnie.
@@ -33,7 +31,6 @@ def test__get_center_vec():
     result = grf._get_center_vec()
     correct = np.array([-0.17,  0.01,  0.19,  0.37,  0.55,  0.73,  0.91])
     np.testing.assert_array_almost_equal(result, correct, decimal=2)
-
 
 def test__get_excitation():
     """
@@ -47,7 +44,6 @@ def test__get_excitation():
     correct = np.array([0.001, 0.024, 0.227, 0.770, 0.962, 0.442, 0.074])
     np.testing.assert_array_almost_equal(result, correct, decimal=3)
 
-
 def test__get_firing_time():
     """
         Sprawdzanie czy czas wystrzelenia GRF jest liczona poprawnie.
@@ -59,7 +55,6 @@ def test__get_firing_time():
     correct = np.array([0.999, 0.976, 0.773, 0.230, 0.038, 0.558, 0.926])
     np.testing.assert_array_almost_equal(result, correct, decimal=3)
 
-
 def test__get_order():
     """
         Sprawdzanie czy kolejność wystrzeliwania neuronów jest liczona poprawnie.
@@ -70,7 +65,6 @@ def test__get_order():
     result = grf._get_order(firing_time)
     correct = np.array([6, 5, 3, 1, 0, 2, 4])
     np.testing.assert_array_equal(result, correct)
-
 
 def test_get_order():
     """

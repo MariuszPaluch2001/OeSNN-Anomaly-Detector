@@ -14,7 +14,6 @@ import matplotlib.lines as mlines
 from oesnn_ad import OeSNNAD
 from utils import get_data_from_path, get_all_files_paths, perf_measure, read_parameters
 
-
 def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -> Tuple[Dict, float, float, float]:
     """
@@ -85,7 +84,6 @@ def parameters_tuning(stream: npt.NDArray[np.float64],
 
     return best_parameters, best_recall, best_precission, best_f1
 
-
 def plots(stream: npt.NDArray[np.float64],
           best_parameters: dict,
           labels: npt.NDArray[np.bool_],
@@ -151,7 +149,6 @@ def plots(stream: npt.NDArray[np.float64],
     plt.savefig(f"./plots/{stream_name}.png")
     plt.close()
 
-
 def main() -> None:
     """
         Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
@@ -202,7 +199,6 @@ def main() -> None:
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
-
 
 if __name__ == "__main__":
     main()

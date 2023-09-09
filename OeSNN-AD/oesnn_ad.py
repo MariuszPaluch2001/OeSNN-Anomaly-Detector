@@ -1,5 +1,5 @@
 """
-    Module zawiera główną klasę algorytmu, stanowiącą główny interfejs modelu.
+    Module contains main class of alghorithm, which is main interface of model.
 """
 
 from typing import List, Generator
@@ -10,13 +10,11 @@ import numpy.typing as npt
 from layer import InputLayer, OutputLayer
 from neuron import OutputNeuron, InputNeuron
 
-
 class OeSNNAD:
     """
-        Klasa implementująca całościowo algorytm OeSNN-AD. Strumień danych
-        jest przekazywany jako parametr w konstruktorze, wraz z wszystkimi
-        hiperparametrami algorytmu. Głównym interfejsem klasy jest metoda 
-        predict, która zwraca wektor z detekcjami.
+        Class implementing OeSNN-AD model. Data stream is passed as parameter in
+        constructor, with all hyperparameters. Main interface of class is method
+        predict, which return vector with predictions.
     """
 
     def __init__(self, stream: npt.NDArray[np.float64], window_size: int = 100,
@@ -25,20 +23,19 @@ class OeSNNAD:
                  epsilon: float = 2, ksi: float = 0.9, sim: float = 0.15,
                  beta: float = 1.6) -> None:
         """
-        _summary_
 
         Args:
-            stream (npt.NDArray[np.float64]): _description_
-            window_size (int): _description_. Defaults to 100.
-            num_in_neurons (int): _description_. Defaults to 10.
-            num_out_neurons (int): _description_. Defaults to 50.
-            ts_factor (float): _description_. Defaults to 1000.0.
-            mod (float): _description_. Defaults to 0.6.
-            c_factor (float): _description_. Defaults to 0.6.
-            epsilon (float): _description_. Defaults to 2.
-            ksi (float): _description_. Defaults to 0.9.
-            sim (float): _description_. Defaults to 0.15.
-            beta (float): _description_. Defaults to 1.6.
+            stream (npt.NDArray[np.float64]): data stream from dataset
+            window_size (int): size of data window. Defaults to 100.
+            num_in_neurons (int): input neuron's number. Defaults to 10.
+            num_out_neurons (int): output neuron's number. Defaults to 50.
+            ts_factor (float): OeSNN-AD specific factor. Defaults to 1000.0.
+            mod (float): OeSNN-AD specific factor. Defaults to 0.6.
+            c_factor (float): OeSNN-AD specific factor. Defaults to 0.6.
+            epsilon (float): OeSNN-AD specific factor. Defaults to 2.
+            ksi (float): OeSNN-AD specific factor. Defaults to 0.9.
+            sim (float): OeSNN-AD specific factor. Defaults to 0.15.
+            beta (float): OeSNN-AD specific factor. Defaults to 1.6.
         """
         self.stream = stream
         self.stream_len = self.stream.shape[0]
@@ -65,20 +62,20 @@ class OeSNNAD:
     def _get_window_from_stream(self, begin_idx: int,
                                 end_idx: int) -> npt.NDArray[np.float64]:
         """
-            Metoda zwracająca okno z danymi.
+            Method returning window with data.
 
             Args:
-                begin_idx (int): _description_
-                end_idx (int): _description_
+                begin_idx (int): begin index of data window
+                end_idx (int): end index of data window
                 
             Returns:
-                npt.NDArray[np.float64]: _description_
+                npt.NDArray[np.float64]: data window
         """
         return self.stream[begin_idx: end_idx]
 
     def _init_values_rand(self, window: npt.NDArray[np.float64]) -> List[float]:
         """
-            Docstring here
+            Method which init values in attribute on begining.
 
             Args:
                 window (npt.NDArray): _description_
@@ -92,14 +89,10 @@ class OeSNNAD:
 
     def _init_new_arrays_for_predict(self, window: npt.NDArray[np.float64]) -> None:
         """
-            Metoda inicjalizująca/resetująca listy z wartościami, które tworzone
-            są przez czas działania algorytmu tj. listy wartości, błędów i anomalii.
-
+            Method initilize attributes like values, errors and anomaliesl
+            
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                
-            Returns:
-                List[float]: _description_
+                window (npt.NDArray[np.float64]): window from datastream
         """
         self.values = self._init_values_rand(window)
         self.errors = [np.abs(xt - yt) for xt, yt in zip(window, self.values)]
@@ -107,11 +100,11 @@ class OeSNNAD:
 
     def predict(self) -> npt.NDArray[np.bool_]:
         """
-            Metoda będąca głównym interfejsem klasy. To tutaj znajduje się
-            główny flow algorytmu. Wynikiem działania metody jest wektor z detekcjami.
-
+            Method is main interface of model. There is main flow of model, with returning
+            vector of predictions.
+            
             Returns:
-                npt.NDArray[np.bool_]: _description_
+                npt.NDArray[np.bool_]: predictions vector
         """
         window = self._get_window_from_stream(0, self.window_size)
 
@@ -130,10 +123,10 @@ class OeSNNAD:
 
     def _anomaly_detection(self, window: npt.NDArray[np.float64]) -> None:
         """
-            Metoda odpowiadająca za sprawdzanie czy zaszła anomalia.
-
+            Method check if anomaly is detected.
+            
             Args:
-                window (npt.NDArray[np.float64]): _description_
+                window (npt.NDArray[np.float64]): window from datastream
         """
         window_head = window[-1]
         first_fired_neuron = self._fires_first()
@@ -148,10 +141,7 @@ class OeSNNAD:
 
     def _anomaly_classification(self) -> bool:
         """
-            Metoda obliczająca, czy na podstawie ostatniej iteracji algorytmu, głowa okna jest
-            anomalią.
-            
-            Args: None
+            Method check if current head of window is anomaly.
             
             Returns:
                 bool: _description_
@@ -169,11 +159,11 @@ class OeSNNAD:
 
     def _learning(self, window: npt.NDArray[np.float64], neuron_age: int) -> None:
         """
-            Metoda odpowiadająca za naukę i strojenie parametrów sieci.
+            Method learn model by tune up parameters of output neurons.
 
             Args:
-                window (npt.NDArray[np.float64]): _description_
-                neuron_age (int): _description_
+                window (npt.NDArray[np.float64]): window from data stream
+                neuron_age (int): number of current iteration
         """
         anomaly_t, window_head = self.anomalies[-1], window[-1]
         candidate_neuron = self.output_layer.make_candidate(window, self.input_layer.orders,
@@ -194,16 +184,16 @@ class OeSNNAD:
 
     def _update_psp(self, neuron_input: InputNeuron) -> Generator[OutputNeuron, None, None]:
         """
-            Metoda uaktualniąca potencjał postsynaptyczny dla neuronów wyjściowych połączonych z 
-            neuronem wejściowym przekazywanym jako parametr funkcji.
-
-            Metoda ta powinna być wywoływana tylko w metodzie _fires_first.
+            Method updating PSP for output neurons conected with input neuron which is passed
+            by argument of method.
+            
+            Method must be only called from method _fires_first.
             
             Args:
-                neuron_input (InputNeuron): _description_
+                neuron_input (InputNeuron): input neuron by which output neuron's PSP is updated
                 
             Yields:
-                Generator[OutputNeuron, None, None]: _description_
+                Generator[OutputNeuron, None, None]: yielding firing neurons
         """
         for n_out in self.output_layer:
             n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
@@ -213,11 +203,11 @@ class OeSNNAD:
 
     def _fires_first(self) -> OutputNeuron | bool:
         """
-            Metoda kontrolująca działanie potencjału postsynaptycznego w sieci, oraz
-            zwracająca pierwszy wystrzeliwujący neuron z posortowanej po order warstwy wejściowej.
+            Method control PSP in model, and returning first firing output neuron (if fired
+            more than one output neuron, there is chosen with greatest PSP)
             
             Returns:
-                OutputNeuron | bool: _description_
+                OutputNeuron | bool: firing neuron with greatest PSP 
         """
         self.output_layer.reset_psp()
 

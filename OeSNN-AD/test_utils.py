@@ -5,7 +5,6 @@
 import numpy as np
 from utils import convert_numpy_array_int_to_booleans, perf_measure
 
-
 def test_convert_numpy_array_int_to_booleans():
     """
         Test sprawdzający czy wektor intów jest dobrze konwertowany na wektor booli.
@@ -14,7 +13,6 @@ def test_convert_numpy_array_int_to_booleans():
 
     np.testing.assert_array_equal(convert_numpy_array_int_to_booleans(
         array), np.array([True, False, False, True, False]))
-
 
 def test_perf_measure():
     """

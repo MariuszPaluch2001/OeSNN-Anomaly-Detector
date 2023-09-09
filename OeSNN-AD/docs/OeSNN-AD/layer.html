@@ -90,7 +90,6 @@ class Layer:
         &#34;&#34;&#34;
         return self.neurons[index]
 
-
 class InputLayer(Layer):
     &#34;&#34;&#34;
         Class implementing input layer, inheriting after base class Layer.
@@ -161,7 +160,6 @@ class InputLayer(Layer):
 
         for neuron, new_order in zip(self.neurons, grf.get_order()):
             neuron.set_order(new_order)
-
 
 class OutputLayer(Layer):
     &#34;&#34;&#34;

@@ -8,7 +8,6 @@ import numpy as np
 
 from pytest import approx
 
-
 def test_update_neuron():
     """
         Test sprawdzający czy neuron faktycznie jest aktualizowany.
@@ -25,7 +24,6 @@ def test_update_neuron():
     assert updated_neuron.addition_time == approx(0.5)
     np.testing.assert_array_almost_equal(
         updated_neuron.weights, np.array([0.5]*3), decimal=3)
-
 
 def test__get_item__():
     """

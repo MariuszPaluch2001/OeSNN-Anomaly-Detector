@@ -5,7 +5,6 @@
 import numpy as np
 import numpy.typing as npt
 
-
 class GRFInit:
     """
         Class contains functions which target is initialization of firing neurons order

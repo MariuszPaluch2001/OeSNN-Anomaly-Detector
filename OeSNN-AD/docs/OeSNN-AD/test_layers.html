@@ -44,7 +44,6 @@ WINDOW = np.array([0.5, 0.3, 0.4,
                    0.4, 0.2, 0.4,
                    0.1, 0.5])
 
-
 def test_make_candidate():
     &#34;&#34;&#34;
         Test sprawdzający czy tworzenie kandydata działa poprawnie.
@@ -71,7 +70,6 @@ def test_make_candidate():
     assert candidate.max_psp == approx(1.333, abs=1e-3)
     assert candidate.gamma == approx(0.666, abs=1e-3)
 
-
 def test_find_most_similar_without_neurons():
     &#34;&#34;&#34;
         Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.
@@ -84,7 +82,6 @@ def test_find_most_similar_without_neurons():
 
     assert not neuron_result
     assert np.isinf(distance)
-
 
 def test_find_most_similar_with_neurons():
     &#34;&#34;&#34;
@@ -112,7 +109,6 @@ def test_find_most_similar_with_neurons():
     assert neuron_result == neuron_out1
     assert distance == approx(0.0173, abs=1e-4)
 
-
 def test_reset_psp():
     &#34;&#34;&#34;
         Test sprawdzający czy resetowanie PSP działa poprawnie.
@@ -134,7 +130,6 @@ def test_reset_psp():
     for neuron in output_layer:
         assert neuron.psp == 0.0
 
-
 def test_add_new_neuron():
     &#34;&#34;&#34;
         Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.
@@ -154,7 +149,6 @@ def test_add_new_neuron():
     assert output_layer.num_neurons == 2
     assert len(output_layer) == 2
     assert output_layer[1] == neuron_out2
-
 
 def test_replace_oldest():
     &#34;&#34;&#34;
@@ -179,7 +173,6 @@ def test_replace_oldest():
 
     assert neuron_out1 not in output_layer
     assert candidate in output_layer
-
 
 def test_len_magic_method():
     &#34;&#34;&#34;

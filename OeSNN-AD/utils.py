@@ -1,7 +1,7 @@
 """
-    Moduł zawiera pomocnicze funkcje, które nie mogły znaleźć się w innych modułach.
-    Głównie znajdują się tutaj funkcje do odczytywania danych z plików, oraz funkcja
-    perf_measure do zliczania miar jakości.
+    Module contains utils function which cannot be placed in other modules.
+    These functions are responsible for reading data from files, and function to 
+    calc performance of model.
 """
 from typing import List, Dict, Tuple, Generator
 
@@ -10,84 +10,78 @@ import json
 import numpy as np
 import numpy.typing as npt
 
-
 def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None]:
     """        
-        Funkcja zwraca ścieżki do wszystkich plików w strukturze folderu, począwszy
-        od folderu-korzenia, który jest podany jako argument funkcji (data_root_folder_name).
-
+        Function return paths of all datasts files in repository tree.
+        
         Args:
-            data_root_folder_name (str): _description_
+            data_root_folder_name (str): path to data root folder
 
         Yields:
-            Generator[str, None, None]: _description_
+            Generator[str, None, None]: yields dataset files paths
     """
     for path, _, files in os.walk(data_root_folder_name):
         for name in files:
             yield os.path.join(path, name)
 
-
-def get_data_from_path(filename: str,
+def get_data_from_path(path: str,
                        is_nab: bool) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]:
     """
-        Funkcja ta odczytuje strumień danych z pliku, i zwraca go wraz z odpowiadającymi mu
-        etykietami.
+        Function read datastream and labels from datastream.
 
         Args:
-            filename (str): _description_
-            is_nab (bool): _description_
+            path (str): path to dataset file
+            is_nab (bool): flag which tell if dataset is from NAB repository
 
         Returns:
-            Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: _description_
+            Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: First element of tuple is
+            datastream and second one are labels
     """
     if is_nab:
-        data = np.loadtxt(filename, delimiter=",", dtype=float,
+        data = np.loadtxt(path, delimiter=",", dtype=float,
                           skiprows=1, usecols=range(1, 3))
     else:
-        data = np.loadtxt(filename, delimiter=",",
+        data = np.loadtxt(path, delimiter=",",
                           dtype=float, usecols=range(1, 3))
 
     return data[:, 0], data[:, 1]
 
-
 def read_parameters(path: str) -> Dict:
     """
-        Funkcja do otczytywania hiperparametrów z pliku json.
+        Function to read hyperparameters from json file.
 
         Args:
-            path (str): _description_
+            path (str): path to json file
 
         Returns:
-            Dict: _description_
+            Dict: dictionary with hyperparameters
     """
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
-
 def convert_numpy_array_int_to_booleans(array: npt.NDArray[np.intp]) -> npt.NDArray[np.bool_]:
     """
-        Funkcja do konwersji numpy listy z intów do wartości bool.
+        Function convert numpy int array to numpy boolean array.
 
         Args:
-            array (npt.NDArray[np.intp]): _description_
+            array (npt.NDArray[np.intp]): numpy array with int values
 
         Returns:
-            npt.NDArray[np.bool_]: _description_
+            npt.NDArray[np.bool_]: numpy array with boolean values
     """
     return array.astype(bool)
 
-
 def perf_measure(y_hat: List, y_actual: List) -> Tuple[float, float, float]:
     """
-        Funkcja służy do liczenia miar jakości takich jak: recall, precission i f1.
-        W takiej kolejności też te wartości są zwracane.
-
+        Function to calculate performance measure such as: recall, precission and f1.
+        In such order they are returned from function.
+        
         Args:
-            y_hat (List): _description_
-            y_actual (List): _description_
+            y_hat (List): list of prediction 
+            y_actual (List): list of true values
 
         Returns:
-            Tuple[float, float, float]: _description_
+            Tuple[float, float, float]: recall, precission, f1 measures
     """
     true_positives = 0
     false_positives = 0
