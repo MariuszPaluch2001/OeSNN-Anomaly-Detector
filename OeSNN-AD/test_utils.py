@@ -3,6 +3,7 @@
 """
 
 import numpy as np
+
 from utils import convert_numpy_array_int_to_booleans, perf_measure
 
 def test_convert_numpy_array_int_to_booleans():

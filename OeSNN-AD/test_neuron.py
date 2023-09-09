@@ -2,11 +2,11 @@
     Moduł testujący metody klas neuronów.
 """
 
-from neuron import OutputNeuron
-
 import numpy as np
 
 from pytest import approx
+
+from neuron import OutputNeuron
 
 def test_update_neuron():
     """

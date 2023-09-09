@@ -2,12 +2,12 @@
     Moduł testujący metody klas Layer.
 """
 
-from layer import OutputLayer, InputLayer
-from neuron import OutputNeuron
-
 import numpy as np
 
 from pytest import approx
+
+from layer import OutputLayer, InputLayer
+from neuron import OutputNeuron
 
 WINDOW = np.array([0.5, 0.3, 0.4,
                    0.3, 0.6, 0.2,
