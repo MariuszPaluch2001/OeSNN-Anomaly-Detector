@@ -1,5 +1,5 @@
 """
-    Moduł zawiera definicje i implementacje neuronów.
+    Module contains definitions and neuron's implementation.
 """
 import numpy as np
 import numpy.typing as npt
@@ -7,27 +7,23 @@ import numpy.typing as npt
 
 class Neuron:
     """
-        Klasa bazowa neuronu.
+        Base class of neuron
     """
 
     def __init__(self) -> None:
-        """
-            Bazowy konstruktor neuronu
-        """
+        pass
 
 class InputNeuron(Neuron):
     """
-        Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Input neuron class inheriting after neuron's base class.
     """
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -> None:
         """
-            _summary_
-
             Args:
-                firing_time (float): _description_
-                neuron_id (int, optional): _description_. Defaults to 0.
-                order (int, optional): _description_. Defaults to 0.
+                firing_time (float): Firing time of neuron
+                neuron_id (int, optional): Neuron identificator. Defaults to 0.
+                order (int, optional): Order of neuron firing in layer. Defaults to 0.
         """
         super().__init__()
         self.neuron_id = neuron_id
@@ -36,33 +32,31 @@ class InputNeuron(Neuron):
 
     def set_order(self, new_order: int):
         """
-            Setter dla atrybtu order.
+            Setter for order attribute.
             
             Args:
-                new_order (int): _description_
+                new_order (int): New neuron order
         """
         self.order = new_order
 
 
 class OutputNeuron(Neuron):
     """
-        Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Output neuron class, inheriting after neuron's base class.
     """
 
     def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -> None:
         """
-            _summary_
-
             Args:
-                weights (npt.NDArray[np.float64]): _description_
-                gamma (float): _description_
-                output_value (float): _description_
-                modification_count (float): _description_
-                addition_time (float): _description_
-                PSP (float): _description_
-                max_PSP (float): _description_
+                weights (npt.NDArray[np.float64]): numpy array of neuron's weights
+                gamma (float): factor specific for OeSNN-AD
+                output_value (float): @TODO - co to jest
+                modification_count (float): count of neuron modifications
+                addition_time (float): @TODO - co to jest
+                PSP (float): postsynaptic potential
+                max_PSP (float): maximal postsynaptic potential
         """
         super().__init__()
         self.weights = weights
@@ -75,23 +69,24 @@ class OutputNeuron(Neuron):
 
     def __getitem__(self, index: int) -> float:
         """
-            _summary_
+            Magic method which return value of weight under specific index.
 
             Args:
-                index (int): _description_
+                index (int): specific index
 
             Returns:
-                float: _description_
+                float: value of weight under index
         """
         return self.weights[index]
 
     def update_neuron(self, candidate_neuron: 'OutputNeuron') -> None:
         """
-            Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-            przekazywanego jako parametr.
-
+            Method to update properties of neuron based on other neuron which is argument
+            of method.
+            
             Args:
-                candidate_neuron (OutputNeuron): _description_
+                candidate_neuron (OutputNeuron): Candidate neuron which properties will be 
+                base of neuron modification
         """
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)
@@ -105,34 +100,35 @@ class OutputNeuron(Neuron):
 
     def error_correction(self, window_head: float, ksi: float) -> None:
         """
-            _summary_
+            Correction of output value based on current head of window and
+            ksi factor.
 
             Args:
-                window_head (float): _description_
-                ksi (float): _description_
+                window_head (float): header value in window
+                ksi (float): factor specific for oeSNN-AD
         """
         # TODO: Dodać testy do tego
         self.output_value += (window_head - self.output_value) * ksi
 
     def error_calc(self, window_head: float) -> float:
         """
-            _summary_
+            Calculation of error between value of neuron and header of window.
 
             Args:
-                window_head (float): _description_
+                window_head (float): header value in window
 
             Returns:
-                float: _description_
+                float: value of error
         """
         # TODO: dodaj testy do tego
         return np.abs(window_head - self.output_value)
 
     def update_psp(self, psp_update : float):
         """
-            _summary_
+            Method to update postsynaptic potential.
 
             Args:
-                psp_update (float): _description_
+                psp_update (float): quantity of post synaptic potential to update
         """
         # TODO dodaj testy do tego
         self.psp += psp_update

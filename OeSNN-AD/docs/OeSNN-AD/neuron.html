@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.neuron API documentation</title>
-<meta name="description" content="Moduł zawiera definicje i implementacje neuronów." />
+<meta name="description" content="Module contains definitions and neuron&#39;s implementation." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,13 +22,13 @@
 <h1 class="title">Module <code>OeSNN-AD.neuron</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł zawiera definicje i implementacje neuronów.</p>
+<p>Module contains definitions and neuron's implementation.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł zawiera definicje i implementacje neuronów.
+    Module contains definitions and neuron&#39;s implementation.
 &#34;&#34;&#34;
 import numpy as np
 import numpy.typing as npt
@@ -36,27 +36,23 @@ import numpy.typing as npt
 
 class Neuron:
     &#34;&#34;&#34;
-        Klasa bazowa neuronu.
+        Base class of neuron
     &#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        &#34;&#34;&#34;
-            Bazowy konstruktor neuronu
-        &#34;&#34;&#34;
+        pass
 
 class InputNeuron(Neuron):
     &#34;&#34;&#34;
-        Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Input neuron class inheriting after neuron&#39;s base class.
     &#34;&#34;&#34;
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                firing_time (float): _description_
-                neuron_id (int, optional): _description_. Defaults to 0.
-                order (int, optional): _description_. Defaults to 0.
+                firing_time (float): Firing time of neuron
+                neuron_id (int, optional): Neuron identificator. Defaults to 0.
+                order (int, optional): Order of neuron firing in layer. Defaults to 0.
         &#34;&#34;&#34;
         super().__init__()
         self.neuron_id = neuron_id
@@ -65,33 +61,31 @@ class InputNeuron(Neuron):
 
     def set_order(self, new_order: int):
         &#34;&#34;&#34;
-            Setter dla atrybtu order.
+            Setter for order attribute.
             
             Args:
-                new_order (int): _description_
+                new_order (int): New neuron order
         &#34;&#34;&#34;
         self.order = new_order
 
 
 class OutputNeuron(Neuron):
     &#34;&#34;&#34;
-        Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Output neuron class, inheriting after neuron&#39;s base class.
     &#34;&#34;&#34;
 
     def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                weights (npt.NDArray[np.float64]): _description_
-                gamma (float): _description_
-                output_value (float): _description_
-                modification_count (float): _description_
-                addition_time (float): _description_
-                PSP (float): _description_
-                max_PSP (float): _description_
+                weights (npt.NDArray[np.float64]): numpy array of neuron&#39;s weights
+                gamma (float): factor specific for OeSNN-AD
+                output_value (float): @TODO - co to jest
+                modification_count (float): count of neuron modifications
+                addition_time (float): @TODO - co to jest
+                PSP (float): postsynaptic potential
+                max_PSP (float): maximal postsynaptic potential
         &#34;&#34;&#34;
         super().__init__()
         self.weights = weights
@@ -104,23 +98,24 @@ class OutputNeuron(Neuron):
 
     def __getitem__(self, index: int) -&gt; float:
         &#34;&#34;&#34;
-            _summary_
+            Magic method which return value of weight under specific index.
 
             Args:
-                index (int): _description_
+                index (int): specific index
 
             Returns:
-                float: _description_
+                float: value of weight under index
         &#34;&#34;&#34;
         return self.weights[index]
 
     def update_neuron(self, candidate_neuron: &#39;OutputNeuron&#39;) -&gt; None:
         &#34;&#34;&#34;
-            Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-            przekazywanego jako parametr.
-
+            Method to update properties of neuron based on other neuron which is argument
+            of method.
+            
             Args:
-                candidate_neuron (OutputNeuron): _description_
+                candidate_neuron (OutputNeuron): Candidate neuron which properties will be 
+                base of neuron modification
         &#34;&#34;&#34;
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)
@@ -134,34 +129,35 @@ class OutputNeuron(Neuron):
 
     def error_correction(self, window_head: float, ksi: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
+            Correction of output value based on current head of window and
+            ksi factor.
 
             Args:
-                window_head (float): _description_
-                ksi (float): _description_
+                window_head (float): header value in window
+                ksi (float): factor specific for oeSNN-AD
         &#34;&#34;&#34;
         # TODO: Dodać testy do tego
         self.output_value += (window_head - self.output_value) * ksi
 
     def error_calc(self, window_head: float) -&gt; float:
         &#34;&#34;&#34;
-            _summary_
+            Calculation of error between value of neuron and header of window.
 
             Args:
-                window_head (float): _description_
+                window_head (float): header value in window
 
             Returns:
-                float: _description_
+                float: value of error
         &#34;&#34;&#34;
         # TODO: dodaj testy do tego
         return np.abs(window_head - self.output_value)
 
     def update_psp(self, psp_update : float):
         &#34;&#34;&#34;
-            _summary_
+            Method to update postsynaptic potential.
 
             Args:
-                psp_update (float): _description_
+                psp_update (float): quantity of post synaptic potential to update
         &#34;&#34;&#34;
         # TODO dodaj testy do tego
         self.psp += psp_update</code></pre>
@@ -181,16 +177,15 @@ class OutputNeuron(Neuron):
 <span>(</span><span>firing_time: float, neuron_id: int = 0, order: int = 0)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p>
-<p><em>summary</em></p>
+<div class="desc"><p>Input neuron class inheriting after neuron's base class.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>firing_time</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>Firing time of neuron</dd>
 <dt><strong><code>neuron_id</code></strong> :&ensp;<code>int</code>, optional</dt>
-<dd><em>description</em>. Defaults to 0.</dd>
+<dd>Neuron identificator. Defaults to 0.</dd>
 <dt><strong><code>order</code></strong> :&ensp;<code>int</code>, optional</dt>
-<dd><em>description</em>. Defaults to 0.</dd>
+<dd>Order of neuron firing in layer. Defaults to 0.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -198,17 +193,15 @@ class OutputNeuron(Neuron):
 </summary>
 <pre><code class="python">class InputNeuron(Neuron):
     &#34;&#34;&#34;
-        Klasa wejściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Input neuron class inheriting after neuron&#39;s base class.
     &#34;&#34;&#34;
 
     def __init__(self, firing_time: float, neuron_id: int = 0, order: int = 0) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                firing_time (float): _description_
-                neuron_id (int, optional): _description_. Defaults to 0.
-                order (int, optional): _description_. Defaults to 0.
+                firing_time (float): Firing time of neuron
+                neuron_id (int, optional): Neuron identificator. Defaults to 0.
+                order (int, optional): Order of neuron firing in layer. Defaults to 0.
         &#34;&#34;&#34;
         super().__init__()
         self.neuron_id = neuron_id
@@ -217,10 +210,10 @@ class OutputNeuron(Neuron):
 
     def set_order(self, new_order: int):
         &#34;&#34;&#34;
-            Setter dla atrybtu order.
+            Setter for order attribute.
             
             Args:
-                new_order (int): _description_
+                new_order (int): New neuron order
         &#34;&#34;&#34;
         self.order = new_order</code></pre>
 </details>
@@ -234,11 +227,11 @@ class OutputNeuron(Neuron):
 <span>def <span class="ident">set_order</span></span>(<span>self, new_order: int)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Setter dla atrybtu order.</p>
+<div class="desc"><p>Setter for order attribute.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>new_order</code></strong> :&ensp;<code>int</code></dt>
-<dd><em>description</em></dd>
+<dd>New neuron order</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -246,10 +239,10 @@ class OutputNeuron(Neuron):
 </summary>
 <pre><code class="python">def set_order(self, new_order: int):
     &#34;&#34;&#34;
-        Setter dla atrybtu order.
+        Setter for order attribute.
         
         Args:
-            new_order (int): _description_
+            new_order (int): New neuron order
     &#34;&#34;&#34;
     self.order = new_order</code></pre>
 </details>
@@ -260,21 +253,18 @@ class OutputNeuron(Neuron):
 <span>class <span class="ident">Neuron</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa bazowa neuronu.</p>
-<p>Bazowy konstruktor neuronu</p></div>
+<div class="desc"><p>Base class of neuron</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Neuron:
     &#34;&#34;&#34;
-        Klasa bazowa neuronu.
+        Base class of neuron
     &#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        &#34;&#34;&#34;
-            Bazowy konstruktor neuronu
-        &#34;&#34;&#34;</code></pre>
+        pass</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -287,24 +277,23 @@ class OutputNeuron(Neuron):
 <span>(</span><span>weights: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], gamma: float, output_value: float, modification_count: float, addition_time: float, PSP: float, max_PSP: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.</p>
-<p><em>summary</em></p>
+<div class="desc"><p>Output neuron class, inheriting after neuron's base class.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>weights</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
-<dd><em>description</em></dd>
+<dd>numpy array of neuron's weights</dd>
 <dt><strong><code>gamma</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>factor specific for OeSNN-AD</dd>
 <dt><strong><code>output_value</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>@TODO - co to jest</dd>
 <dt><strong><code>modification_count</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>count of neuron modifications</dd>
 <dt><strong><code>addition_time</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>@TODO - co to jest</dd>
 <dt><strong><code>PSP</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>postsynaptic potential</dd>
 <dt><strong><code>max_PSP</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>maximal postsynaptic potential</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -312,23 +301,21 @@ class OutputNeuron(Neuron):
 </summary>
 <pre><code class="python">class OutputNeuron(Neuron):
     &#34;&#34;&#34;
-        Klasa wyjściowego neuronu, dziedzicząca po bazowej klasie neuronu.
+        Output neuron class, inheriting after neuron&#39;s base class.
     &#34;&#34;&#34;
 
     def __init__(self, weights: npt.NDArray[np.float64], gamma: float,
                  output_value: float, modification_count: float, addition_time: float,
                  PSP: float, max_PSP: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
-
             Args:
-                weights (npt.NDArray[np.float64]): _description_
-                gamma (float): _description_
-                output_value (float): _description_
-                modification_count (float): _description_
-                addition_time (float): _description_
-                PSP (float): _description_
-                max_PSP (float): _description_
+                weights (npt.NDArray[np.float64]): numpy array of neuron&#39;s weights
+                gamma (float): factor specific for OeSNN-AD
+                output_value (float): @TODO - co to jest
+                modification_count (float): count of neuron modifications
+                addition_time (float): @TODO - co to jest
+                PSP (float): postsynaptic potential
+                max_PSP (float): maximal postsynaptic potential
         &#34;&#34;&#34;
         super().__init__()
         self.weights = weights
@@ -341,23 +328,24 @@ class OutputNeuron(Neuron):
 
     def __getitem__(self, index: int) -&gt; float:
         &#34;&#34;&#34;
-            _summary_
+            Magic method which return value of weight under specific index.
 
             Args:
-                index (int): _description_
+                index (int): specific index
 
             Returns:
-                float: _description_
+                float: value of weight under index
         &#34;&#34;&#34;
         return self.weights[index]
 
     def update_neuron(self, candidate_neuron: &#39;OutputNeuron&#39;) -&gt; None:
         &#34;&#34;&#34;
-            Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-            przekazywanego jako parametr.
-
+            Method to update properties of neuron based on other neuron which is argument
+            of method.
+            
             Args:
-                candidate_neuron (OutputNeuron): _description_
+                candidate_neuron (OutputNeuron): Candidate neuron which properties will be 
+                base of neuron modification
         &#34;&#34;&#34;
         self.weights = (candidate_neuron.weights +
                         self.modification_count * self.weights) / (self.modification_count + 1)
@@ -371,34 +359,35 @@ class OutputNeuron(Neuron):
 
     def error_correction(self, window_head: float, ksi: float) -&gt; None:
         &#34;&#34;&#34;
-            _summary_
+            Correction of output value based on current head of window and
+            ksi factor.
 
             Args:
-                window_head (float): _description_
-                ksi (float): _description_
+                window_head (float): header value in window
+                ksi (float): factor specific for oeSNN-AD
         &#34;&#34;&#34;
         # TODO: Dodać testy do tego
         self.output_value += (window_head - self.output_value) * ksi
 
     def error_calc(self, window_head: float) -&gt; float:
         &#34;&#34;&#34;
-            _summary_
+            Calculation of error between value of neuron and header of window.
 
             Args:
-                window_head (float): _description_
+                window_head (float): header value in window
 
             Returns:
-                float: _description_
+                float: value of error
         &#34;&#34;&#34;
         # TODO: dodaj testy do tego
         return np.abs(window_head - self.output_value)
 
     def update_psp(self, psp_update : float):
         &#34;&#34;&#34;
-            _summary_
+            Method to update postsynaptic potential.
 
             Args:
-                psp_update (float): _description_
+                psp_update (float): quantity of post synaptic potential to update
         &#34;&#34;&#34;
         # TODO dodaj testy do tego
         self.psp += psp_update</code></pre>
@@ -413,16 +402,16 @@ class OutputNeuron(Neuron):
 <span>def <span class="ident">error_calc</span></span>(<span>self, window_head: float) ‑> float</span>
 </code></dt>
 <dd>
-<div class="desc"><p><em>summary</em></p>
+<div class="desc"><p>Calculation of error between value of neuron and header of window.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>window_head</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>header value in window</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>value of error</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -430,13 +419,13 @@ class OutputNeuron(Neuron):
 </summary>
 <pre><code class="python">def error_calc(self, window_head: float) -&gt; float:
     &#34;&#34;&#34;
-        _summary_
+        Calculation of error between value of neuron and header of window.
 
         Args:
-            window_head (float): _description_
+            window_head (float): header value in window
 
         Returns:
-            float: _description_
+            float: value of error
     &#34;&#34;&#34;
     # TODO: dodaj testy do tego
     return np.abs(window_head - self.output_value)</code></pre>
@@ -446,13 +435,14 @@ class OutputNeuron(Neuron):
 <span>def <span class="ident">error_correction</span></span>(<span>self, window_head: float, ksi: float) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p><em>summary</em></p>
+<div class="desc"><p>Correction of output value based on current head of window and
+ksi factor.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>window_head</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>header value in window</dd>
 <dt><strong><code>ksi</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>factor specific for oeSNN-AD</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -460,11 +450,12 @@ class OutputNeuron(Neuron):
 </summary>
 <pre><code class="python">def error_correction(self, window_head: float, ksi: float) -&gt; None:
     &#34;&#34;&#34;
-        _summary_
+        Correction of output value based on current head of window and
+        ksi factor.
 
         Args:
-            window_head (float): _description_
-            ksi (float): _description_
+            window_head (float): header value in window
+            ksi (float): factor specific for oeSNN-AD
     &#34;&#34;&#34;
     # TODO: Dodać testy do tego
     self.output_value += (window_head - self.output_value) * ksi</code></pre>
@@ -474,24 +465,26 @@ class OutputNeuron(Neuron):
 <span>def <span class="ident">update_neuron</span></span>(<span>self, candidate_neuron: <a title="OeSNN-AD.neuron.OutputNeuron" href="#OeSNN-AD.neuron.OutputNeuron">OutputNeuron</a>) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-przekazywanego jako parametr.</p>
+<div class="desc"><p>Method to update properties of neuron based on other neuron which is argument
+of method.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>candidate_neuron</code></strong> :&ensp;<code><a title="OeSNN-AD.neuron.OutputNeuron" href="#OeSNN-AD.neuron.OutputNeuron">OutputNeuron</a></code></dt>
-<dd><em>description</em></dd>
-</dl></div>
+<dd>Candidate neuron which properties will be </dd>
+</dl>
+<p>base of neuron modification</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def update_neuron(self, candidate_neuron: &#39;OutputNeuron&#39;) -&gt; None:
     &#34;&#34;&#34;
-        Metoda służąca do aktualizacji neuronu na podstawie innego neuronu
-        przekazywanego jako parametr.
-
+        Method to update properties of neuron based on other neuron which is argument
+        of method.
+        
         Args:
-            candidate_neuron (OutputNeuron): _description_
+            candidate_neuron (OutputNeuron): Candidate neuron which properties will be 
+            base of neuron modification
     &#34;&#34;&#34;
     self.weights = (candidate_neuron.weights +
                     self.modification_count * self.weights) / (self.modification_count + 1)
@@ -508,11 +501,11 @@ przekazywanego jako parametr.</p>
 <span>def <span class="ident">update_psp</span></span>(<span>self, psp_update: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p><em>summary</em></p>
+<div class="desc"><p>Method to update postsynaptic potential.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>psp_update</code></strong> :&ensp;<code>float</code></dt>
-<dd><em>description</em></dd>
+<dd>quantity of post synaptic potential to update</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -520,10 +513,10 @@ przekazywanego jako parametr.</p>
 </summary>
 <pre><code class="python">def update_psp(self, psp_update : float):
     &#34;&#34;&#34;
-        _summary_
+        Method to update postsynaptic potential.
 
         Args:
-            psp_update (float): _description_
+            psp_update (float): quantity of post synaptic potential to update
     &#34;&#34;&#34;
     # TODO dodaj testy do tego
     self.psp += psp_update</code></pre>
