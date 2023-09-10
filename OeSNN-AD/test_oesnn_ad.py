@@ -1,5 +1,5 @@
 """
-    Moduł testujący główny flow algorytmu.
+    Module test algorithm's main flow.
 """
 # pylint: disable=W0212
 
@@ -17,8 +17,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test__anomaly_classification_without_correct_values():
     """
-        Test sprawdzający zachowanie metody _anomaly_classification
-        gdy w ostatnich anomaliach nie ma poprawnej wartości.
+        Test assert if method classify point as anomaly when no correct value in window.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.0]*5
@@ -27,7 +26,7 @@ def test__anomaly_classification_without_correct_values():
 
 def test__anomaly_classification_with_anomaly_classified():
     """
-        Test sprawdzający czy została wykryta anomalia.
+        Test assert if method detected anomaly.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.9]
@@ -36,7 +35,7 @@ def test__anomaly_classification_with_anomaly_classified():
 
 def test__anomaly_classification_with_not_anomaly_classified():
     """
-        Test sprawdzający czy nie została wykryta anomalia.
+        Test assert if method didn't detect anomaly.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 1.0)
     oesnn_ad.errors = [0.1, 0.2, 0.15, 0.1, 0.16]
@@ -45,7 +44,7 @@ def test__anomaly_classification_with_not_anomaly_classified():
 
 def test__get_window_from_stream():
     """
-        Test sprawdzający wyodrębnianie okna ze strumienia.
+        Test assert if method correctly get window from stream.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     result = oesnn_ad._get_window_from_stream(0, 5)
@@ -54,8 +53,7 @@ def test__get_window_from_stream():
 
 def test__init_new_arrays_for_predict():
     """
-        Test sprawdzający czy wartości list values, anomalies, errors są
-        poprawnie inicjalizowane.
+        Test assert if lists values, anomalies, erros are correctly initialized.
     """
     oesnn_ad = OeSNNAD(WINDOW, 5, 3, 3, 0.5, 0.5, 0.5, 0.5)
     assert len(oesnn_ad.values) == 0
@@ -69,7 +67,7 @@ def test__init_new_arrays_for_predict():
 
 def test_predict():
     """        
-        Test sprawdzający działanie interfejsu klasy.
+        Test assert if class's interface working correctly.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=2, num_in_neurons=5,
                        num_out_neurons=10, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -80,7 +78,7 @@ def test_predict():
 
 def test__anomaly_detection_without_firing():
     """
-        Test sprawdzający czy anomalia jest wykryta, gdy żaden neuron nie wystrzelił.
+        Test assert if anomaly is detected, when none of neurons didn't fired.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -91,7 +89,7 @@ def test__anomaly_detection_without_firing():
 
 def test__anomaly_detection_with_firing():
     """
-        Test sprawdzający czy anamolia nie została wykryta, gdy neuron wystrzelił.
+        Test assert if anomaly is detected when neuron fired.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -125,8 +123,8 @@ def test__anomaly_detection_with_firing():
 
 def test__anomaly_classification_without_non_anomaly_in_window():
     """
-        Test sprawdzjący czy gdy w ostatnich iteracjach były same anomalie to czy
-        w tej iteracji poprawnie zaklasyfikuje wartość jako nie-anomalie.
+        Test assert if value will be classified as non-anomaly when if previous iterations
+        was only anomalies.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -137,7 +135,7 @@ def test__anomaly_classification_without_non_anomaly_in_window():
 
 def test__anomaly_classification_without_anomaly_result():
     """
-        Test sprawdzający czy próbka zostanie zaklasyfikowana jako nie-anomalia.
+        Test assert if value will be classified as non-anomaly.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -147,7 +145,7 @@ def test__anomaly_classification_without_anomaly_result():
 
 def test__anomaly_classification_with_anomaly_result():
     """
-        Test sprawdzający czy próbka zostanie zaklasyfikowana jako anomalia.
+        Test assert if value will be classified as anomaly.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -157,8 +155,8 @@ def test__anomaly_classification_with_anomaly_result():
 
 def test__learning_with_update():
     """
-        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
-        się poprzez aktualizację neuronu.
+        Test assert path where model learning will be make by neuron
+        update.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
                        num_out_neurons=5, ts_factor=0.5, mod=0.3,
@@ -194,8 +192,7 @@ def test__learning_with_update():
 
 def test__learning_with_add_new_neuron():
     """
-        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
-        się poprzez dodanie nowego neuronu.
+        Test assert path where model learning will be make by add new neuron.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=5,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3,
@@ -208,8 +205,7 @@ def test__learning_with_add_new_neuron():
 
 def test__learning_with_replace_oldest():
     """
-        Test sprawdzający ścieżkę, w której nauka algorytmu odbędzie 
-        się poprzez zastąpienie najstarszego neuronu.
+        Test assert path where model learning will be make by replace oldest neuron.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=5, num_in_neurons=3,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3,
@@ -246,7 +242,7 @@ def test__learning_with_replace_oldest():
 
 def test__update_psp_case_with_one_input_neuron():
     """
-        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest tylko jeden neuron.
+        Test assert PSP update when in input layer there is one neuron.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -275,7 +271,7 @@ def test__update_psp_case_with_one_input_neuron():
 
 def test__update_psp_case_with_multiple_input_neuron():
     """
-        Test sprawdzający aktualizację PSP gdy w warstwie wejściowej jest wiele neuronów.
+        Test assert PSP update when in input layer there are many neuron.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -319,7 +315,7 @@ def test__update_psp_case_with_multiple_input_neuron():
 
 def test__fires_first_with_none():
     """
-        Test sprawdzający czy zwracany jest None gdy nie ma neuronów w warstwie wyjściowej.
+        Test assert if method reutn None when there are no neurons in output layer.
     """
     oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
                        num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
@@ -328,7 +324,7 @@ def test__fires_first_with_none():
 
 def test__fires_first_with_one_input_neuron():
     """
-        Test sprawdzający przypadek dla jednego neuronu w warstwie wejściowej.
+        Test assert firing output neuron for one neuron in input layer.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=1,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
@@ -356,7 +352,7 @@ def test__fires_first_with_one_input_neuron():
 
 def test__fires_first_with_multiple_input_neuron():
     """
-        Test sprawdzający przypadek dla wielu neuronów w warstwie wejściowej.
+        Test assert firing output neuron for many neurons in input layer.
     """
     oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
                        num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
