@@ -1,5 +1,5 @@
 """
-    Moduł testujący metody klas neuronów.
+    Module test Neuron's class methods.
 """
 
 import numpy as np
@@ -10,7 +10,7 @@ from neuron import OutputNeuron
 
 def test_update_neuron():
     """
-        Test sprawdzający czy neuron faktycznie jest aktualizowany.
+        Test assert if neuron is updated.
     """
     updated_neuron = OutputNeuron(
         np.array([0.25]*3), 0.25, 0.1, 1, 0.25, 0.75, 2)
@@ -27,8 +27,8 @@ def test_update_neuron():
 
 def test__get_item__():
     """
-        Test sprawdzający czy indeksowanie neuronu faktycznie zwraca wartości
-        w wektorze wag.
+        Test assert if neuron indexing is correctly returning values from weights
+        vector.
     """
     neuron = OutputNeuron(
         np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, 0.75, 2)

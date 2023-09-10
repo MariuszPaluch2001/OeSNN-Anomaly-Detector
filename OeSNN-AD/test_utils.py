@@ -1,5 +1,5 @@
 """
-    Moduł testujący wybrane funkcje z modułu utils.
+    Module tests utils functions.
 """
 
 import numpy as np
@@ -8,7 +8,7 @@ from utils import convert_numpy_array_int_to_booleans, perf_measure
 
 def test_convert_numpy_array_int_to_booleans():
     """
-        Test sprawdzający czy wektor intów jest dobrze konwertowany na wektor booli.
+        Test assert if int vector is correctly converted to boolean vector.
     """
     array = np.array([1, 0, 0, 1, 0])
 
@@ -17,7 +17,7 @@ def test_convert_numpy_array_int_to_booleans():
 
 def test_perf_measure():
     """
-        Test sprawdzający czy funkcja perf_measure dobrze liczy miary jakości.
+        Test assert if method correctly calculate performance measures.
     """
     preds, correct = [True, True, False, False], [False, True, False, True]
     recall, precission, f_1 = perf_measure(preds, correct)

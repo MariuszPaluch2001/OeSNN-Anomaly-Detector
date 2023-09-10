@@ -1,5 +1,5 @@
 """
-    Moduł testujący metody klas GRFInit.
+    Module tests GRFinit's methods.
 """
 # pylint: disable=W0212
 
@@ -14,7 +14,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test__get_width_vec():
     """
-        Sprawdzanie czy szerokośc GRF jest liczona poprawnie.
+        Assert if GRF width is calculated correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -24,7 +24,7 @@ def test__get_width_vec():
 
 def test__get_center_vec():
     """
-        Sprawdzanie czy centrum GRF jest liczone poprawnie.
+        Assert if GRF center is calculated correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -34,7 +34,7 @@ def test__get_center_vec():
 
 def test__get_excitation():
     """
-        Sprawdzanie czy ekscytacja GRF jest liczona poprawnie.
+        Assert if GRF excitation is calculated correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     width_v = np.repeat(0.18, 7)
@@ -46,7 +46,7 @@ def test__get_excitation():
 
 def test__get_firing_time():
     """
-        Sprawdzanie czy czas wystrzelenia GRF jest liczona poprawnie.
+        Assert if GRF firing time is calculated correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     excitation = np.array([0.001, 0.024, 0.227, 0.770, 0.962, 0.442, 0.074])
@@ -57,7 +57,7 @@ def test__get_firing_time():
 
 def test__get_order():
     """
-        Sprawdzanie czy kolejność wystrzeliwania neuronów jest liczona poprawnie.
+        Assert if neurons firing order is calculated correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     firing_time = np.array([0.999, 0.976, 0.773, 0.230, 0.038, 0.558, 0.926])
@@ -68,7 +68,7 @@ def test__get_order():
 
 def test_get_order():
     """
-        Sprawdzanie czy interfejs klasy GRF działa poprawnie.
+        Assert if flow of GRF is working correctly.
     """
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 

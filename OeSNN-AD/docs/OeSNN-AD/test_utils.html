@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.test_utils API documentation</title>
-<meta name="description" content="Moduł testujący wybrane funkcje z modułu utils." />
+<meta name="description" content="Module tests utils functions." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,21 +22,22 @@
 <h1 class="title">Module <code>OeSNN-AD.test_utils</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł testujący wybrane funkcje z modułu utils.</p>
+<p>Module tests utils functions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł testujący wybrane funkcje z modułu utils.
+    Module tests utils functions.
 &#34;&#34;&#34;
 
 import numpy as np
+
 from utils import convert_numpy_array_int_to_booleans, perf_measure
 
 def test_convert_numpy_array_int_to_booleans():
     &#34;&#34;&#34;
-        Test sprawdzający czy wektor intów jest dobrze konwertowany na wektor booli.
+        Test assert if int vector is correctly converted to boolean vector.
     &#34;&#34;&#34;
     array = np.array([1, 0, 0, 1, 0])
 
@@ -45,7 +46,7 @@ def test_convert_numpy_array_int_to_booleans():
 
 def test_perf_measure():
     &#34;&#34;&#34;
-        Test sprawdzający czy funkcja perf_measure dobrze liczy miary jakości.
+        Test assert if method correctly calculate performance measures.
     &#34;&#34;&#34;
     preds, correct = [True, True, False, False], [False, True, False, True]
     recall, precission, f_1 = perf_measure(preds, correct)
@@ -65,14 +66,14 @@ def test_perf_measure():
 <span>def <span class="ident">test_convert_numpy_array_int_to_booleans</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy wektor intów jest dobrze konwertowany na wektor booli.</p></div>
+<div class="desc"><p>Test assert if int vector is correctly converted to boolean vector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_convert_numpy_array_int_to_booleans():
     &#34;&#34;&#34;
-        Test sprawdzający czy wektor intów jest dobrze konwertowany na wektor booli.
+        Test assert if int vector is correctly converted to boolean vector.
     &#34;&#34;&#34;
     array = np.array([1, 0, 0, 1, 0])
 
@@ -84,14 +85,14 @@ def test_perf_measure():
 <span>def <span class="ident">test_perf_measure</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy funkcja perf_measure dobrze liczy miary jakości.</p></div>
+<div class="desc"><p>Test assert if method correctly calculate performance measures.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_perf_measure():
     &#34;&#34;&#34;
-        Test sprawdzający czy funkcja perf_measure dobrze liczy miary jakości.
+        Test assert if method correctly calculate performance measures.
     &#34;&#34;&#34;
     preds, correct = [True, True, False, False], [False, True, False, True]
     recall, precission, f_1 = perf_measure(preds, correct)

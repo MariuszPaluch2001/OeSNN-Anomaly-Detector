@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.test_layers API documentation</title>
-<meta name="description" content="Moduł testujący metody klas Layer." />
+<meta name="description" content="Module tests Layer&#39;s methods." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,21 +22,21 @@
 <h1 class="title">Module <code>OeSNN-AD.test_layers</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł testujący metody klas Layer.</p>
+<p>Module tests Layer's methods.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł testujący metody klas Layer.
+    Module tests Layer&#39;s methods.
 &#34;&#34;&#34;
-
-from layer import OutputLayer, InputLayer
-from neuron import OutputNeuron
 
 import numpy as np
 
 from pytest import approx
+
+from layer import OutputLayer, InputLayer
+from neuron import OutputNeuron
 
 WINDOW = np.array([0.5, 0.3, 0.4,
                    0.3, 0.6, 0.2,
@@ -46,7 +46,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test_make_candidate():
     &#34;&#34;&#34;
-        Test sprawdzający czy tworzenie kandydata działa poprawnie.
+        Test asserts if candidate creation working correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -72,7 +72,7 @@ def test_make_candidate():
 
 def test_find_most_similar_without_neurons():
     &#34;&#34;&#34;
-        Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.
+        Test asserts if method return None and np.if when there aren&#39;t neurons in output layer.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     candidate = OutputNeuron(
@@ -85,8 +85,7 @@ def test_find_most_similar_without_neurons():
 
 def test_find_most_similar_with_neurons():
     &#34;&#34;&#34;
-        Test sprawdzający czy gdy neurony w są w liście to czy 
-        faktycznie zwracany jest najbliższy neuron.
+        Test asserts if method return nearest neuron when there are neurons in output layer.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -111,7 +110,7 @@ def test_find_most_similar_with_neurons():
 
 def test_reset_psp():
     &#34;&#34;&#34;
-        Test sprawdzający czy resetowanie PSP działa poprawnie.
+        Test assert if zeroing PSP working correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     neuron_out1 = OutputNeuron(
@@ -132,7 +131,7 @@ def test_reset_psp():
 
 def test_add_new_neuron():
     &#34;&#34;&#34;
-        Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.
+        Test assert if method add new neuron correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     assert output_layer.num_neurons == 0
@@ -152,7 +151,7 @@ def test_add_new_neuron():
 
 def test_replace_oldest():
     &#34;&#34;&#34;
-        Test sprawdzający czy zastąpywanie najstarszego neuronu działa poprawnie.
+        Test assert if method replace oldest neuron correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -176,7 +175,7 @@ def test_replace_oldest():
 
 def test_len_magic_method():
     &#34;&#34;&#34;
-        Test sprawdzający czy operator len działa poprawnie dla hierarchii klas Layer.
+        Test assert if len method working correctly for Layer&#39;s classes.
     &#34;&#34;&#34;
     input_layer = InputLayer(10)
 
@@ -203,14 +202,14 @@ def test_len_magic_method():
 <span>def <span class="ident">test_add_new_neuron</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.</p></div>
+<div class="desc"><p>Test assert if method add new neuron correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_add_new_neuron():
     &#34;&#34;&#34;
-        Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.
+        Test assert if method add new neuron correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     assert output_layer.num_neurons == 0
@@ -233,16 +232,14 @@ def test_len_magic_method():
 <span>def <span class="ident">test_find_most_similar_with_neurons</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy gdy neurony w są w liście to czy
-faktycznie zwracany jest najbliższy neuron.</p></div>
+<div class="desc"><p>Test asserts if method return nearest neuron when there are neurons in output layer.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_find_most_similar_with_neurons():
     &#34;&#34;&#34;
-        Test sprawdzający czy gdy neurony w są w liście to czy 
-        faktycznie zwracany jest najbliższy neuron.
+        Test asserts if method return nearest neuron when there are neurons in output layer.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -270,14 +267,14 @@ faktycznie zwracany jest najbliższy neuron.</p></div>
 <span>def <span class="ident">test_find_most_similar_without_neurons</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.</p></div>
+<div class="desc"><p>Test asserts if method return None and np.if when there aren't neurons in output layer.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_find_most_similar_without_neurons():
     &#34;&#34;&#34;
-        Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.
+        Test asserts if method return None and np.if when there aren&#39;t neurons in output layer.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     candidate = OutputNeuron(
@@ -293,14 +290,14 @@ faktycznie zwracany jest najbliższy neuron.</p></div>
 <span>def <span class="ident">test_len_magic_method</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy operator len działa poprawnie dla hierarchii klas Layer.</p></div>
+<div class="desc"><p>Test assert if len method working correctly for Layer's classes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_len_magic_method():
     &#34;&#34;&#34;
-        Test sprawdzający czy operator len działa poprawnie dla hierarchii klas Layer.
+        Test assert if len method working correctly for Layer&#39;s classes.
     &#34;&#34;&#34;
     input_layer = InputLayer(10)
 
@@ -320,14 +317,14 @@ faktycznie zwracany jest najbliższy neuron.</p></div>
 <span>def <span class="ident">test_make_candidate</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy tworzenie kandydata działa poprawnie.</p></div>
+<div class="desc"><p>Test asserts if candidate creation working correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_make_candidate():
     &#34;&#34;&#34;
-        Test sprawdzający czy tworzenie kandydata działa poprawnie.
+        Test asserts if candidate creation working correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -356,14 +353,14 @@ faktycznie zwracany jest najbliższy neuron.</p></div>
 <span>def <span class="ident">test_replace_oldest</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy zastąpywanie najstarszego neuronu działa poprawnie.</p></div>
+<div class="desc"><p>Test assert if method replace oldest neuron correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_replace_oldest():
     &#34;&#34;&#34;
-        Test sprawdzający czy zastąpywanie najstarszego neuronu działa poprawnie.
+        Test assert if method replace oldest neuron correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
 
@@ -390,14 +387,14 @@ faktycznie zwracany jest najbliższy neuron.</p></div>
 <span>def <span class="ident">test_reset_psp</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy resetowanie PSP działa poprawnie.</p></div>
+<div class="desc"><p>Test assert if zeroing PSP working correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_reset_psp():
     &#34;&#34;&#34;
-        Test sprawdzający czy resetowanie PSP działa poprawnie.
+        Test assert if zeroing PSP working correctly.
     &#34;&#34;&#34;
     output_layer = OutputLayer(10)
     neuron_out1 = OutputNeuron(

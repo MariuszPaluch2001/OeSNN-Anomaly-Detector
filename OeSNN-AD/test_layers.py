@@ -1,5 +1,5 @@
 """
-    Moduł testujący metody klas Layer.
+    Module tests Layer's methods.
 """
 
 import numpy as np
@@ -17,7 +17,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test_make_candidate():
     """
-        Test sprawdzający czy tworzenie kandydata działa poprawnie.
+        Test asserts if candidate creation working correctly.
     """
     output_layer = OutputLayer(10)
 
@@ -43,7 +43,7 @@ def test_make_candidate():
 
 def test_find_most_similar_without_neurons():
     """
-        Test sprawdzający czy gdy nie ma neuronów w liście to zwracany jest None i np.inf.
+        Test asserts if method return None and np.if when there aren't neurons in output layer.
     """
     output_layer = OutputLayer(10)
     candidate = OutputNeuron(
@@ -56,8 +56,7 @@ def test_find_most_similar_without_neurons():
 
 def test_find_most_similar_with_neurons():
     """
-        Test sprawdzający czy gdy neurony w są w liście to czy 
-        faktycznie zwracany jest najbliższy neuron.
+        Test asserts if method return nearest neuron when there are neurons in output layer.
     """
     output_layer = OutputLayer(10)
 
@@ -82,7 +81,7 @@ def test_find_most_similar_with_neurons():
 
 def test_reset_psp():
     """
-        Test sprawdzający czy resetowanie PSP działa poprawnie.
+        Test assert if zeroing PSP working correctly.
     """
     output_layer = OutputLayer(10)
     neuron_out1 = OutputNeuron(
@@ -103,7 +102,7 @@ def test_reset_psp():
 
 def test_add_new_neuron():
     """
-        Test sprawdzający czy dodawanie nowego neuronu działa poprawnie.
+        Test assert if method add new neuron correctly.
     """
     output_layer = OutputLayer(10)
     assert output_layer.num_neurons == 0
@@ -123,7 +122,7 @@ def test_add_new_neuron():
 
 def test_replace_oldest():
     """
-        Test sprawdzający czy zastąpywanie najstarszego neuronu działa poprawnie.
+        Test assert if method replace oldest neuron correctly.
     """
     output_layer = OutputLayer(10)
 
@@ -147,7 +146,7 @@ def test_replace_oldest():
 
 def test_len_magic_method():
     """
-        Test sprawdzający czy operator len działa poprawnie dla hierarchii klas Layer.
+        Test assert if len method working correctly for Layer's classes.
     """
     input_layer = InputLayer(10)
 

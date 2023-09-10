@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.test_grf API documentation</title>
-<meta name="description" content="Moduł testujący metody klas GRFInit." />
+<meta name="description" content="Module tests GRFinit&#39;s methods." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,13 +22,13 @@
 <h1 class="title">Module <code>OeSNN-AD.test_grf</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł testujący metody klas GRFInit.</p>
+<p>Module tests GRFinit's methods.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł testujący metody klas GRFInit.
+    Module tests GRFinit&#39;s methods.
 &#34;&#34;&#34;
 # pylint: disable=W0212
 
@@ -43,7 +43,7 @@ WINDOW = np.array([0.5, 0.3, 0.4,
 
 def test__get_width_vec():
     &#34;&#34;&#34;
-        Sprawdzanie czy szerokośc GRF jest liczona poprawnie.
+        Assert if GRF width is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -53,7 +53,7 @@ def test__get_width_vec():
 
 def test__get_center_vec():
     &#34;&#34;&#34;
-        Sprawdzanie czy centrum GRF jest liczone poprawnie.
+        Assert if GRF center is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -63,7 +63,7 @@ def test__get_center_vec():
 
 def test__get_excitation():
     &#34;&#34;&#34;
-        Sprawdzanie czy ekscytacja GRF jest liczona poprawnie.
+        Assert if GRF excitation is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     width_v = np.repeat(0.18, 7)
@@ -75,7 +75,7 @@ def test__get_excitation():
 
 def test__get_firing_time():
     &#34;&#34;&#34;
-        Sprawdzanie czy czas wystrzelenia GRF jest liczona poprawnie.
+        Assert if GRF firing time is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     excitation = np.array([0.001, 0.024, 0.227, 0.770, 0.962, 0.442, 0.074])
@@ -86,7 +86,7 @@ def test__get_firing_time():
 
 def test__get_order():
     &#34;&#34;&#34;
-        Sprawdzanie czy kolejność wystrzeliwania neuronów jest liczona poprawnie.
+        Assert if neurons firing order is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     firing_time = np.array([0.999, 0.976, 0.773, 0.230, 0.038, 0.558, 0.926])
@@ -97,7 +97,7 @@ def test__get_order():
 
 def test_get_order():
     &#34;&#34;&#34;
-        Sprawdzanie czy interfejs klasy GRF działa poprawnie.
+        Assert if flow of GRF is working correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -117,14 +117,14 @@ def test_get_order():
 <span>def <span class="ident">test__get_center_vec</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy centrum GRF jest liczone poprawnie.</p></div>
+<div class="desc"><p>Assert if GRF center is calculated correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_center_vec():
     &#34;&#34;&#34;
-        Sprawdzanie czy centrum GRF jest liczone poprawnie.
+        Assert if GRF center is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -137,14 +137,14 @@ def test_get_order():
 <span>def <span class="ident">test__get_excitation</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy ekscytacja GRF jest liczona poprawnie.</p></div>
+<div class="desc"><p>Assert if GRF excitation is calculated correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_excitation():
     &#34;&#34;&#34;
-        Sprawdzanie czy ekscytacja GRF jest liczona poprawnie.
+        Assert if GRF excitation is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     width_v = np.repeat(0.18, 7)
@@ -159,14 +159,14 @@ def test_get_order():
 <span>def <span class="ident">test__get_firing_time</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy czas wystrzelenia GRF jest liczona poprawnie.</p></div>
+<div class="desc"><p>Assert if GRF firing time is calculated correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_firing_time():
     &#34;&#34;&#34;
-        Sprawdzanie czy czas wystrzelenia GRF jest liczona poprawnie.
+        Assert if GRF firing time is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     excitation = np.array([0.001, 0.024, 0.227, 0.770, 0.962, 0.442, 0.074])
@@ -180,14 +180,14 @@ def test_get_order():
 <span>def <span class="ident">test__get_order</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy kolejność wystrzeliwania neuronów jest liczona poprawnie.</p></div>
+<div class="desc"><p>Assert if neurons firing order is calculated correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_order():
     &#34;&#34;&#34;
-        Sprawdzanie czy kolejność wystrzeliwania neuronów jest liczona poprawnie.
+        Assert if neurons firing order is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
     firing_time = np.array([0.999, 0.976, 0.773, 0.230, 0.038, 0.558, 0.926])
@@ -201,14 +201,14 @@ def test_get_order():
 <span>def <span class="ident">test__get_width_vec</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy szerokośc GRF jest liczona poprawnie.</p></div>
+<div class="desc"><p>Assert if GRF width is calculated correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_width_vec():
     &#34;&#34;&#34;
-        Sprawdzanie czy szerokośc GRF jest liczona poprawnie.
+        Assert if GRF width is calculated correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 
@@ -221,14 +221,14 @@ def test_get_order():
 <span>def <span class="ident">test_get_order</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sprawdzanie czy interfejs klasy GRF działa poprawnie.</p></div>
+<div class="desc"><p>Assert if flow of GRF is working correctly.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_get_order():
     &#34;&#34;&#34;
-        Sprawdzanie czy interfejs klasy GRF działa poprawnie.
+        Assert if flow of GRF is working correctly.
     &#34;&#34;&#34;
     grf = GRFInit(WINDOW, 7, 1, 0.5, 1.6)
 

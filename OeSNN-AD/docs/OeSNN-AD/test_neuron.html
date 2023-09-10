@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>OeSNN-AD.test_neuron API documentation</title>
-<meta name="description" content="Moduł testujący metody klas neuronów." />
+<meta name="description" content="Module test Neuron&#39;s class methods." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,24 +22,24 @@
 <h1 class="title">Module <code>OeSNN-AD.test_neuron</code></h1>
 </header>
 <section id="section-intro">
-<p>Moduł testujący metody klas neuronów.</p>
+<p>Module test Neuron's class methods.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-    Moduł testujący metody klas neuronów.
+    Module test Neuron&#39;s class methods.
 &#34;&#34;&#34;
-
-from neuron import OutputNeuron
 
 import numpy as np
 
 from pytest import approx
 
+from neuron import OutputNeuron
+
 def test_update_neuron():
     &#34;&#34;&#34;
-        Test sprawdzający czy neuron faktycznie jest aktualizowany.
+        Test assert if neuron is updated.
     &#34;&#34;&#34;
     updated_neuron = OutputNeuron(
         np.array([0.25]*3), 0.25, 0.1, 1, 0.25, 0.75, 2)
@@ -56,8 +56,8 @@ def test_update_neuron():
 
 def test__get_item__():
     &#34;&#34;&#34;
-        Test sprawdzający czy indeksowanie neuronu faktycznie zwraca wartości
-        w wektorze wag.
+        Test assert if neuron indexing is correctly returning values from weights
+        vector.
     &#34;&#34;&#34;
     neuron = OutputNeuron(
         np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, 0.75, 2)
@@ -78,16 +78,16 @@ def test__get_item__():
 <span>def <span class="ident">test__get_item__</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy indeksowanie neuronu faktycznie zwraca wartości
-w wektorze wag.</p></div>
+<div class="desc"><p>Test assert if neuron indexing is correctly returning values from weights
+vector.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test__get_item__():
     &#34;&#34;&#34;
-        Test sprawdzający czy indeksowanie neuronu faktycznie zwraca wartości
-        w wektorze wag.
+        Test assert if neuron indexing is correctly returning values from weights
+        vector.
     &#34;&#34;&#34;
     neuron = OutputNeuron(
         np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, 0.75, 2)
@@ -101,14 +101,14 @@ w wektorze wag.</p></div>
 <span>def <span class="ident">test_update_neuron</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Test sprawdzający czy neuron faktycznie jest aktualizowany.</p></div>
+<div class="desc"><p>Test assert if neuron is updated.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_update_neuron():
     &#34;&#34;&#34;
-        Test sprawdzający czy neuron faktycznie jest aktualizowany.
+        Test assert if neuron is updated.
     &#34;&#34;&#34;
     updated_neuron = OutputNeuron(
         np.array([0.25]*3), 0.25, 0.1, 1, 0.25, 0.75, 2)
