@@ -41,7 +41,7 @@ class GRFInit:
         """
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
-        if value == 0.0:  # @TODO: dodaj na ten case osobny test
+        if value == 0.0:
             value = 1.0
         return np.repeat(value, self.input_size)
 

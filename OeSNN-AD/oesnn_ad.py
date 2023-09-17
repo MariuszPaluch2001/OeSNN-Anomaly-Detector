@@ -83,7 +83,6 @@ class OeSNNAD:
             Returns:
                 List[float]: _description_
         """
-        # TODO: dodaj testy
         return np.random.normal(
             np.mean(window), np.std(window), self.window_size).tolist()
 
@@ -151,7 +150,6 @@ class OeSNNAD:
         anomalies_window = np.array(self.anomalies[-(self.window_size - 1):])
 
         errors_for_non_anomalies = errors_window[np.where(~anomalies_window)]
-        #TODO: Zadługie, wydziel osobną metodę do tego
         return not (
             (not np.any(errors_for_non_anomalies)) or (error_t - np.mean(errors_for_non_anomalies)
                                                 < np.std(errors_for_non_anomalies) * self.epsilon)

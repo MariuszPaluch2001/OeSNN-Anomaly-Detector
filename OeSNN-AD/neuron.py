@@ -50,9 +50,9 @@ class OutputNeuron(Neuron):
             Args:
                 weights (npt.NDArray[np.float64]): numpy array of neuron's weights
                 gamma (float): factor specific for OeSNN-AD
-                output_value (float): @TODO - co to jest
+                output_value (float): Output value of output neuron
                 modification_count (float): count of neuron modifications
-                addition_time (float): @TODO - co to jest
+                addition_time (float): Update time of output neuron
                 PSP (float): postsynaptic potential
                 max_PSP (float): maximal postsynaptic potential
         """
@@ -105,7 +105,6 @@ class OutputNeuron(Neuron):
                 window_head (float): header value in window
                 ksi (float): factor specific for oeSNN-AD
         """
-        # TODO: Dodać testy do tego
         self.output_value += (window_head - self.output_value) * ksi
 
     def error_calc(self, window_head: float) -> float:
@@ -118,7 +117,6 @@ class OutputNeuron(Neuron):
             Returns:
                 float: value of error
         """
-        # TODO: dodaj testy do tego
         return np.abs(window_head - self.output_value)
 
     def update_psp(self, psp_update : float):
@@ -128,5 +126,4 @@ class OutputNeuron(Neuron):
             Args:
                 psp_update (float): quantity of post synaptic potential to update
         """
-        # TODO dodaj testy do tego
         self.psp += psp_update

@@ -382,3 +382,17 @@ def test__fires_first_with_multiple_input_neuron():
 
     assert result == neuron_output3
     assert result.psp == approx(1.14, abs=1e-1)
+
+def test__init_values_rand():
+    """
+        Test assert values random initialization
+    """
+    np.random.seed(seed=0)
+    oesnn_ad = OeSNNAD(stream=WINDOW, window_size=3, num_in_neurons=3,
+                    num_out_neurons=3, ts_factor=0.5, mod=0.3, c_factor=1.0, epsilon=0.5)
+
+    result = oesnn_ad._init_values_rand(WINDOW)
+
+    assert result[0] == approx(0.771, abs=1e-3)
+    assert result[1] == approx(0.484, abs=1e-3)
+    assert result[2] == approx(0.605, abs=1e-3)

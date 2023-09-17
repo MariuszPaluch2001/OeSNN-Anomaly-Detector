@@ -22,6 +22,16 @@ def test__get_width_vec():
     correct = np.repeat(0.11, 7)
     np.testing.assert_array_almost_equal(result, correct, decimal=2)
 
+def test__get_width_vec_with_zero_value():
+    """
+        Assert if GRF width is calculated correctly when value is zero.
+    """
+    grf = GRFInit(np.array([0.5, 0.5, 0.5]), 7, 1, 0.5, 1.6)
+
+    result = grf._get_width_vec()
+    correct = np.repeat(1.0, 7)
+    np.testing.assert_array_almost_equal(result, correct, decimal=2)
+
 def test__get_center_vec():
     """
         Assert if GRF center is calculated correctly.
