@@ -35,7 +35,7 @@ class GRFInit:
     def _get_width_vec(self) -> npt.NDArray[np.float64]:
         """
             Method to calculate Gaussian Receptor Field width vector for all neurons in input layer.
-            
+            If GRF value value is equal 0, it will be replaced to 1.
             Returns:
                 npt.NDArray[np.float64]: GRF's width vector
         """

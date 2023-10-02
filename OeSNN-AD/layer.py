@@ -37,8 +37,7 @@ class Layer:
                 Generator[Neuron, None, None]: generator which allow to iterate 
                 over object's neurons
         """
-        for neuron in self.neurons:
-            yield neuron
+        return (neuron for neuron in self.neurons)
 
     def __len__(self) -> int:
         """
@@ -87,8 +86,7 @@ class InputLayer(Layer):
                 over input neurons
         """
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
-        for neuron in neurons:
-            yield neuron
+        return (neuron for neuron in neurons)
 
     def __getitem__(self, index: int) -> InputNeuron:
         """
@@ -200,7 +198,7 @@ class OutputLayer(Layer):
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | bool, float]:
+                          candidate_neuron: OutputNeuron) -> Tuple[OutputNeuron | None, float]:
         """ 
             Method return neuron which have lowest euclidean distance to candidate neuron and that
             distance. If layer doesn't have neurons, method return Tuple[false, np.inf]
@@ -214,7 +212,7 @@ class OutputLayer(Layer):
                 euclidean distance (np.inf if layer is empty)
         """
         if not self.neurons:
-            return False, np.Inf
+            return None, np.Inf
 
         def dist_f(neuron: OutputNeuron) -> float:
             return np.linalg.norm(neuron.weights - candidate_neuron.weights)
