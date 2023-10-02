@@ -181,7 +181,7 @@ class OeSNNAD:
         else:
             self.output_layer.replace_oldest(candidate_neuron)
 
-    def _fires_first(self) -> OutputNeuron | bool:
+    def _fires_first(self) -> OutputNeuron | None:
         """
             Method control PSP in model, and returning first firing output neuron (if fired
             more than one output neuron, there is chosen with greatest PSP)
@@ -201,4 +201,5 @@ class OeSNNAD:
 
             if fired_neuron is not None:
                 return fired_neuron
-        return False
+            
+        return None

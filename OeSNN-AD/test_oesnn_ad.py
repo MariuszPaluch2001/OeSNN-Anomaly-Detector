@@ -247,7 +247,7 @@ def test__fires_first_with_none():
     oesnn_ad = OeSNNAD(WINDOW, window_size=14, num_in_neurons=10,
                        num_out_neurons=10, ts_factor=0.5, mod=0.5, c_factor=0.5, epsilon=0.5)
 
-    assert not oesnn_ad._fires_first()
+    assert oesnn_ad._fires_first() is None
 
 def test__fires_first_with_one_input_neuron():
     """

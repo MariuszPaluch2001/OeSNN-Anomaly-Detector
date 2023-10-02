@@ -217,8 +217,7 @@ class OutputLayer(Layer):
         if not self.neurons:
             return None, np.Inf
 
-        def dist_f(neuron: OutputNeuron) -> float:
-            return np.linalg.norm(neuron.weights - candidate_neuron.weights)
+        dist_f = lambda neuron: np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
         return most_similar_neuron, min_distance
