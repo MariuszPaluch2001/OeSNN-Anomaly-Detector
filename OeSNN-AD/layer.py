@@ -142,7 +142,6 @@ class OutputLayer(Layer):
             Args:
                 max_output_size (int): Max number of output neurons in layer
         """
-        super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[OutputNeuron] = []
@@ -168,6 +167,10 @@ class OutputLayer(Layer):
                 OutputNeuron: output neuron under index in list
         """
         return super().__getitem__(index)
+
+    @property
+    def num_neurons(self):
+        return len(self.neurons)
 
     def make_candidate(self,
                        window: npt.NDArray[np.float64],
@@ -230,7 +233,6 @@ class OutputLayer(Layer):
                 neuron (OutputNeuron): New neuron in layer
         """
         self.neurons.append(neuron)
-        self.num_neurons += 1
 
     def replace_oldest(self, candidate: OutputNeuron) -> None:
         """

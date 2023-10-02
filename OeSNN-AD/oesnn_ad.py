@@ -2,13 +2,14 @@
     Module contains main class of alghorithm, which is main interface of model.
 """
 
-from typing import List, Generator
+from typing import Generator, List
 
 import numpy as np
 import numpy.typing as npt
 
 from layer import InputLayer, OutputLayer
-from neuron import OutputNeuron, InputNeuron
+from neuron import InputNeuron, OutputNeuron
+
 
 class OeSNNAD:
     """
@@ -180,25 +181,6 @@ class OeSNNAD:
         else:
             self.output_layer.replace_oldest(candidate_neuron)
 
-    def _update_psp(self, neuron_input: InputNeuron) -> Generator[OutputNeuron, None, None]:
-        """
-            Method updating PSP for output neurons conected with input neuron which is passed
-            by argument of method.
-            
-            Method must be only called from method _fires_first.
-            
-            Args:
-                neuron_input (InputNeuron): input neuron by which output neuron's PSP is updated
-                
-            Yields:
-                Generator[OutputNeuron, None, None]: yielding firing neurons
-        """
-        for n_out in self.output_layer:
-            n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
-
-            if n_out.psp > self.gamma:
-                yield n_out
-
     def _fires_first(self) -> OutputNeuron | bool:
         """
             Method control PSP in model, and returning first firing output neuron (if fired
@@ -210,8 +192,13 @@ class OeSNNAD:
         self.output_layer.reset_psp()
 
         for neuron_input in self.input_layer:
-            to_fire = list(self._update_psp(neuron_input))
+            fired_neuron = None
+            for n_out in self.output_layer:
+                n_out.update_psp(n_out[neuron_input.neuron_id] * (self.mod ** neuron_input.order))
 
-            if to_fire:
-                return max(to_fire, key=lambda x: x.psp)
+                if n_out.psp > self.gamma:
+                    fired_neuron = n_out
+
+            if fired_neuron is not None:
+                return fired_neuron
         return False
