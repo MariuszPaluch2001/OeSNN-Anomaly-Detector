@@ -20,9 +20,8 @@ def get_all_files_paths(data_root_folder_name: str) -> Generator[str, None, None
         Yields:
             Generator[str, None, None]: yields dataset files paths
     """
-    for path, _, files in os.walk(data_root_folder_name):
-        for name in files:
-            yield os.path.join(path, name)
+    return (os.path.join(path, name) 
+            for path, _, files in os.walk(data_root_folder_name) for name in files)
 
 def get_data_from_path(path: str,
                        is_nab: bool) -> Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]:
@@ -37,13 +36,9 @@ def get_data_from_path(path: str,
             Tuple[npt.NDArray[np.float64], npt.NDArray[np.intp]]: First element of tuple is
             datastream and second one are labels
     """
-    if is_nab:
-        data = np.loadtxt(path, delimiter=",", dtype=float,
-                          skiprows=1, usecols=range(1, 3))
-    else:
-        data = np.loadtxt(path, delimiter=",",
-                          dtype=float, usecols=range(1, 3))
-
+    data = np.loadtxt(path, delimiter=",", dtype=float,
+                        skiprows=1, usecols=range(1, 3)) if is_nab else np.loadtxt(path, delimiter=",",
+                        dtype=float, usecols=range(1, 3))
     return data[:, 0], data[:, 1]
 
 def read_parameters(path: str) -> Dict:
