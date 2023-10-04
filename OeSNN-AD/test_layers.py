@@ -3,10 +3,9 @@
 """
 
 import numpy as np
-
 from pytest import approx
 
-from layer import OutputLayer, InputLayer
+from layer import InputLayer, OutputLayer
 from neuron import OutputNeuron
 
 WINDOW = np.array([0.5, 0.3, 0.4,

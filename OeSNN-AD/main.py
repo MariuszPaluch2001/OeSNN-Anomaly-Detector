@@ -5,14 +5,17 @@
 """
 
 import csv
-from typing import List, Tuple, Dict
+import itertools
+from typing import Dict, List, Tuple
+
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-
 from oesnn_ad import OeSNNAD
-from utils import get_data_from_path, get_all_files_paths, perf_measure, read_parameters
+from utils import (get_all_files_paths, get_data_from_path, perf_measure,
+                   read_parameters)
+
 
 def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -> Tuple[Dict, float, float, float]:
@@ -41,48 +44,51 @@ def parameters_tuning(stream: npt.NDArray[np.float64],
             Tuple[Dict, float, float, float]: _description_
     """
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
-    for no_size in range(*parameters['NOsize']):
-        for w_size in range(*parameters['Wsize']):
-            for ni_size in range(*parameters['NIsize']):
-                for ts_coef in range(*parameters['TS']):
-                    for beta in np.arange(*parameters['Beta']):
-                        for sim in np.arange(*parameters['sim']):
-                            for mod in np.arange(*parameters['mod']):
-                                for c_coef in np.arange(*parameters['C']):
-                                    for ksi in np.arange(*parameters['ksi']):
-                                        for epsilon in range(*parameters['epsilon']):
-                                            oesnn_ad = OeSNNAD(stream,
-                                                               window_size=w_size,
-                                                               num_in_neurons=ni_size,
-                                                               num_out_neurons=no_size,
-                                                               ts_factor=ts_coef,
-                                                               mod=mod,
-                                                               c_factor=c_coef,
-                                                               epsilon=epsilon,
-                                                               ksi=ksi,
-                                                               sim=sim,
-                                                               beta=beta)
-                                            detection_result = oesnn_ad.predict()
-                                            recall, precission, f_1 = perf_measure(
-                                                detection_result, labels)
-                                            if f_1 > best_f1:
-                                                best_f1 = f_1
-                                                best_precission = precission
-                                                best_recall = recall
-                                                best_parameters = {
-                                                    'NOsize': no_size,
-                                                    'Wsize': w_size,
-                                                    'NIsize': ni_size,
-                                                    'Beta': beta,
-                                                    'TS': ts_coef,
-                                                    'sim': sim,
-                                                    'mod': mod,
-                                                    'C': c_coef,
-                                                    'ksi': ksi,  # error factor
-                                                    'epsilon': epsilon  # anomaly factor
-                                                }
+    for no_size, w_size, ni_size, ts_coef, beta, sim, mod, c_coef, ksi, epsilon in itertools.product(
+        np.arange(*parameters['NOsize']),
+        np.arange(*parameters['Wsize']),
+        np.arange(*parameters['NIsize']),
+        np.arange(*parameters['TS']),
+        np.arange(*parameters['Beta']),
+        np.arange(*parameters['sim']),
+        np.arange(*parameters['mod']),
+        np.arange(*parameters['C']),
+        np.arange(*parameters['ksi']),
+        np.arange(*parameters['epsilon']),
+    ):
+        oesnn_ad = OeSNNAD(stream,
+                           window_size=w_size,
+                           num_in_neurons=ni_size,
+                           num_out_neurons=no_size,
+                           ts_factor=ts_coef,
+                           mod=mod,
+                           c_factor=c_coef,
+                           epsilon=epsilon,
+                           ksi=ksi,
+                           sim=sim,
+                           beta=beta)
+        detection_result = oesnn_ad.predict()
+        recall, precission, f_1 = perf_measure(
+            detection_result, labels)
+        if f_1 > best_f1:
+            best_f1 = f_1
+            best_precission = precission
+            best_recall = recall
+            best_parameters = {
+                'NOsize': no_size,
+                'Wsize': w_size,
+                'NIsize': ni_size,
+                'Beta': beta,
+                'TS': ts_coef,
+                'sim': sim,
+                'mod': mod,
+                'C': c_coef,
+                'ksi': ksi,  # error factor
+                'epsilon': epsilon  # anomaly factor
+            }
 
     return best_parameters, best_recall, best_precission, best_f1
+
 
 def plots(stream: npt.NDArray[np.float64],
           best_parameters: dict,
@@ -90,7 +96,7 @@ def plots(stream: npt.NDArray[np.float64],
           stream_name: str) -> None:
     """
         Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
-        
+
         Args:
             stream (npt.NDArray[np.float64]): _description_
             best_parameters (dict): _description_
@@ -149,6 +155,7 @@ def plots(stream: npt.NDArray[np.float64],
     plt.savefig(f"./plots/{stream_name}.png")
     plt.close()
 
+
 def main() -> None:
     """
         Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
@@ -199,6 +206,7 @@ def main() -> None:
             else:
                 writer.writerow((dataset, filename, f_1, recall,
                                 precission) + (None, ) * 10)
+
 
 if __name__ == "__main__":
     main()

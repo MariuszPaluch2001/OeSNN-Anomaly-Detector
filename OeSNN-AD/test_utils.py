@@ -2,9 +2,8 @@
     Module tests utils functions.
 """
 
-import numpy as np
-
 from utils import perf_measure
+
 
 def test_perf_measure():
     """

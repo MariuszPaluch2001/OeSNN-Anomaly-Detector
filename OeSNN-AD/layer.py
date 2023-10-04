@@ -2,13 +2,14 @@
     Module contains definition and implementation of layer class.
 """
 
-from typing import List, Tuple, Generator
+from typing import Generator, List, Tuple
+
 import numpy as np
 import numpy.typing as npt
 
-from neuron import Neuron
-from neuron import InputNeuron, OutputNeuron
 from grf_init import GRFInit
+from neuron import InputNeuron, Neuron, OutputNeuron
+
 
 class Layer:
     """

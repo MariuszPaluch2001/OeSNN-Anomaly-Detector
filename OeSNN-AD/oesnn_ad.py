@@ -2,13 +2,13 @@
     Module contains main class of alghorithm, which is main interface of model.
 """
 
-from typing import Generator, List
+from typing import List
 
 import numpy as np
 import numpy.typing as npt
 
 from layer import InputLayer, OutputLayer
-from neuron import InputNeuron, OutputNeuron
+from neuron import OutputNeuron
 
 
 class OeSNNAD:

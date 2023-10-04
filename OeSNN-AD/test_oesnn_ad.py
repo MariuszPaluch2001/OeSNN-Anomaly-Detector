@@ -3,10 +3,10 @@
 """
 # pylint: disable=W0212
 
-from pytest import approx
 import numpy as np
+from pytest import approx
 
-from neuron import OutputNeuron, InputNeuron
+from neuron import InputNeuron, OutputNeuron
 from oesnn_ad import OeSNNAD
 
 WINDOW = np.array([0.5, 0.3, 0.4,
