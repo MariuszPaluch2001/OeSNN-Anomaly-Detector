@@ -32,10 +32,10 @@
 &#34;&#34;&#34;
 
 import numpy as np
-
 from pytest import approx
 
 from neuron import OutputNeuron
+
 
 def test_update_neuron():
     &#34;&#34;&#34;
@@ -64,7 +64,47 @@ def test__get_item__():
 
     assert neuron[0] == 0.25
     assert neuron[1] == 0.5
-    assert neuron[2] == 0.75</code></pre>
+    assert neuron[2] == 0.75
+
+def test_error_correction():
+    &#34;&#34;&#34;
+        Test assert if error correction method correctly update output value.
+    &#34;&#34;&#34;
+    output_value = 0.1
+    ksi = 0.5
+    window_head = 1.0
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, output_value, 1, 0.25, 0.75, 2)
+
+    neuron.error_correction(window_head, ksi)
+    assert neuron.output_value == 0.55
+
+def test_error_calc():
+    &#34;&#34;&#34;
+        Test assert if error calculation working correctly.
+    &#34;&#34;&#34;
+    output_value = 0.1
+    window_head = 1.0
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, output_value, 1, 0.25, 0.75, 2)
+
+    assert neuron.error_calc(window_head) == 0.9
+
+def test_update_psp():
+    &#34;&#34;&#34;
+        Test assert if PSP is updated correctly.
+    &#34;&#34;&#34;
+    psp = 0.5
+    update_psp = 0.3
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, psp, 2)
+
+    neuron.update_psp(update_psp)
+
+    assert neuron.psp == 0.8</code></pre>
 </details>
 </section>
 <section>
@@ -97,6 +137,52 @@ vector.</p></div>
     assert neuron[2] == 0.75</code></pre>
 </details>
 </dd>
+<dt id="OeSNN-AD.test_neuron.test_error_calc"><code class="name flex">
+<span>def <span class="ident">test_error_calc</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test assert if error calculation working correctly.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_error_calc():
+    &#34;&#34;&#34;
+        Test assert if error calculation working correctly.
+    &#34;&#34;&#34;
+    output_value = 0.1
+    window_head = 1.0
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, output_value, 1, 0.25, 0.75, 2)
+
+    assert neuron.error_calc(window_head) == 0.9</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.test_neuron.test_error_correction"><code class="name flex">
+<span>def <span class="ident">test_error_correction</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test assert if error correction method correctly update output value.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_error_correction():
+    &#34;&#34;&#34;
+        Test assert if error correction method correctly update output value.
+    &#34;&#34;&#34;
+    output_value = 0.1
+    ksi = 0.5
+    window_head = 1.0
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, output_value, 1, 0.25, 0.75, 2)
+
+    neuron.error_correction(window_head, ksi)
+    assert neuron.output_value == 0.55</code></pre>
+</details>
+</dd>
 <dt id="OeSNN-AD.test_neuron.test_update_neuron"><code class="name flex">
 <span>def <span class="ident">test_update_neuron</span></span>(<span>)</span>
 </code></dt>
@@ -124,6 +210,30 @@ vector.</p></div>
         updated_neuron.weights, np.array([0.5]*3), decimal=3)</code></pre>
 </details>
 </dd>
+<dt id="OeSNN-AD.test_neuron.test_update_psp"><code class="name flex">
+<span>def <span class="ident">test_update_psp</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test assert if PSP is updated correctly.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_update_psp():
+    &#34;&#34;&#34;
+        Test assert if PSP is updated correctly.
+    &#34;&#34;&#34;
+    psp = 0.5
+    update_psp = 0.3
+
+    neuron = OutputNeuron(
+        np.array([0.25, 0.5, 0.75]), 0.25, 0.1, 1, 0.25, psp, 2)
+
+    neuron.update_psp(update_psp)
+
+    assert neuron.psp == 0.8</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -143,7 +253,10 @@ vector.</p></div>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="OeSNN-AD.test_neuron.test__get_item__" href="#OeSNN-AD.test_neuron.test__get_item__">test__get_item__</a></code></li>
+<li><code><a title="OeSNN-AD.test_neuron.test_error_calc" href="#OeSNN-AD.test_neuron.test_error_calc">test_error_calc</a></code></li>
+<li><code><a title="OeSNN-AD.test_neuron.test_error_correction" href="#OeSNN-AD.test_neuron.test_error_correction">test_error_correction</a></code></li>
 <li><code><a title="OeSNN-AD.test_neuron.test_update_neuron" href="#OeSNN-AD.test_neuron.test_update_neuron">test_update_neuron</a></code></li>
+<li><code><a title="OeSNN-AD.test_neuron.test_update_psp" href="#OeSNN-AD.test_neuron.test_update_psp">test_update_psp</a></code></li>
 </ul>
 </li>
 </ul>

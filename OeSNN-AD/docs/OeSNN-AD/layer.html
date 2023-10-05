@@ -31,13 +31,14 @@
     Module contains definition and implementation of layer class.
 &#34;&#34;&#34;
 
-from typing import List, Tuple, Generator
+from typing import Generator, List, Tuple
+
 import numpy as np
 import numpy.typing as npt
 
-from neuron import Neuron
-from neuron import InputNeuron, OutputNeuron
 from grf_init import GRFInit
+from neuron import InputNeuron, Neuron, OutputNeuron
+
 
 class Layer:
     &#34;&#34;&#34;
@@ -66,8 +67,7 @@ class Layer:
                 Generator[Neuron, None, None]: generator which allow to iterate 
                 over object&#39;s neurons
         &#34;&#34;&#34;
-        for neuron in self.neurons:
-            yield neuron
+        return (neuron for neuron in self.neurons)
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;
@@ -116,8 +116,7 @@ class InputLayer(Layer):
                 over input neurons
         &#34;&#34;&#34;
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
-        for neuron in neurons:
-            yield neuron
+        return (neuron for neuron in neurons)
 
     def __getitem__(self, index: int) -&gt; InputNeuron:
         &#34;&#34;&#34;
@@ -173,7 +172,6 @@ class OutputLayer(Layer):
             Args:
                 max_output_size (int): Max number of output neurons in layer
         &#34;&#34;&#34;
-        super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[OutputNeuron] = []
@@ -199,6 +197,10 @@ class OutputLayer(Layer):
                 OutputNeuron: output neuron under index in list
         &#34;&#34;&#34;
         return super().__getitem__(index)
+
+    @property
+    def num_neurons(self):
+        return len(self.neurons)
 
     def make_candidate(self,
                        window: npt.NDArray[np.float64],
@@ -229,7 +231,7 @@ class OutputLayer(Layer):
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
         &#34;&#34;&#34; 
             Method return neuron which have lowest euclidean distance to candidate neuron and that
             distance. If layer doesn&#39;t have neurons, method return Tuple[false, np.inf]
@@ -243,10 +245,9 @@ class OutputLayer(Layer):
                 euclidean distance (np.inf if layer is empty)
         &#34;&#34;&#34;
         if not self.neurons:
-            return False, np.Inf
+            return None, np.Inf
 
-        def dist_f(neuron: OutputNeuron) -&gt; float:
-            return np.linalg.norm(neuron.weights - candidate_neuron.weights)
+        dist_f = lambda neuron: np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
         return most_similar_neuron, min_distance
@@ -261,7 +262,6 @@ class OutputLayer(Layer):
                 neuron (OutputNeuron): New neuron in layer
         &#34;&#34;&#34;
         self.neurons.append(neuron)
-        self.num_neurons += 1
 
     def replace_oldest(self, candidate: OutputNeuron) -&gt; None:
         &#34;&#34;&#34;
@@ -334,8 +334,7 @@ class OutputLayer(Layer):
                 over input neurons
         &#34;&#34;&#34;
         neurons = sorted(self.neurons, key=lambda neuron: neuron.order)
-        for neuron in neurons:
-            yield neuron
+        return (neuron for neuron in neurons)
 
     def __getitem__(self, index: int) -&gt; InputNeuron:
         &#34;&#34;&#34;
@@ -499,8 +498,7 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
                 Generator[Neuron, None, None]: generator which allow to iterate 
                 over object&#39;s neurons
         &#34;&#34;&#34;
-        for neuron in self.neurons:
-            yield neuron
+        return (neuron for neuron in self.neurons)
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;
@@ -557,7 +555,6 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
             Args:
                 max_output_size (int): Max number of output neurons in layer
         &#34;&#34;&#34;
-        super().__init__(0)
 
         self.max_outpt_size = max_output_size
         self.neurons: List[OutputNeuron] = []
@@ -583,6 +580,10 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
                 OutputNeuron: output neuron under index in list
         &#34;&#34;&#34;
         return super().__getitem__(index)
+
+    @property
+    def num_neurons(self):
+        return len(self.neurons)
 
     def make_candidate(self,
                        window: npt.NDArray[np.float64],
@@ -613,7 +614,7 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
                             0, psp_max)
 
     def find_most_similar(self,
-                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+                          candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
         &#34;&#34;&#34; 
             Method return neuron which have lowest euclidean distance to candidate neuron and that
             distance. If layer doesn&#39;t have neurons, method return Tuple[false, np.inf]
@@ -627,10 +628,9 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
                 euclidean distance (np.inf if layer is empty)
         &#34;&#34;&#34;
         if not self.neurons:
-            return False, np.Inf
+            return None, np.Inf
 
-        def dist_f(neuron: OutputNeuron) -&gt; float:
-            return np.linalg.norm(neuron.weights - candidate_neuron.weights)
+        dist_f = lambda neuron: np.linalg.norm(neuron.weights - candidate_neuron.weights)
         most_similar_neuron = min(self.neurons, key=dist_f)
         min_distance = dist_f(most_similar_neuron)
         return most_similar_neuron, min_distance
@@ -645,7 +645,6 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
                 neuron (OutputNeuron): New neuron in layer
         &#34;&#34;&#34;
         self.neurons.append(neuron)
-        self.num_neurons += 1
 
     def replace_oldest(self, candidate: OutputNeuron) -&gt; None:
         &#34;&#34;&#34;
@@ -670,6 +669,21 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
 <ul class="hlist">
 <li><a title="OeSNN-AD.layer.Layer" href="#OeSNN-AD.layer.Layer">Layer</a></li>
 </ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="OeSNN-AD.layer.OutputLayer.num_neurons"><code class="name">var <span class="ident">num_neurons</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def num_neurons(self):
+    return len(self.neurons)</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="OeSNN-AD.layer.OutputLayer.add_new_neuron"><code class="name flex">
@@ -696,12 +710,11 @@ indexation, counting numer of neurons in layer thank to 'len' function.</p>
         Args:
             neuron (OutputNeuron): New neuron in layer
     &#34;&#34;&#34;
-    self.neurons.append(neuron)
-    self.num_neurons += 1</code></pre>
+    self.neurons.append(neuron)</code></pre>
 </details>
 </dd>
 <dt id="OeSNN-AD.layer.OutputLayer.find_most_similar"><code class="name flex">
-<span>def <span class="ident">find_most_similar</span></span>(<span>self, candidate_neuron: neuron.OutputNeuron) ‑> Tuple[neuron.OutputNeuron | bool, float]</span>
+<span>def <span class="ident">find_most_similar</span></span>(<span>self, candidate_neuron: neuron.OutputNeuron) ‑> Tuple[neuron.OutputNeuron | None, float]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Method return neuron which have lowest euclidean distance to candidate neuron and that
@@ -720,7 +733,7 @@ euclidean distance (np.inf if layer is empty)</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def find_most_similar(self,
-                      candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | bool, float]:
+                      candidate_neuron: OutputNeuron) -&gt; Tuple[OutputNeuron | None, float]:
     &#34;&#34;&#34; 
         Method return neuron which have lowest euclidean distance to candidate neuron and that
         distance. If layer doesn&#39;t have neurons, method return Tuple[false, np.inf]
@@ -734,10 +747,9 @@ euclidean distance (np.inf if layer is empty)</p></div>
             euclidean distance (np.inf if layer is empty)
     &#34;&#34;&#34;
     if not self.neurons:
-        return False, np.Inf
+        return None, np.Inf
 
-    def dist_f(neuron: OutputNeuron) -&gt; float:
-        return np.linalg.norm(neuron.weights - candidate_neuron.weights)
+    dist_f = lambda neuron: np.linalg.norm(neuron.weights - candidate_neuron.weights)
     most_similar_neuron = min(self.neurons, key=dist_f)
     min_distance = dist_f(most_similar_neuron)
     return most_similar_neuron, min_distance</code></pre>
@@ -874,10 +886,11 @@ of neurons in layer is max.</p>
 </li>
 <li>
 <h4><code><a title="OeSNN-AD.layer.OutputLayer" href="#OeSNN-AD.layer.OutputLayer">OutputLayer</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="OeSNN-AD.layer.OutputLayer.add_new_neuron" href="#OeSNN-AD.layer.OutputLayer.add_new_neuron">add_new_neuron</a></code></li>
 <li><code><a title="OeSNN-AD.layer.OutputLayer.find_most_similar" href="#OeSNN-AD.layer.OutputLayer.find_most_similar">find_most_similar</a></code></li>
 <li><code><a title="OeSNN-AD.layer.OutputLayer.make_candidate" href="#OeSNN-AD.layer.OutputLayer.make_candidate">make_candidate</a></code></li>
+<li><code><a title="OeSNN-AD.layer.OutputLayer.num_neurons" href="#OeSNN-AD.layer.OutputLayer.num_neurons">num_neurons</a></code></li>
 <li><code><a title="OeSNN-AD.layer.OutputLayer.replace_oldest" href="#OeSNN-AD.layer.OutputLayer.replace_oldest">replace_oldest</a></code></li>
 <li><code><a title="OeSNN-AD.layer.OutputLayer.reset_psp" href="#OeSNN-AD.layer.OutputLayer.reset_psp">reset_psp</a></code></li>
 </ul>

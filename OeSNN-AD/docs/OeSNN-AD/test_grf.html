@@ -33,6 +33,7 @@
 # pylint: disable=W0212
 
 import numpy as np
+
 from grf_init import GRFInit
 
 WINDOW = np.array([0.5, 0.3, 0.4,
@@ -49,6 +50,16 @@ def test__get_width_vec():
 
     result = grf._get_width_vec()
     correct = np.repeat(0.11, 7)
+    np.testing.assert_array_almost_equal(result, correct, decimal=2)
+
+def test__get_width_vec_with_zero_value():
+    &#34;&#34;&#34;
+        Assert if GRF width is calculated correctly when value is zero.
+    &#34;&#34;&#34;
+    grf = GRFInit(np.array([0.5, 0.5, 0.5]), 7, 1, 0.5, 1.6)
+
+    result = grf._get_width_vec()
+    correct = np.repeat(1.0, 7)
     np.testing.assert_array_almost_equal(result, correct, decimal=2)
 
 def test__get_center_vec():
@@ -217,6 +228,26 @@ def test_get_order():
     np.testing.assert_array_almost_equal(result, correct, decimal=2)</code></pre>
 </details>
 </dd>
+<dt id="OeSNN-AD.test_grf.test__get_width_vec_with_zero_value"><code class="name flex">
+<span>def <span class="ident">test__get_width_vec_with_zero_value</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Assert if GRF width is calculated correctly when value is zero.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test__get_width_vec_with_zero_value():
+    &#34;&#34;&#34;
+        Assert if GRF width is calculated correctly when value is zero.
+    &#34;&#34;&#34;
+    grf = GRFInit(np.array([0.5, 0.5, 0.5]), 7, 1, 0.5, 1.6)
+
+    result = grf._get_width_vec()
+    correct = np.repeat(1.0, 7)
+    np.testing.assert_array_almost_equal(result, correct, decimal=2)</code></pre>
+</details>
+</dd>
 <dt id="OeSNN-AD.test_grf.test_get_order"><code class="name flex">
 <span>def <span class="ident">test_get_order</span></span>(<span>)</span>
 </code></dt>
@@ -260,6 +291,7 @@ def test_get_order():
 <li><code><a title="OeSNN-AD.test_grf.test__get_firing_time" href="#OeSNN-AD.test_grf.test__get_firing_time">test__get_firing_time</a></code></li>
 <li><code><a title="OeSNN-AD.test_grf.test__get_order" href="#OeSNN-AD.test_grf.test__get_order">test__get_order</a></code></li>
 <li><code><a title="OeSNN-AD.test_grf.test__get_width_vec" href="#OeSNN-AD.test_grf.test__get_width_vec">test__get_width_vec</a></code></li>
+<li><code><a title="OeSNN-AD.test_grf.test__get_width_vec_with_zero_value" href="#OeSNN-AD.test_grf.test__get_width_vec_with_zero_value">test__get_width_vec_with_zero_value</a></code></li>
 <li><code><a title="OeSNN-AD.test_grf.test_get_order" href="#OeSNN-AD.test_grf.test_get_order">test_get_order</a></code></li>
 </ul>
 </li>

@@ -1,7 +1,5 @@
 """
-    Główny moduł projektu, w którym testowana jest efektywność modelu.
-    
-    Funkcje z tego modułu nie powinny być importowane.
+    Main project's module which testing model effectiveness.
 """
 
 import csv
@@ -20,28 +18,19 @@ from utils import (get_all_files_paths, get_data_from_path, perf_measure,
 def parameters_tuning(stream: npt.NDArray[np.float64],
                       labels: List[bool], parameters: Dict) -> Tuple[Dict, float, float, float]:
     """
-        Funkcja implementująca algorytm grid-search, który jest wykorzystywany do 
-        znalezienia najlepszychhiperparametrów oesnn-ad dla danego strumienia danych.
-
-        Jako argumenty funkcja przyjmuje:\n
-            1. stream - strumień danych w postaci wektora najlepiej z biblioteki numpy
-            2. labels - listę etykiet mówiących o próbkach czy są anomaliami
-            3. parameters - słownik, w którym klucze to hiperparametry, a wartości to tuple,
-            które opisują zakres przeszukiwań i są w postaci (początek, koniec, krok)
-
-        Funkcja zwraca krotkę z następującymi wartościami:\n
-            1. słownik hiperparametr-wartośc dla najlepszego wyniku
-            2. recall najlepszego wyniku
-            3. precission najlepszego wyniku
-            4. f1 najlepszego wyniku
+        A function that implements the grid-search algorithm that is used for
+        finding the best oesnn-ad hyperparameters for a given data stream.
 
         Args:
-            stream (npt.NDArray[np.float64]): _description_
-            labels (List[bool]): _description_
+            stream (npt.NDArray[np.float64]): data stream's vector
+            labels (List[bool]): labels vector
             parameters (Dict): _description_
 
         Returns:
-            Tuple[Dict, float, float, float]: _description_
+            Tuple[Dict, float, float, float]: dict with best parameters, 
+                                              recall for the best result,
+                                              precission for the best result, 
+                                              f1 for the best result
     """
     best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
     for no_size, w_size, ni_size, ts_coef, beta, sim, mod, c_coef, ksi, epsilon in itertools.product(
@@ -95,13 +84,13 @@ def plots(stream: npt.NDArray[np.float64],
           labels: npt.NDArray[np.bool_],
           stream_name: str) -> None:
     """
-        Funkcja do generowania wykresów strumienia, z uwzględnieniem predykcji modelu.
+        Method is generating plots for stream including model predictions.
 
         Args:
-            stream (npt.NDArray[np.float64]): _description_
-            best_parameters (dict): _description_
-            labels (npt.NDArray[np.bool_]): _description_
-            stream_name (str): _description_
+            stream (npt.NDArray[np.float64]): stream values vector
+            best_parameters (dict): dictionary with best model parameters
+            labels (npt.NDArray[np.bool_]): labels vector
+            stream_name (str): stream name for plot title
     """
     oesnn_ad = OeSNNAD(stream,
                        window_size=best_parameters['Wsize'],
@@ -158,11 +147,8 @@ def plots(stream: npt.NDArray[np.float64],
 
 def main() -> None:
     """
-        Główna funkcja programu. Odczytuje zakres hiperparametrów z plików json, odczytuje
-        strumienie z plików csv, uruchamia strojenie hiperparametrów, zapisuje najlepsze wyniki
-        do pliku csv dla danego datasetu.
-
-        Nie przyjmuje żadnych parametrów, i niczego nie zwraca.
+        Entry function for program. Function read hiperparameters from json files, stream data from 
+        csv files, run hiperparameter tuning and write best results to csv file for every dataset.
     """
     parameters_nab = read_parameters("parameters_NAB.json")
     parameters_yahoo = read_parameters("parameters_Yahoo.json")

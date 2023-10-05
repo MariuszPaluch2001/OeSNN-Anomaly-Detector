@@ -31,18 +31,8 @@
     Module tests utils functions.
 &#34;&#34;&#34;
 
-import numpy as np
+from utils import perf_measure
 
-from utils import convert_numpy_array_int_to_booleans, perf_measure
-
-def test_convert_numpy_array_int_to_booleans():
-    &#34;&#34;&#34;
-        Test assert if int vector is correctly converted to boolean vector.
-    &#34;&#34;&#34;
-    array = np.array([1, 0, 0, 1, 0])
-
-    np.testing.assert_array_equal(convert_numpy_array_int_to_booleans(
-        array), np.array([True, False, False, True, False]))
 
 def test_perf_measure():
     &#34;&#34;&#34;
@@ -62,25 +52,6 @@ def test_perf_measure():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="OeSNN-AD.test_utils.test_convert_numpy_array_int_to_booleans"><code class="name flex">
-<span>def <span class="ident">test_convert_numpy_array_int_to_booleans</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Test assert if int vector is correctly converted to boolean vector.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def test_convert_numpy_array_int_to_booleans():
-    &#34;&#34;&#34;
-        Test assert if int vector is correctly converted to boolean vector.
-    &#34;&#34;&#34;
-    array = np.array([1, 0, 0, 1, 0])
-
-    np.testing.assert_array_equal(convert_numpy_array_int_to_booleans(
-        array), np.array([True, False, False, True, False]))</code></pre>
-</details>
-</dd>
 <dt id="OeSNN-AD.test_utils.test_perf_measure"><code class="name flex">
 <span>def <span class="ident">test_perf_measure</span></span>(<span>)</span>
 </code></dt>
@@ -119,7 +90,6 @@ def test_perf_measure():
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="OeSNN-AD.test_utils.test_convert_numpy_array_int_to_booleans" href="#OeSNN-AD.test_utils.test_convert_numpy_array_int_to_booleans">test_convert_numpy_array_int_to_booleans</a></code></li>
 <li><code><a title="OeSNN-AD.test_utils.test_perf_measure" href="#OeSNN-AD.test_utils.test_perf_measure">test_perf_measure</a></code></li>
 </ul>
 </li>

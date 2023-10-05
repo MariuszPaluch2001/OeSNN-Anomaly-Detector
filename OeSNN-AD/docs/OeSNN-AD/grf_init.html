@@ -34,6 +34,7 @@
 import numpy as np
 import numpy.typing as npt
 
+
 class GRFInit:
     &#34;&#34;&#34;
         Class contains functions which target is initialization of firing neurons order
@@ -64,13 +65,13 @@ class GRFInit:
     def _get_width_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
             Method to calculate Gaussian Receptor Field width vector for all neurons in input layer.
-            
+            If GRF value value is equal 0, it will be replaced to 1.
             Returns:
                 npt.NDArray[np.float64]: GRF&#39;s width vector
         &#34;&#34;&#34;
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
-        if value == 0.0:  # @TODO: dodaj na ten case osobny test
+        if value == 0.0:
             value = 1.0
         return np.repeat(value, self.input_size)
 
@@ -211,13 +212,13 @@ in output layer.</p>
     def _get_width_vec(self) -&gt; npt.NDArray[np.float64]:
         &#34;&#34;&#34;
             Method to calculate Gaussian Receptor Field width vector for all neurons in input layer.
-            
+            If GRF value value is equal 0, it will be replaced to 1.
             Returns:
                 npt.NDArray[np.float64]: GRF&#39;s width vector
         &#34;&#34;&#34;
         value = (self.max_w_i - self.min_w_i) / \
             ((self.input_size - 2) * self.beta)
-        if value == 0.0:  # @TODO: dodaj na ten case osobny test
+        if value == 0.0:
             value = 1.0
         return np.repeat(value, self.input_size)
 
