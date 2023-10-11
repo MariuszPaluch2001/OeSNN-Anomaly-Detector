@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>OeSNN-AD.main API documentation</title>
+<meta name="description" content="Main project&#39;s module which testing model effectiveness." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>OeSNN-AD.main</code></h1>
+</header>
+<section id="section-intro">
+<p>Main project's module which testing model effectiveness.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+    Main project&#39;s module which testing model effectiveness.
+&#34;&#34;&#34;
+
+import csv
+import itertools
+from typing import Dict, List, Tuple
+
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
+import numpy as np
+import numpy.typing as npt
+from oesnn_ad import OeSNNAD
+from utils import (get_all_files_paths, get_data_from_path, perf_measure,
+                   read_parameters)
+
+
+def parameters_tuning(stream: npt.NDArray[np.float64],
+                      labels: List[bool], parameters: Dict) -&gt; Tuple[Dict, float, float, float]:
+    &#34;&#34;&#34;
+        A function that implements the grid-search algorithm that is used for
+        finding the best oesnn-ad hyperparameters for a given data stream.
+
+        Args:
+            stream (npt.NDArray[np.float64]): data stream&#39;s vector
+            labels (List[bool]): labels vector
+            parameters (Dict): _description_
+
+        Returns:
+            Tuple[Dict, float, float, float]: dict with best parameters, 
+                                              recall for the best result,
+                                              precission for the best result, 
+                                              f1 for the best result
+    &#34;&#34;&#34;
+    best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
+    for no_size, w_size, ni_size, ts_coef, beta, sim, mod, c_coef, ksi, epsilon in itertools.product(
+        np.arange(*parameters[&#39;NOsize&#39;]),
+        np.arange(*parameters[&#39;Wsize&#39;]),
+        np.arange(*parameters[&#39;NIsize&#39;]),
+        np.arange(*parameters[&#39;TS&#39;]),
+        np.arange(*parameters[&#39;Beta&#39;]),
+        np.arange(*parameters[&#39;sim&#39;]),
+        np.arange(*parameters[&#39;mod&#39;]),
+        np.arange(*parameters[&#39;C&#39;]),
+        np.arange(*parameters[&#39;ksi&#39;]),
+        np.arange(*parameters[&#39;epsilon&#39;]),
+    ):
+        oesnn_ad = OeSNNAD(stream,
+                           window_size=w_size,
+                           num_in_neurons=ni_size,
+                           num_out_neurons=no_size,
+                           ts_factor=ts_coef,
+                           mod=mod,
+                           c_factor=c_coef,
+                           epsilon=epsilon,
+                           ksi=ksi,
+                           sim=sim,
+                           beta=beta)
+        detection_result = oesnn_ad.predict()
+        recall, precission, f_1 = perf_measure(
+            detection_result, labels)
+        if f_1 &gt; best_f1:
+            best_f1 = f_1
+            best_precission = precission
+            best_recall = recall
+            best_parameters = {
+                &#39;NOsize&#39;: no_size,
+                &#39;Wsize&#39;: w_size,
+                &#39;NIsize&#39;: ni_size,
+                &#39;Beta&#39;: beta,
+                &#39;TS&#39;: ts_coef,
+                &#39;sim&#39;: sim,
+                &#39;mod&#39;: mod,
+                &#39;C&#39;: c_coef,
+                &#39;ksi&#39;: ksi,  # error factor
+                &#39;epsilon&#39;: epsilon  # anomaly factor
+            }
+
+    return best_parameters, best_recall, best_precission, best_f1
+
+
+def plots(stream: npt.NDArray[np.float64],
+          best_parameters: dict,
+          labels: npt.NDArray[np.bool_],
+          stream_name: str) -&gt; None:
+    &#34;&#34;&#34;
+        Method is generating plots for stream including model predictions.
+
+        Args:
+            stream (npt.NDArray[np.float64]): stream values vector
+            best_parameters (dict): dictionary with best model parameters
+            labels (npt.NDArray[np.bool_]): labels vector
+            stream_name (str): stream name for plot title
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream,
+                       window_size=best_parameters[&#39;Wsize&#39;],
+                       num_in_neurons=best_parameters[&#39;NIsize&#39;],
+                       num_out_neurons=best_parameters[&#39;NOsize&#39;],
+                       ts_factor=best_parameters[&#39;TS&#39;],
+                       mod=best_parameters[&#39;mod&#39;],
+                       c_factor=best_parameters[&#39;C&#39;],
+                       epsilon=best_parameters[&#39;epsilon&#39;],
+                       ksi=best_parameters[&#39;ksi&#39;],
+                       sim=best_parameters[&#39;sim&#39;],
+                       beta=best_parameters[&#39;Beta&#39;])
+    result = oesnn_ad.predict()
+    fn_list = []
+    fp_list = []
+    tn_list = []
+    tp_list = []
+    for index, (value, predict, label) in enumerate(
+            zip(stream.tolist(), result.tolist(), labels.tolist())):
+        if predict and label:
+            tp_list.append((index, value))
+        if predict and not label:
+            fp_list.append((index, value))
+        if not predict and not label:
+            tn_list.append((index, value))
+        if not predict and label:
+            fn_list.append((index, value))
+    plt.figure(figsize=(15, 5))
+    plt.title(stream_name)
+    plt.plot([x[0] for x in fn_list], [x[1]
+             for x in fn_list], &#39;+g&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in fp_list], [x[1]
+             for x in fp_list], &#39;sb&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tn_list], [x[1]
+             for x in tn_list], &#39;.k&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tp_list], [x[1]
+             for x in tp_list], &#39;2r&#39;, linestyle=&#39;None&#39;)
+    plt.grid()
+    green_plus = mlines.Line2D([], [], color=&#39;green&#39;, marker=&#39;+&#39;, linestyle=&#39;None&#39;,
+                               markersize=10, label=&#39;FN&#39;)
+    blue_square = mlines.Line2D([], [], color=&#39;blue&#39;, marker=&#39;s&#39;, linestyle=&#39;None&#39;,
+                                markersize=10, label=&#39;FP&#39;)
+    black_dot = mlines.Line2D([], [], color=&#39;black&#39;, marker=&#39;.&#39;, linestyle=&#39;None&#39;,
+                              markersize=10, label=&#39;TN&#39;)
+    red_triangle = mlines.Line2D([], [], color=&#39;red&#39;, marker=&#39;2&#39;, linestyle=&#39;None&#39;,
+                                 markersize=10, label=&#39;TP&#39;)
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc=&#34;center left&#34;, borderaxespad=0, handles=[
+               green_plus, blue_square, black_dot, red_triangle])
+    plt.xlabel(&#34;Timestamp&#34;)
+    plt.ylabel(&#34;Input value (X)&#34;)
+    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)
+    plt.close()
+
+
+def main() -&gt; None:
+    &#34;&#34;&#34;
+        Entry function for program. Function read hiperparameters from json files, stream data from 
+        csv files, run hiperparameter tuning and write best results to csv file for every dataset.
+    &#34;&#34;&#34;
+    parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
+    parameters_yahoo = read_parameters(&#34;parameters_Yahoo.json&#34;)
+    with open(&#39;results/nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+        writer = csv.writer(file)
+
+        writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
+                        &#34;precission&#34;) + tuple(parameters_nab.keys()))
+        for path in get_all_files_paths(&#34;../data/NAB&#34;):
+            dataset = path.split(&#34;/&#34;)[-2]
+            filename = path.split(&#34;/&#34;)[-1][:-4]
+            print(f&#34;dataset={dataset}, filename={filename}&#34;)
+            data, labels = get_data_from_path(path, True)
+            param, recall, precission, f_1 = parameters_tuning(
+                data, labels, parameters_nab)
+
+            if param is not None:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + tuple(param.values()))
+
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
+            else:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + (None, ) * 10)
+    with open(&#39;results/yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+        writer = csv.writer(file)
+
+        writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
+                        &#34;precission&#34;) + tuple(parameters_yahoo.keys()))
+        for path in get_all_files_paths(&#34;../data/Yahoo&#34;):
+            dataset = path.split(&#34;/&#34;)[-2]
+            filename = path.split(&#34;/&#34;)[-1][:-4]
+            print(f&#34;dataset={dataset}, filename={filename}&#34;)
+            data, labels = get_data_from_path(path, False)
+            param, recall, precission, f_1 = parameters_tuning(
+                data, labels, parameters_yahoo)
+            if param is not None:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + tuple(param.values()))
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
+            else:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + (None, ) * 10)
+
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="OeSNN-AD.main.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Entry function for program. Function read hiperparameters from json files, stream data from
+csv files, run hiperparameter tuning and write best results to csv file for every dataset.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main() -&gt; None:
+    &#34;&#34;&#34;
+        Entry function for program. Function read hiperparameters from json files, stream data from 
+        csv files, run hiperparameter tuning and write best results to csv file for every dataset.
+    &#34;&#34;&#34;
+    parameters_nab = read_parameters(&#34;parameters_NAB.json&#34;)
+    parameters_yahoo = read_parameters(&#34;parameters_Yahoo.json&#34;)
+    with open(&#39;results/nab_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+        writer = csv.writer(file)
+
+        writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
+                        &#34;precission&#34;) + tuple(parameters_nab.keys()))
+        for path in get_all_files_paths(&#34;../data/NAB&#34;):
+            dataset = path.split(&#34;/&#34;)[-2]
+            filename = path.split(&#34;/&#34;)[-1][:-4]
+            print(f&#34;dataset={dataset}, filename={filename}&#34;)
+            data, labels = get_data_from_path(path, True)
+            param, recall, precission, f_1 = parameters_tuning(
+                data, labels, parameters_nab)
+
+            if param is not None:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + tuple(param.values()))
+
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
+            else:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + (None, ) * 10)
+    with open(&#39;results/yahoo_result.csv&#39;, &#39;w&#39;, encoding=&#39;UTF8&#39;) as file:
+        writer = csv.writer(file)
+
+        writer.writerow((&#34;dataset&#34;, &#34;filename&#34;, &#34;f1&#34;, &#34;recall&#34;,
+                        &#34;precission&#34;) + tuple(parameters_yahoo.keys()))
+        for path in get_all_files_paths(&#34;../data/Yahoo&#34;):
+            dataset = path.split(&#34;/&#34;)[-2]
+            filename = path.split(&#34;/&#34;)[-1][:-4]
+            print(f&#34;dataset={dataset}, filename={filename}&#34;)
+            data, labels = get_data_from_path(path, False)
+            param, recall, precission, f_1 = parameters_tuning(
+                data, labels, parameters_yahoo)
+            if param is not None:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + tuple(param.values()))
+                plots(data, param, labels, f&#34;{dataset}-{filename}&#34;)
+            else:
+                writer.writerow((dataset, filename, f_1, recall,
+                                precission) + (None, ) * 10)</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.main.parameters_tuning"><code class="name flex">
+<span>def <span class="ident">parameters_tuning</span></span>(<span>stream: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], labels: List[bool], parameters: Dict) ‑> Tuple[Dict, float, float, float]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A function that implements the grid-search algorithm that is used for
+finding the best oesnn-ad hyperparameters for a given data stream.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd>data stream's vector</dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>List[bool]</code></dt>
+<dd>labels vector</dd>
+<dt><strong><code>parameters</code></strong> :&ensp;<code>Dict</code></dt>
+<dd><em>description</em></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[Dict, float, float, float]</code></dt>
+<dd>dict with best parameters,
+recall for the best result,
+precission for the best result,
+f1 for the best result</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parameters_tuning(stream: npt.NDArray[np.float64],
+                      labels: List[bool], parameters: Dict) -&gt; Tuple[Dict, float, float, float]:
+    &#34;&#34;&#34;
+        A function that implements the grid-search algorithm that is used for
+        finding the best oesnn-ad hyperparameters for a given data stream.
+
+        Args:
+            stream (npt.NDArray[np.float64]): data stream&#39;s vector
+            labels (List[bool]): labels vector
+            parameters (Dict): _description_
+
+        Returns:
+            Tuple[Dict, float, float, float]: dict with best parameters, 
+                                              recall for the best result,
+                                              precission for the best result, 
+                                              f1 for the best result
+    &#34;&#34;&#34;
+    best_parameters, best_recall, best_precission, best_f1 = None, 0.0, 0.0, 0.0
+    for no_size, w_size, ni_size, ts_coef, beta, sim, mod, c_coef, ksi, epsilon in itertools.product(
+        np.arange(*parameters[&#39;NOsize&#39;]),
+        np.arange(*parameters[&#39;Wsize&#39;]),
+        np.arange(*parameters[&#39;NIsize&#39;]),
+        np.arange(*parameters[&#39;TS&#39;]),
+        np.arange(*parameters[&#39;Beta&#39;]),
+        np.arange(*parameters[&#39;sim&#39;]),
+        np.arange(*parameters[&#39;mod&#39;]),
+        np.arange(*parameters[&#39;C&#39;]),
+        np.arange(*parameters[&#39;ksi&#39;]),
+        np.arange(*parameters[&#39;epsilon&#39;]),
+    ):
+        oesnn_ad = OeSNNAD(stream,
+                           window_size=w_size,
+                           num_in_neurons=ni_size,
+                           num_out_neurons=no_size,
+                           ts_factor=ts_coef,
+                           mod=mod,
+                           c_factor=c_coef,
+                           epsilon=epsilon,
+                           ksi=ksi,
+                           sim=sim,
+                           beta=beta)
+        detection_result = oesnn_ad.predict()
+        recall, precission, f_1 = perf_measure(
+            detection_result, labels)
+        if f_1 &gt; best_f1:
+            best_f1 = f_1
+            best_precission = precission
+            best_recall = recall
+            best_parameters = {
+                &#39;NOsize&#39;: no_size,
+                &#39;Wsize&#39;: w_size,
+                &#39;NIsize&#39;: ni_size,
+                &#39;Beta&#39;: beta,
+                &#39;TS&#39;: ts_coef,
+                &#39;sim&#39;: sim,
+                &#39;mod&#39;: mod,
+                &#39;C&#39;: c_coef,
+                &#39;ksi&#39;: ksi,  # error factor
+                &#39;epsilon&#39;: epsilon  # anomaly factor
+            }
+
+    return best_parameters, best_recall, best_precission, best_f1</code></pre>
+</details>
+</dd>
+<dt id="OeSNN-AD.main.plots"><code class="name flex">
+<span>def <span class="ident">plots</span></span>(<span>stream: numpy.ndarray[typing.Any, numpy.dtype[numpy.float64]], best_parameters: dict, labels: numpy.ndarray[typing.Any, numpy.dtype[numpy.bool_]], stream_name: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Method is generating plots for stream including model predictions.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream</code></strong> :&ensp;<code>npt.NDArray[np.float64]</code></dt>
+<dd>stream values vector</dd>
+<dt><strong><code>best_parameters</code></strong> :&ensp;<code>dict</code></dt>
+<dd>dictionary with best model parameters</dd>
+<dt><strong><code>labels</code></strong> :&ensp;<code>npt.NDArray[np.bool_]</code></dt>
+<dd>labels vector</dd>
+<dt><strong><code>stream_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>stream name for plot title</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plots(stream: npt.NDArray[np.float64],
+          best_parameters: dict,
+          labels: npt.NDArray[np.bool_],
+          stream_name: str) -&gt; None:
+    &#34;&#34;&#34;
+        Method is generating plots for stream including model predictions.
+
+        Args:
+            stream (npt.NDArray[np.float64]): stream values vector
+            best_parameters (dict): dictionary with best model parameters
+            labels (npt.NDArray[np.bool_]): labels vector
+            stream_name (str): stream name for plot title
+    &#34;&#34;&#34;
+    oesnn_ad = OeSNNAD(stream,
+                       window_size=best_parameters[&#39;Wsize&#39;],
+                       num_in_neurons=best_parameters[&#39;NIsize&#39;],
+                       num_out_neurons=best_parameters[&#39;NOsize&#39;],
+                       ts_factor=best_parameters[&#39;TS&#39;],
+                       mod=best_parameters[&#39;mod&#39;],
+                       c_factor=best_parameters[&#39;C&#39;],
+                       epsilon=best_parameters[&#39;epsilon&#39;],
+                       ksi=best_parameters[&#39;ksi&#39;],
+                       sim=best_parameters[&#39;sim&#39;],
+                       beta=best_parameters[&#39;Beta&#39;])
+    result = oesnn_ad.predict()
+    fn_list = []
+    fp_list = []
+    tn_list = []
+    tp_list = []
+    for index, (value, predict, label) in enumerate(
+            zip(stream.tolist(), result.tolist(), labels.tolist())):
+        if predict and label:
+            tp_list.append((index, value))
+        if predict and not label:
+            fp_list.append((index, value))
+        if not predict and not label:
+            tn_list.append((index, value))
+        if not predict and label:
+            fn_list.append((index, value))
+    plt.figure(figsize=(15, 5))
+    plt.title(stream_name)
+    plt.plot([x[0] for x in fn_list], [x[1]
+             for x in fn_list], &#39;+g&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in fp_list], [x[1]
+             for x in fp_list], &#39;sb&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tn_list], [x[1]
+             for x in tn_list], &#39;.k&#39;, linestyle=&#39;None&#39;)
+    plt.plot([x[0] for x in tp_list], [x[1]
+             for x in tp_list], &#39;2r&#39;, linestyle=&#39;None&#39;)
+    plt.grid()
+    green_plus = mlines.Line2D([], [], color=&#39;green&#39;, marker=&#39;+&#39;, linestyle=&#39;None&#39;,
+                               markersize=10, label=&#39;FN&#39;)
+    blue_square = mlines.Line2D([], [], color=&#39;blue&#39;, marker=&#39;s&#39;, linestyle=&#39;None&#39;,
+                                markersize=10, label=&#39;FP&#39;)
+    black_dot = mlines.Line2D([], [], color=&#39;black&#39;, marker=&#39;.&#39;, linestyle=&#39;None&#39;,
+                              markersize=10, label=&#39;TN&#39;)
+    red_triangle = mlines.Line2D([], [], color=&#39;red&#39;, marker=&#39;2&#39;, linestyle=&#39;None&#39;,
+                                 markersize=10, label=&#39;TP&#39;)
+    plt.legend(bbox_to_anchor=(1.04, 0.5), loc=&#34;center left&#34;, borderaxespad=0, handles=[
+               green_plus, blue_square, black_dot, red_triangle])
+    plt.xlabel(&#34;Timestamp&#34;)
+    plt.ylabel(&#34;Input value (X)&#34;)
+    plt.savefig(f&#34;./plots/{stream_name}.png&#34;)
+    plt.close()</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="OeSNN-AD" href="index.html">OeSNN-AD</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="OeSNN-AD.main.main" href="#OeSNN-AD.main.main">main</a></code></li>
+<li><code><a title="OeSNN-AD.main.parameters_tuning" href="#OeSNN-AD.main.parameters_tuning">parameters_tuning</a></code></li>
+<li><code><a title="OeSNN-AD.main.plots" href="#OeSNN-AD.main.plots">plots</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
