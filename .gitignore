@@ -6,3 +6,5 @@ __pycache__/
 plots/
 *.png
 results/
+plots-decomposition/
+*.csv
