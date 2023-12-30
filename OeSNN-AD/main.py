@@ -72,8 +72,8 @@ def parameters_tuning(stream: npt.NDArray[np.float64],
                 'sim': sim,
                 'mod': mod,
                 'C': c_coef,
-                'ksi': ksi,  # error factor
-                'epsilon': epsilon  # anomaly factor
+                'ksi': ksi,
+                'epsilon': epsilon
             }
 
     return best_parameters, best_recall, best_precission, best_f1
@@ -152,27 +152,27 @@ def main() -> None:
     """
     parameters_nab = read_parameters("parameters_NAB.json")
     parameters_yahoo = read_parameters("parameters_Yahoo.json")
-    with open('results/nab_result.csv', 'w', encoding='UTF8') as file:
-        writer = csv.writer(file)
+    # with open('results/nab_result.csv', 'w', encoding='UTF8') as file:
+    #     writer = csv.writer(file)
 
-        writer.writerow(("dataset", "filename", "f1", "recall",
-                        "precission") + tuple(parameters_nab.keys()))
-        for path in get_all_files_paths("../data/NAB"):
-            dataset = path.split("/")[-2]
-            filename = path.split("/")[-1][:-4]
-            print(f"dataset={dataset}, filename={filename}")
-            data, labels = get_data_from_path(path, True)
-            param, recall, precission, f_1 = parameters_tuning(
-                data, labels, parameters_nab)
+    #     writer.writerow(("dataset", "filename", "f1", "recall",
+    #                     "precission") + tuple(parameters_nab.keys()))
+    #     for path in get_all_files_paths("../data/NAB"):
+    #         dataset = path.split("/")[-2]
+    #         filename = path.split("/")[-1][:-4]
+    #         print(f"dataset={dataset}, filename={filename}")
+    #         data, labels = get_data_from_path(path, True)
+    #         param, recall, precission, f_1 = parameters_tuning(
+    #             data, labels, parameters_nab)
 
-            if param is not None:
-                writer.writerow((dataset, filename, f_1, recall,
-                                precission) + tuple(param.values()))
+    #         if param is not None:
+    #             writer.writerow((dataset, filename, f_1, recall,
+    #                             precission) + tuple(param.values()))
 
-                plots(data, param, labels, f"{dataset}-{filename}")
-            else:
-                writer.writerow((dataset, filename, f_1, recall,
-                                precission) + (None, ) * 10)
+    #             plots(data, param, labels, f"{dataset}-{filename}")
+    #         else:
+    #             writer.writerow((dataset, filename, f_1, recall,
+    #                             precission) + (None, ) * 10)
     with open('results/yahoo_result.csv', 'w', encoding='UTF8') as file:
         writer = csv.writer(file)
 
